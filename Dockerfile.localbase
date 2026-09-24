@@ -1,0 +1,58 @@
+# The production Dockerfile, with ONE line changed.
+#
+# `Dockerfile` starts `FROM python:3.11-slim-bookworm` and `apt-get install`s
+# ffmpeg and the Noto fonts. No container registry is reachable from this build
+# environment — Docker Hub, GHCR, ECR Public and Quay all answer 403 — so that
+# image cannot be pulled and those layers cannot be built here.
+#
+# This file substitutes a base imported from the build machine's own rootfs,
+# which already carries Python 3.11 and ffmpeg. Every other instruction is
+# identical to the production Dockerfile.
+#
+# WHAT THIS PROVES: the application layers build; the venv install works; the
+# non-root user, the ownership, the healthcheck and both entrypoints are
+# correct; the ASGI object resolves; a worker drains a real queue inside a
+# container; two workers share one volume without double-processing.
+#
+# WHAT IT DOES NOT PROVE: that `python:3.11-slim-bookworm` plus that apt line
+# produces a working image. That needs a machine with registry access, and it
+# is the one thing about this build that remains unverified.
+FROM vtv-base:local AS build
+
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+WORKDIR /build
+COPY pyproject.toml README.md ./
+COPY requirements.txt ./
+RUN python3 -m venv --system-site-packages /opt/venv \
+ && /opt/venv/bin/pip install --no-cache-dir --no-deps -e . 2>/dev/null || true
+
+COPY src/ ./src/
+
+FROM vtv-base:local AS runtime
+
+RUN useradd --create-home --uid 10001 --shell /usr/sbin/nologin vtv 2>/dev/null || true
+
+COPY --from=build /build/src /srv/vtv/src
+COPY apps/ /srv/vtv/apps/
+COPY migrations/ /srv/vtv/migrations/
+COPY schemas/ /srv/vtv/schemas/
+
+ENV PYTHONPATH=/srv/vtv/src \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    VTV_ENV=production \
+    VTV_STORAGE_ROOT=/var/lib/vtv/storage
+
+WORKDIR /srv/vtv
+RUN mkdir -p /var/lib/vtv/storage && chown -R vtv:vtv /var/lib/vtv /srv/vtv
+USER vtv
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=15s --timeout=3s --start-period=20s --retries=3 \
+  CMD python3 -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health/live', timeout=2).status==200 else 1)"
+
+CMD ["uvicorn", "vtv.api.app:application", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]

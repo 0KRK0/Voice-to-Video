@@ -1,0 +1,2625 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:04.024
+Imagine waking up one morning in the
+not-too-distant future.
+
+00:00:04.024 --> 00:00:13.841
+You open your eyes, and before you even
+touch your phone, your AI assistant
+already knows that you have a busy day
+ahead.
+
+00:00:13.841 --> 00:00:16.210
+It has checked your calendar.
+
+00:00:16.210 --> 00:00:20.234
+It has looked at the messages that arrived
+overnight.
+
+00:00:20.234 --> 00:00:24.672
+It has reviewed the documents you were
+supposed to read.
+
+00:00:24.672 --> 00:00:29.110
+It has noticed that one of your meetings
+was moved.
+
+00:00:29.110 --> 00:00:33.134
+It has prepared a summary of the important
+information.
+
+00:00:33.134 --> 00:00:42.124
+And instead of opening ten different
+applications, searching through hundreds
+of messages, and manually organizing
+everything, you simply ask one question.
+
+00:00:42.124 --> 00:00:45.321
+“What do I need to know today?”
+
+00:00:45.321 --> 00:00:46.862
+Your AI answers.
+
+00:00:46.862 --> 00:00:49.645
+Not with a list of notifications.
+
+00:00:49.645 --> 00:00:52.428
+Not with a collection of links.
+
+00:00:52.428 --> 00:00:56.038
+But with an understanding of what actually
+matters.
+
+00:00:56.038 --> 00:00:59.235
+It tells you which meeting requires
+preparation.
+
+00:00:59.235 --> 00:01:02.845
+It tells you which message needs a
+response.
+
+00:01:02.845 --> 00:01:07.283
+It tells you that a project is falling
+behind schedule.
+
+00:01:07.283 --> 00:01:12.549
+And perhaps it has already prepared the
+first draft of the work.
+
+00:01:12.549 --> 00:01:14.090
+You approve it.
+
+00:01:14.090 --> 00:01:16.045
+The work gets done.
+
+00:01:16.045 --> 00:01:17.586
+This sounds futuristic.
+
+00:01:17.586 --> 00:01:20.783
+But pieces of this world already exist.
+
+00:01:20.783 --> 00:01:26.049
+And that is what makes the future of
+artificial intelligence so interesting.
+
+00:01:26.049 --> 00:01:30.901
+We are not simply watching the development
+of another software tool.
+
+00:01:30.901 --> 00:01:37.408
+We may be watching the beginning of a
+completely different way of interacting
+with computers.
+
+00:01:37.408 --> 00:01:42.260
+For decades, computers have required us to
+learn how they work.
+
+00:01:42.260 --> 00:01:43.801
+We open applications.
+
+00:01:43.801 --> 00:01:45.342
+We navigate menus.
+
+00:01:45.342 --> 00:01:47.297
+We search for information.
+
+00:01:47.297 --> 00:01:49.252
+We fill in forms.
+
+00:01:49.252 --> 00:01:50.793
+We click buttons.
+
+00:01:50.793 --> 00:01:52.334
+We move files.
+
+00:01:52.334 --> 00:01:55.944
+We copy information from one system into
+another.
+
+00:01:55.944 --> 00:02:02.451
+Software gives us enormous power, but it
+often makes us adapt ourselves to the
+software.
+
+00:02:02.451 --> 00:02:05.234
+Artificial intelligence introduces a
+different possibility.
+
+00:02:05.234 --> 00:02:08.431
+What if software could adapt to us?
+
+00:02:08.431 --> 00:02:12.455
+What if we could simply describe what we
+want?
+
+00:02:12.455 --> 00:02:22.272
+Instead of saying, “Open this application,
+find this customer, copy this information,
+create a report, export it, and send it,”
+we could say:
+
+00:02:22.272 --> 00:02:32.089
+“Prepare a report showing which customers
+are most likely to leave, explain why, and
+send the important cases to my team for
+review.”
+
+00:02:32.089 --> 00:02:35.286
+The computer would figure out the steps.
+
+00:02:35.286 --> 00:02:37.655
+That is a profound change.
+
+00:02:37.655 --> 00:02:44.576
+Because the real promise of AI is not
+merely that machines can generate text or
+images.
+
+00:02:44.576 --> 00:02:49.428
+The deeper promise is that machines can
+begin to understand goals.
+
+00:02:49.428 --> 00:03:06.280
+And once a computer can understand a goal,
+reason about the steps required to achieve
+it, use tools, and evaluate the result,
+software starts to look less like a
+collection of applications and more like a
+collection of intelligent workers.
+
+00:03:06.280 --> 00:03:10.718
+This is the beginning of the age of AI
+agents.
+
+00:03:10.718 --> 00:03:17.225
+But to understand where we are going, we
+need to understand where we came from.
+
+00:03:17.225 --> 00:03:23.318
+For most of the history of computing,
+computers were extremely powerful but
+fundamentally literal.
+
+00:03:23.318 --> 00:03:31.066
+If you wanted a computer to perform a
+task, you had to tell it exactly what to
+do.
+
+00:03:31.066 --> 00:03:32.607
+Programmers wrote instructions.
+
+00:03:32.607 --> 00:03:34.562
+Those instructions became software.
+
+00:03:34.562 --> 00:03:36.103
+Software followed rules.
+
+00:03:36.103 --> 00:03:40.541
+The computer did not understand the
+purpose behind those rules.
+
+00:03:40.541 --> 00:03:42.496
+It simply executed them.
+
+00:03:42.496 --> 00:03:44.451
+Then came machine learning.
+
+00:03:44.451 --> 00:03:51.785
+Instead of programming every rule
+manually, we could give machines examples
+and allow them to learn patterns.
+
+00:03:51.785 --> 00:03:57.878
+This changed fields such as image
+recognition, recommendation systems,
+speech recognition, and fraud detection.
+
+00:03:57.878 --> 00:04:00.247
+Then came modern generative AI.
+
+00:04:00.247 --> 00:04:03.030
+Large language models demonstrated
+something surprising.
+
+00:04:03.030 --> 00:04:07.468
+They could work with language at a
+remarkably broad level.
+
+00:04:07.468 --> 00:04:09.423
+They could summarize documents.
+
+00:04:09.423 --> 00:04:10.623
+Translate languages.
+
+00:04:10.623 --> 00:04:11.823
+Write software.
+
+00:04:11.823 --> 00:04:13.364
+Explain complicated concepts.
+
+00:04:13.364 --> 00:04:14.564
+Generate ideas.
+
+00:04:14.564 --> 00:04:15.764
+Analyze information.
+
+00:04:15.764 --> 00:04:17.305
+And communicate conversationally.
+
+00:04:17.305 --> 00:04:23.812
+Suddenly, the computer was no longer
+limited to commands written in a rigid
+programming language.
+
+00:04:23.812 --> 00:04:27.836
+We could communicate with it using
+ordinary human language.
+
+00:04:27.836 --> 00:04:30.619
+That alone was a major shift.
+
+00:04:30.619 --> 00:04:34.229
+But there was another shift hiding
+underneath it.
+
+00:04:34.229 --> 00:04:42.805
+If a model can understand a request,
+perhaps it can also decide what actions
+are necessary to fulfill that request.
+
+00:04:42.805 --> 00:04:45.174
+That leads us to agents.
+
+00:04:45.174 --> 00:04:48.784
+An AI agent is not simply a chatbot.
+
+00:04:48.784 --> 00:04:55.291
+A chatbot waits for you to ask a question
+and then gives you an answer.
+
+00:04:55.291 --> 00:04:58.488
+An agent can be given a goal.
+
+00:04:58.488 --> 00:05:01.685
+It can break that goal into steps.
+
+00:05:01.685 --> 00:05:03.640
+It can use tools.
+
+00:05:03.640 --> 00:05:05.595
+It can inspect information.
+
+00:05:05.595 --> 00:05:07.550
+It can make decisions.
+
+00:05:07.550 --> 00:05:10.333
+It can check its own work.
+
+00:05:10.333 --> 00:05:18.909
+And it can continue until the task is
+complete, within whatever permissions and
+boundaries a human or organization gives
+it.
+
+00:05:18.909 --> 00:05:20.864
+Imagine a sales team.
+
+00:05:20.864 --> 00:05:24.888
+Today, a salesperson might spend hours
+researching a prospect.
+
+00:05:24.888 --> 00:05:27.671
+They look at the company's website.
+
+00:05:27.671 --> 00:05:29.626
+They examine previous interactions.
+
+00:05:29.626 --> 00:05:32.823
+They check the customer relationship
+management system.
+
+00:05:32.823 --> 00:05:34.364
+They read emails.
+
+00:05:34.364 --> 00:05:37.147
+They search for recent company news.
+
+00:05:37.147 --> 00:05:39.102
+They prepare talking points.
+
+00:05:39.102 --> 00:05:41.471
+Then they write an email.
+
+00:05:41.471 --> 00:05:47.150
+In an AI-native organization, an agent
+could perform much of this preparation
+automatically.
+
+00:05:47.150 --> 00:05:49.519
+It could research the company.
+
+00:05:49.519 --> 00:05:51.474
+Understand the account history.
+
+00:05:51.474 --> 00:05:53.015
+Identify important changes.
+
+00:05:53.015 --> 00:05:54.556
+Suggest a strategy.
+
+00:05:54.556 --> 00:05:56.511
+Draft a personalized message.
+
+00:05:56.511 --> 00:06:00.121
+And place everything in front of the
+salesperson.
+
+00:06:00.121 --> 00:06:03.318
+The human still makes the important
+decision.
+
+00:06:03.318 --> 00:06:06.928
+But the machine handles much of the
+preparation.
+
+00:06:06.928 --> 00:06:09.711
+Now imagine taking that idea further.
+
+00:06:09.711 --> 00:06:13.735
+Suppose the agent is allowed to send the
+message.
+
+00:06:13.735 --> 00:06:16.518
+Suppose it can schedule a meeting.
+
+00:06:16.518 --> 00:06:19.301
+Suppose it can update the CRM.
+
+00:06:19.301 --> 00:06:22.498
+Suppose it can monitor the account
+afterward.
+
+00:06:22.498 --> 00:06:28.177
+Suddenly, we are no longer talking about
+AI that helps with one task.
+
+00:06:28.177 --> 00:06:33.443
+We are talking about an AI system that
+operates an entire workflow.
+
+00:06:33.443 --> 00:06:35.812
+This distinction is incredibly important.
+
+00:06:35.812 --> 00:06:39.836
+The first wave of AI applications helped
+people create.
+
+00:06:39.836 --> 00:06:43.033
+The next wave may help organizations
+operate.
+
+00:06:43.033 --> 00:06:45.816
+That could affect almost every industry.
+
+00:06:45.816 --> 00:06:47.357
+Consider software development.
+
+00:06:47.357 --> 00:06:55.933
+Today, developers spend time reading
+requirements, designing systems, writing
+code, debugging, testing, reviewing pull
+requests, reading documentation, and
+deploying applications.
+
+00:06:55.933 --> 00:06:59.957
+AI can already assist with many of these
+tasks.
+
+00:06:59.957 --> 00:07:05.636
+But the future may involve development
+agents that work across an entire
+repository.
+
+00:07:05.636 --> 00:07:08.419
+A developer could describe a feature.
+
+00:07:08.419 --> 00:07:11.202
+The agent could inspect the architecture.
+
+00:07:11.202 --> 00:07:13.157
+Identify the relevant files.
+
+00:07:13.157 --> 00:07:14.698
+Write the implementation.
+
+00:07:14.698 --> 00:07:15.898
+Run tests.
+
+00:07:15.898 --> 00:07:17.098
+Investigate failures.
+
+00:07:17.098 --> 00:07:18.298
+Make corrections.
+
+00:07:18.298 --> 00:07:19.498
+Create documentation.
+
+00:07:19.498 --> 00:07:21.453
+Prepare a pull request.
+
+00:07:21.453 --> 00:07:24.236
+And then wait for human approval.
+
+00:07:24.236 --> 00:07:27.433
+The programmer's role does not necessarily
+disappear.
+
+00:07:27.433 --> 00:07:30.216
+Instead, the programmer may move upward.
+
+00:07:30.216 --> 00:07:39.206
+The important question becomes less about
+typing every line of code and more about
+architecture, product decisions,
+verification, security, and judgment.
+
+00:07:39.206 --> 00:07:42.403
+The same transformation could happen in
+finance.
+
+00:07:42.403 --> 00:07:46.013
+Imagine an AI system monitoring company
+finances continuously.
+
+00:07:46.013 --> 00:07:47.554
+It sees revenue.
+
+00:07:47.554 --> 00:07:48.754
+Expenses.
+
+00:07:48.754 --> 00:07:49.954
+Invoices.
+
+00:07:49.954 --> 00:07:51.154
+Cash flow.
+
+00:07:51.154 --> 00:07:52.354
+Budgets.
+
+00:07:52.354 --> 00:07:53.554
+Contracts.
+
+00:07:53.554 --> 00:07:55.509
+It notices unusual transactions.
+
+00:07:55.509 --> 00:07:58.292
+It compares actual performance with
+forecasts.
+
+00:07:58.292 --> 00:08:00.247
+It prepares management reports.
+
+00:08:00.247 --> 00:08:03.857
+It identifies potential problems before
+they become emergencies.
+
+00:08:03.857 --> 00:08:07.054
+But again, there is an important
+principle.
+
+00:08:07.054 --> 00:08:11.906
+The most powerful systems should not
+simply be given unlimited authority.
+
+00:08:11.906 --> 00:08:14.689
+Financial actions can have serious
+consequences.
+
+00:08:14.689 --> 00:08:18.713
+So an enterprise AI system may need
+permission boundaries.
+
+00:08:18.713 --> 00:08:22.737
+Perhaps it can analyze everything but
+cannot transfer money.
+
+00:08:22.737 --> 00:08:27.589
+Perhaps it can prepare a payment but
+requires approval before execution.
+
+00:08:27.589 --> 00:08:34.096
+Perhaps low-risk actions can happen
+automatically while high-risk actions
+require multiple people to approve them.
+
+00:08:34.096 --> 00:08:41.017
+This idea of controlled autonomy will
+become one of the most important parts of
+enterprise AI.
+
+00:08:41.017 --> 00:08:45.455
+The future is not necessarily about giving
+machines unlimited freedom.
+
+00:08:45.455 --> 00:08:51.134
+It is about giving machines the right
+amount of freedom for each task.
+
+00:08:51.134 --> 00:08:53.089
+Now consider customer support.
+
+00:08:53.089 --> 00:08:57.527
+A traditional customer service system
+might answer frequently asked questions.
+
+00:08:57.527 --> 00:09:03.206
+A more advanced AI agent could understand
+the entire history of a customer.
+
+00:09:03.206 --> 00:09:05.575
+It could identify the issue.
+
+00:09:05.575 --> 00:09:07.116
+Search internal documentation.
+
+00:09:07.116 --> 00:09:09.071
+Check the customer's account.
+
+00:09:09.071 --> 00:09:11.440
+Determine what actions are permitted.
+
+00:09:11.440 --> 00:09:12.981
+Resolve the problem.
+
+00:09:12.981 --> 00:09:14.936
+Update the relevant systems.
+
+00:09:14.936 --> 00:09:17.305
+And communicate the result naturally.
+
+00:09:17.305 --> 00:09:22.157
+If the situation is unusual, it could
+escalate to a human.
+
+00:09:22.157 --> 00:09:30.319
+The customer might never need to know
+whether the first step was performed by a
+human or an AI.
+
+00:09:30.319 --> 00:09:34.343
+What matters is whether the problem was
+solved correctly.
+
+00:09:34.343 --> 00:09:39.609
+This brings us to one of the biggest
+economic possibilities of AI.
+
+00:09:39.609 --> 00:09:42.806
+The cost of intelligence may fall
+dramatically.
+
+00:09:42.806 --> 00:09:48.899
+Throughout history, highly skilled human
+labor has been expensive because human
+attention is limited.
+
+00:09:48.899 --> 00:09:52.509
+A company cannot instantly hire a thousand
+engineers.
+
+00:09:52.509 --> 00:09:55.706
+It cannot hire ten thousand analysts
+overnight.
+
+00:09:55.706 --> 00:09:59.730
+It cannot have a researcher investigate
+every possible question.
+
+00:09:59.730 --> 00:10:01.685
+Human capacity is constrained.
+
+00:10:01.685 --> 00:10:03.640
+AI changes the equation.
+
+00:10:03.640 --> 00:10:09.319
+A company might be able to deploy hundreds
+or thousands of specialized agents.
+
+00:10:09.319 --> 00:10:11.688
+One agent could analyze sales.
+
+00:10:11.688 --> 00:10:13.643
+Another could monitor competitors.
+
+00:10:13.643 --> 00:10:15.598
+Another could review contracts.
+
+00:10:15.598 --> 00:10:17.553
+Another could test software.
+
+00:10:17.553 --> 00:10:19.508
+Another could research markets.
+
+00:10:19.508 --> 00:10:21.463
+Another could support customers.
+
+00:10:21.463 --> 00:10:23.832
+Another could analyze financial data.
+
+00:10:23.832 --> 00:10:26.615
+And another could coordinate the others.
+
+00:10:26.615 --> 00:10:31.881
+The result could be something that looks
+almost like a digital organization.
+
+00:10:31.881 --> 00:10:35.491
+This creates an extraordinary opportunity
+for small companies.
+
+00:10:35.491 --> 00:10:38.274
+Imagine a startup with ten people.
+
+00:10:38.274 --> 00:10:43.953
+Historically, competing with a company
+employing ten thousand people would be
+extremely difficult.
+
+00:10:43.953 --> 00:10:46.736
+The larger company has more engineers.
+
+00:10:46.736 --> 00:10:47.936
+More salespeople.
+
+00:10:47.936 --> 00:10:49.136
+More analysts.
+
+00:10:49.136 --> 00:10:50.677
+More support staff.
+
+00:10:50.677 --> 00:10:52.218
+More operational capacity.
+
+00:10:52.218 --> 00:10:58.311
+But if a small team can multiply its
+capabilities using AI, the relationship
+changes.
+
+00:10:58.311 --> 00:11:05.232
+Ten excellent people supported by
+sophisticated AI systems could potentially
+operate like a much larger organization.
+
+00:11:05.232 --> 00:11:08.842
+That does not mean small companies
+automatically win.
+
+00:11:08.842 --> 00:11:11.211
+Large companies have advantages too.
+
+00:11:11.211 --> 00:11:12.752
+They have data.
+
+00:11:12.752 --> 00:11:13.952
+Distribution.
+
+00:11:13.952 --> 00:11:15.152
+Capital.
+
+00:11:15.152 --> 00:11:16.352
+Brand recognition.
+
+00:11:16.352 --> 00:11:17.552
+Customers.
+
+00:11:17.552 --> 00:11:19.093
+And existing infrastructure.
+
+00:11:19.093 --> 00:11:24.359
+But AI could lower the cost of building
+and operating sophisticated businesses.
+
+00:11:24.359 --> 00:11:27.969
+That could produce an explosion of new
+companies.
+
+00:11:27.969 --> 00:11:32.821
+And perhaps the most interesting
+businesses will not simply sell AI.
+
+00:11:32.821 --> 00:11:36.845
+They will be designed around AI from the
+beginning.
+
+00:11:36.845 --> 00:11:45.421
+Think about the difference between adding
+electricity to an old factory and
+designing a factory for electricity from
+day one.
+
+00:11:45.421 --> 00:11:50.273
+You can take an old process and replace a
+few machines.
+
+00:11:50.273 --> 00:11:53.470
+Or you can completely redesign the
+factory.
+
+00:11:53.470 --> 00:11:56.253
+AI-native companies can do the same.
+
+00:11:56.253 --> 00:12:00.277
+Instead of asking, “Where can we add a
+chatbot?”
+
+00:12:00.277 --> 00:12:01.477
+They ask:
+
+00:12:01.477 --> 00:12:07.570
+“If intelligent agents are available from
+the beginning, how should this company
+actually operate?”
+
+00:12:07.570 --> 00:12:10.353
+That is a much bigger question.
+
+00:12:10.353 --> 00:12:13.963
+Maybe the company has no traditional
+operations department.
+
+00:12:13.963 --> 00:12:16.332
+Maybe agents handle routine workflows.
+
+00:12:16.332 --> 00:12:20.770
+Maybe every employee has a team of
+specialized AI assistants.
+
+00:12:20.770 --> 00:12:24.380
+Maybe internal information is accessible
+through natural language.
+
+00:12:24.380 --> 00:12:28.818
+Maybe meetings become less important
+because agents continuously coordinate
+work.
+
+00:12:28.818 --> 00:12:31.187
+Maybe reports are generated automatically.
+
+00:12:31.187 --> 00:12:35.625
+Maybe management dashboards are replaced
+by conversations with intelligent systems.
+
+00:12:35.625 --> 00:12:39.235
+But there is another side to this
+transformation.
+
+00:12:39.235 --> 00:12:40.435
+Jobs.
+
+00:12:40.435 --> 00:12:46.528
+Whenever technology changes the cost of
+work, people naturally ask what happens to
+employment.
+
+00:12:46.528 --> 00:12:48.897
+This question is not new.
+
+00:12:48.897 --> 00:12:50.852
+Industrial machines changed agriculture.
+
+00:12:50.852 --> 00:12:52.393
+Factories changed manufacturing.
+
+00:12:52.393 --> 00:12:53.934
+Computers changed offices.
+
+00:12:53.934 --> 00:12:57.131
+The internet changed media, commerce, and
+communication.
+
+00:12:57.131 --> 00:13:00.328
+AI is different in one important way.
+
+00:13:00.328 --> 00:13:03.938
+Previous automation often targeted
+physical or repetitive tasks.
+
+00:13:03.938 --> 00:13:06.307
+AI can target cognitive tasks.
+
+00:13:06.307 --> 00:13:07.848
+It can write.
+
+00:13:07.848 --> 00:13:09.048
+Analyze.
+
+00:13:09.048 --> 00:13:10.248
+Reason.
+
+00:13:10.248 --> 00:13:11.448
+Code.
+
+00:13:11.448 --> 00:13:12.648
+Design.
+
+00:13:12.648 --> 00:13:13.848
+Research.
+
+00:13:13.848 --> 00:13:15.048
+Communicate.
+
+00:13:15.048 --> 00:13:21.141
+That means its impact could reach into
+professions that previously seemed
+protected from automation.
+
+00:13:21.141 --> 00:13:27.234
+But there is an important distinction
+between automating a task and eliminating
+a job.
+
+00:13:27.234 --> 00:13:30.844
+A job is usually a collection of tasks.
+
+00:13:30.844 --> 00:13:36.523
+AI might automate some of those tasks
+while increasing the value of others.
+
+00:13:36.523 --> 00:13:42.202
+A lawyer might spend less time searching
+documents and more time advising clients.
+
+00:13:42.202 --> 00:13:48.709
+A doctor might spend less time on
+administrative paperwork and more time
+communicating with patients.
+
+00:13:48.709 --> 00:13:54.802
+A teacher might spend less time creating
+routine materials and more time mentoring
+students.
+
+00:13:54.802 --> 00:14:00.895
+An engineer might spend less time writing
+repetitive code and more time designing
+systems.
+
+00:14:00.895 --> 00:14:06.574
+A manager might spend less time preparing
+reports and more time making decisions.
+
+00:14:06.574 --> 00:14:11.012
+So perhaps the future is not simply humans
+versus AI.
+
+00:14:11.012 --> 00:14:14.622
+It is humans working with increasingly
+capable AI.
+
+00:14:14.622 --> 00:14:20.715
+The people who learn how to direct these
+systems may have a major advantage.
+
+00:14:20.715 --> 00:14:23.498
+That leads to an important skill.
+
+00:14:23.498 --> 00:14:28.764
+Prompting was one of the early skills
+people associated with generative AI.
+
+00:14:28.764 --> 00:14:32.374
+But the future skill may be much broader.
+
+00:14:32.374 --> 00:14:34.743
+It may be AI orchestration.
+
+00:14:34.743 --> 00:14:37.526
+Knowing how to define a goal.
+
+00:14:37.526 --> 00:14:39.481
+How to provide context.
+
+00:14:39.481 --> 00:14:41.436
+How to establish constraints.
+
+00:14:41.436 --> 00:14:43.391
+How to evaluate results.
+
+00:14:43.391 --> 00:14:47.001
+How to divide work between humans and
+machines.
+
+00:14:47.001 --> 00:14:49.370
+How to verify important decisions.
+
+00:14:49.370 --> 00:14:54.636
+And how to build systems that remain
+reliable when something goes wrong.
+
+00:14:54.636 --> 00:15:00.729
+In other words, the future may reward
+people who can think clearly about
+processes.
+
+00:15:00.729 --> 00:15:08.477
+Because if you can describe a process, an
+AI system may increasingly be able to
+execute that process.
+
+00:15:08.477 --> 00:15:11.260
+Now let's move outside the workplace.
+
+00:15:11.260 --> 00:15:12.460
+Imagine education.
+
+00:15:12.460 --> 00:15:18.139
+A traditional classroom gives many
+students the same lesson at the same time.
+
+00:15:18.139 --> 00:15:20.508
+But every student is different.
+
+00:15:20.508 --> 00:15:22.049
+Some understand quickly.
+
+00:15:22.049 --> 00:15:23.590
+Some need repetition.
+
+00:15:23.590 --> 00:15:25.131
+Some learn visually.
+
+00:15:25.131 --> 00:15:27.086
+Some learn through examples.
+
+00:15:27.086 --> 00:15:29.041
+Some need practical exercises.
+
+00:15:29.041 --> 00:15:33.065
+An AI tutor could adapt to the individual
+student.
+
+00:15:33.065 --> 00:15:36.675
+It could explain a concept five different
+ways.
+
+00:15:36.675 --> 00:15:39.458
+Notice where the student is struggling.
+
+00:15:39.458 --> 00:15:42.241
+Generate exercises specifically for that
+weakness.
+
+00:15:42.241 --> 00:15:43.782
+Adjust the difficulty.
+
+00:15:43.782 --> 00:15:45.323
+Provide immediate feedback.
+
+00:15:45.323 --> 00:15:48.520
+And remember the student's progress over
+time.
+
+00:15:48.520 --> 00:15:52.544
+This could make high-quality personalized
+education far more accessible.
+
+00:15:52.544 --> 00:15:55.741
+But education is not just information
+transfer.
+
+00:15:55.741 --> 00:15:57.282
+Teachers provide motivation.
+
+00:15:57.282 --> 00:15:58.482
+Human connection.
+
+00:15:58.482 --> 00:15:59.682
+Judgment.
+
+00:15:59.682 --> 00:16:00.882
+Social development.
+
+00:16:00.882 --> 00:16:02.082
+And inspiration.
+
+00:16:02.082 --> 00:16:07.761
+So again, the most powerful future may
+combine machine capability with human
+relationships.
+
+00:16:07.761 --> 00:16:09.716
+Now imagine personal productivity.
+
+00:16:09.716 --> 00:16:13.326
+Today, people often have dozens of small
+responsibilities.
+
+00:16:13.326 --> 00:16:14.526
+Paying bills.
+
+00:16:14.526 --> 00:16:15.726
+Scheduling appointments.
+
+00:16:15.726 --> 00:16:16.926
+Managing travel.
+
+00:16:16.926 --> 00:16:18.126
+Comparing options.
+
+00:16:18.126 --> 00:16:19.326
+Remembering deadlines.
+
+00:16:19.326 --> 00:16:20.867
+Responding to messages.
+
+00:16:20.867 --> 00:16:22.067
+Finding documents.
+
+00:16:22.067 --> 00:16:23.267
+Organizing information.
+
+00:16:23.267 --> 00:16:26.050
+Much of modern life is administrative.
+
+00:16:26.050 --> 00:16:28.833
+AI agents could reduce this burden.
+
+00:16:28.833 --> 00:16:31.202
+You might tell your assistant:
+
+00:16:31.202 --> 00:16:33.571
+“I am traveling next month.
+
+00:16:33.571 --> 00:16:34.771
+Organize everything.”
+
+00:16:34.771 --> 00:16:37.554
+The system could understand your
+preferences.
+
+00:16:37.554 --> 00:16:39.095
+Find possible flights.
+
+00:16:39.095 --> 00:16:40.295
+Compare schedules.
+
+00:16:40.295 --> 00:16:41.495
+Check accommodation.
+
+00:16:41.495 --> 00:16:43.036
+Build an itinerary.
+
+00:16:43.036 --> 00:16:44.991
+Prepare a packing list.
+
+00:16:44.991 --> 00:16:46.532
+Identify visa requirements.
+
+00:16:46.532 --> 00:16:50.970
+And place the decisions requiring your
+approval in one place.
+
+00:16:50.970 --> 00:16:57.477
+The experience of using technology becomes
+less about operating software and more
+about expressing intent.
+
+00:16:57.477 --> 00:17:00.260
+That is a major philosophical shift.
+
+00:17:00.260 --> 00:17:04.698
+For decades, digital literacy meant
+learning how to use computers.
+
+00:17:04.698 --> 00:17:10.791
+In the future, digital literacy may mean
+learning how to collaborate with
+intelligent systems.
+
+00:17:10.791 --> 00:17:13.160
+But there are serious risks.
+
+00:17:13.160 --> 00:17:15.529
+AI systems can be wrong.
+
+00:17:15.529 --> 00:17:18.312
+They can confidently produce incorrect
+information.
+
+00:17:18.312 --> 00:17:20.267
+They can misunderstand instructions.
+
+00:17:20.267 --> 00:17:23.050
+They can use the wrong tool.
+
+00:17:23.050 --> 00:17:27.488
+They can expose sensitive information if
+systems are poorly designed.
+
+00:17:27.488 --> 00:17:31.926
+They can make decisions based on
+incomplete or biased data.
+
+00:17:31.926 --> 00:17:38.019
+And when AI agents gain the ability to
+take actions, errors become more
+consequential.
+
+00:17:38.019 --> 00:17:42.457
+A chatbot giving you a wrong answer is one
+problem.
+
+00:17:42.457 --> 00:17:48.136
+An autonomous system sending the wrong
+email to thousands of customers is
+another.
+
+00:17:48.136 --> 00:17:52.160
+An agent making an incorrect financial
+transaction is another.
+
+00:17:52.160 --> 00:17:57.426
+An AI system modifying production
+infrastructure incorrectly could create a
+major outage.
+
+00:17:57.426 --> 00:18:00.209
+This is why reliability becomes essential.
+
+00:18:00.209 --> 00:18:04.233
+Future enterprise AI systems will need
+more than intelligence.
+
+00:18:04.233 --> 00:18:06.188
+They will need verification.
+
+00:18:06.188 --> 00:18:07.388
+Permissions.
+
+00:18:07.388 --> 00:18:08.588
+Audit logs.
+
+00:18:08.588 --> 00:18:09.788
+Testing.
+
+00:18:09.788 --> 00:18:10.988
+Observability.
+
+00:18:10.988 --> 00:18:12.188
+Human approval.
+
+00:18:12.188 --> 00:18:13.388
+Rollback mechanisms.
+
+00:18:13.388 --> 00:18:14.588
+Security controls.
+
+00:18:14.588 --> 00:18:16.129
+And clear accountability.
+
+00:18:16.129 --> 00:18:20.567
+We should not build systems that simply
+say, “Trust me.”
+
+00:18:20.567 --> 00:18:25.005
+We should build systems that can show what
+they did.
+
+00:18:25.005 --> 00:18:26.960
+Why they did it.
+
+00:18:26.960 --> 00:18:28.915
+Which information they used.
+
+00:18:28.915 --> 00:18:30.870
+Which tools they called.
+
+00:18:30.870 --> 00:18:32.411
+What they changed.
+
+00:18:32.411 --> 00:18:35.194
+And whether the result was verified.
+
+00:18:35.194 --> 00:18:39.632
+That is especially important as AI becomes
+integrated into organizations.
+
+00:18:39.632 --> 00:18:43.242
+Because an AI agent is not just software.
+
+00:18:43.242 --> 00:18:46.852
+It is software that can increasingly make
+decisions.
+
+00:18:46.852 --> 00:18:48.807
+And decisions require accountability.
+
+00:18:48.807 --> 00:18:51.590
+There is another major issue: privacy.
+
+00:18:51.590 --> 00:18:57.683
+AI systems may eventually have access to
+enormous amounts of personal and
+organizational information.
+
+00:18:57.683 --> 00:18:58.883
+Your messages.
+
+00:18:58.883 --> 00:19:00.083
+Your documents.
+
+00:19:00.083 --> 00:19:01.283
+Your calendar.
+
+00:19:01.283 --> 00:19:02.824
+Your financial information.
+
+00:19:02.824 --> 00:19:04.024
+Your work.
+
+00:19:04.024 --> 00:19:05.224
+Your preferences.
+
+00:19:05.224 --> 00:19:06.424
+Your conversations.
+
+00:19:06.424 --> 00:19:09.621
+This could create extremely useful
+personal assistants.
+
+00:19:09.621 --> 00:19:12.404
+But it also creates enormous
+responsibility.
+
+00:19:12.404 --> 00:19:14.359
+Who owns the data?
+
+00:19:14.359 --> 00:19:16.314
+Where is it stored?
+
+00:19:16.314 --> 00:19:18.269
+Who can access it?
+
+00:19:18.269 --> 00:19:21.879
+Can the AI provider use it for training?
+
+00:19:21.879 --> 00:19:25.076
+What happens when you leave a company?
+
+00:19:25.076 --> 00:19:28.273
+What happens if an account is compromised?
+
+00:19:28.273 --> 00:19:32.297
+These questions cannot be treated as minor
+technical details.
+
+00:19:32.297 --> 00:19:36.735
+They are central to the design of the AI
+future.
+
+00:19:36.735 --> 00:19:42.414
+Security will become even more important
+because AI agents can potentially operate
+tools.
+
+00:19:42.414 --> 00:19:48.093
+If an attacker compromises an agent, the
+problem is not just stolen information.
+
+00:19:48.093 --> 00:19:53.359
+The attacker might gain the ability to
+make the agent perform actions.
+
+00:19:53.359 --> 00:19:56.556
+This creates an entirely new security
+model.
+
+00:19:56.556 --> 00:20:00.580
+Organizations will need to think carefully
+about agent identity.
+
+00:20:00.580 --> 00:20:01.780
+Permissions.
+
+00:20:01.780 --> 00:20:02.980
+Authentication.
+
+00:20:02.980 --> 00:20:04.180
+Tool access.
+
+00:20:04.180 --> 00:20:05.380
+Secrets.
+
+00:20:05.380 --> 00:20:06.580
+Isolation.
+
+00:20:06.580 --> 00:20:07.780
+And monitoring.
+
+00:20:07.780 --> 00:20:12.632
+The systems that succeed will not simply
+be the most intelligent.
+
+00:20:12.632 --> 00:20:17.070
+They will be the systems that combine
+intelligence with control.
+
+00:20:17.070 --> 00:20:19.439
+Now imagine the competitive landscape.
+
+00:20:19.439 --> 00:20:23.877
+Every company will have access to
+increasingly capable AI models.
+
+00:20:23.877 --> 00:20:28.315
+At first, that might appear to make AI
+less valuable.
+
+00:20:28.315 --> 00:20:32.753
+If everyone has access to similar models,
+what creates differentiation?
+
+00:20:32.753 --> 00:20:36.363
+The answer may be everything around the
+model.
+
+00:20:36.363 --> 00:20:37.563
+Data.
+
+00:20:37.563 --> 00:20:38.763
+Workflows.
+
+00:20:38.763 --> 00:20:39.963
+Integrations.
+
+00:20:39.963 --> 00:20:41.163
+Customer relationships.
+
+00:20:41.163 --> 00:20:42.363
+Proprietary processes.
+
+00:20:42.363 --> 00:20:43.563
+Distribution.
+
+00:20:43.563 --> 00:20:44.763
+Trust.
+
+00:20:44.763 --> 00:20:48.787
+And the ability to turn intelligence into
+reliable outcomes.
+
+00:20:48.787 --> 00:20:51.570
+The model is only one component.
+
+00:20:51.570 --> 00:20:55.594
+Imagine two companies using the same
+underlying AI model.
+
+00:20:55.594 --> 00:20:58.377
+Company A gives employees a chatbot.
+
+00:20:58.377 --> 00:21:05.298
+Company B connects the AI to its data,
+systems, workflows, permissions,
+verification processes, and business
+rules.
+
+00:21:05.298 --> 00:21:08.908
+Company B can potentially create much more
+value.
+
+00:21:08.908 --> 00:21:17.484
+This is why the next generation of AI
+companies may look less like chatbot
+companies and more like infrastructure
+companies.
+
+00:21:17.484 --> 00:21:20.267
+They will connect intelligence to action.
+
+00:21:20.267 --> 00:21:25.119
+That connection is where much of the
+economic value could emerge.
+
+00:21:25.119 --> 00:21:27.488
+Now let's consider software itself.
+
+00:21:27.488 --> 00:21:31.512
+For decades, software has been built as
+fixed applications.
+
+00:21:31.512 --> 00:21:35.122
+A customer uses the interface the
+developer created.
+
+00:21:35.122 --> 00:21:37.905
+But what if applications become dynamic?
+
+00:21:37.905 --> 00:21:45.653
+Instead of every user seeing exactly the
+same interface, the AI could construct an
+interface around the task.
+
+00:21:45.653 --> 00:21:50.091
+If you need a report, it creates a report
+workspace.
+
+00:21:50.091 --> 00:21:54.943
+If you need to analyze data, it creates
+the appropriate visualizations.
+
+00:21:54.943 --> 00:22:00.209
+If you need to manage a project, it builds
+a project environment.
+
+00:22:00.209 --> 00:22:03.406
+The interface becomes something generated
+on demand.
+
+00:22:03.406 --> 00:22:05.775
+You don't necessarily navigate software.
+
+00:22:05.775 --> 00:22:08.558
+Software navigates the task with you.
+
+00:22:08.558 --> 00:22:12.168
+That could make traditional applications
+feel very different.
+
+00:22:12.168 --> 00:22:16.606
+The operating system itself might become
+more conversational and agentic.
+
+00:22:16.606 --> 00:22:21.044
+Instead of opening separate programs, you
+could describe an objective.
+
+00:22:21.044 --> 00:22:29.206
+“Take these photos, organize them by
+event, remove duplicates, create an album,
+and prepare the best ones for printing.”
+
+00:22:29.206 --> 00:22:31.989
+The operating system coordinates the work.
+
+00:22:31.989 --> 00:22:38.082
+This is one reason AI agents could become
+more important than individual AI
+features.
+
+00:22:38.082 --> 00:22:40.865
+A feature helps you do something.
+
+00:22:40.865 --> 00:22:44.475
+An agent can potentially manage the entire
+process.
+
+00:22:44.475 --> 00:22:50.154
+And once agents become capable enough, we
+may start building teams of agents.
+
+00:22:50.154 --> 00:22:51.695
+One agent plans.
+
+00:22:51.695 --> 00:22:52.895
+Another researches.
+
+00:22:52.895 --> 00:22:54.095
+Another executes.
+
+00:22:54.095 --> 00:22:55.295
+Another verifies.
+
+00:22:55.295 --> 00:22:56.495
+Another monitors.
+
+00:22:56.495 --> 00:22:58.864
+A coordinator manages the workflow.
+
+00:22:58.864 --> 00:23:01.233
+This resembles a human organization.
+
+00:23:01.233 --> 00:23:04.016
+But there is an important difference.
+
+00:23:04.016 --> 00:23:06.799
+Digital agents can potentially communicate
+instantly.
+
+00:23:06.799 --> 00:23:08.754
+They can operate continuously.
+
+00:23:08.754 --> 00:23:11.951
+They can process enormous amounts of
+information.
+
+00:23:11.951 --> 00:23:14.734
+They do not need to sleep.
+
+00:23:14.734 --> 00:23:16.689
+They can be replicated.
+
+00:23:16.689 --> 00:23:18.644
+And they can specialize.
+
+00:23:18.644 --> 00:23:21.427
+That could make organizations dramatically
+faster.
+
+00:23:21.427 --> 00:23:25.451
+But speed is not always the same as
+progress.
+
+00:23:25.451 --> 00:23:36.510
+If an AI system can produce ten thousand
+actions per minute, but those actions are
+wrong, it is worse than a slow system that
+is correct.
+
+00:23:36.510 --> 00:23:42.189
+So the future of AI will require a balance
+between autonomy and caution.
+
+00:23:42.189 --> 00:23:44.972
+Fast systems need strong feedback loops.
+
+00:23:44.972 --> 00:23:47.341
+The ability to detect mistakes.
+
+00:23:47.341 --> 00:23:49.296
+The ability to stop.
+
+00:23:49.296 --> 00:23:52.493
+And the ability to learn from failures.
+
+00:23:52.493 --> 00:23:56.103
+This brings us to perhaps the biggest
+question.
+
+00:23:56.103 --> 00:23:58.886
+What happens when intelligence becomes
+abundant?
+
+00:23:58.886 --> 00:24:02.910
+For most of human history, intelligence
+has been scarce.
+
+00:24:02.910 --> 00:24:06.107
+Expertise requires years of education and
+experience.
+
+00:24:06.107 --> 00:24:07.648
+Research requires time.
+
+00:24:07.648 --> 00:24:09.603
+Analysis requires skilled people.
+
+00:24:09.603 --> 00:24:11.144
+Writing requires practice.
+
+00:24:11.144 --> 00:24:12.685
+Programming requires training.
+
+00:24:12.685 --> 00:24:19.192
+If machines can provide increasingly
+capable intelligence at extremely low
+cost, many activities become cheaper.
+
+00:24:19.192 --> 00:24:24.044
+When something becomes cheaper, society
+tends to use more of it.
+
+00:24:24.044 --> 00:24:26.827
+The same thing happened with computing.
+
+00:24:26.827 --> 00:24:30.437
+When computing became cheap, we put
+computers everywhere.
+
+00:24:30.437 --> 00:24:33.634
+When communication became cheap, we
+communicated constantly.
+
+00:24:33.634 --> 00:24:38.072
+When information became cheap, we produced
+enormous quantities of it.
+
+00:24:38.072 --> 00:24:43.338
+If intelligence becomes cheap, we may see
+an explosion of intelligence-intensive
+activity.
+
+00:24:43.338 --> 00:24:44.538
+More research.
+
+00:24:44.538 --> 00:24:45.738
+More software.
+
+00:24:45.738 --> 00:24:46.938
+More experiments.
+
+00:24:46.938 --> 00:24:48.138
+More businesses.
+
+00:24:48.138 --> 00:24:49.679
+More personalized education.
+
+00:24:49.679 --> 00:24:51.220
+More creative projects.
+
+00:24:51.220 --> 00:24:52.761
+More scientific discovery.
+
+00:24:52.761 --> 00:24:53.961
+More simulations.
+
+00:24:53.961 --> 00:24:55.161
+More analysis.
+
+00:24:55.161 --> 00:25:00.427
+This could be one of the most productive
+technological transformations in history.
+
+00:25:00.427 --> 00:25:02.796
+But abundance also creates noise.
+
+00:25:02.796 --> 00:25:08.062
+If everyone can generate unlimited
+content, content becomes less valuable by
+itself.
+
+00:25:08.062 --> 00:25:12.086
+If everyone can create software, software
+becomes less differentiated.
+
+00:25:12.086 --> 00:25:16.524
+If everyone can produce marketing
+material, attention becomes more scarce.
+
+00:25:16.524 --> 00:25:20.134
+In such a world, trust becomes extremely
+valuable.
+
+00:25:20.134 --> 00:25:21.675
+Taste becomes valuable.
+
+00:25:21.675 --> 00:25:23.216
+Judgment becomes valuable.
+
+00:25:23.216 --> 00:25:25.171
+Original ideas become valuable.
+
+00:25:25.171 --> 00:25:26.712
+Relationships become valuable.
+
+00:25:26.712 --> 00:25:31.150
+And the ability to distinguish signal from
+noise becomes essential.
+
+00:25:31.150 --> 00:25:36.829
+Humans may increasingly focus on questions
+that machines cannot simply answer through
+computation.
+
+00:25:36.829 --> 00:25:38.784
+What should we build?
+
+00:25:38.784 --> 00:25:40.739
+What is worth pursuing?
+
+00:25:40.739 --> 00:25:43.936
+What kind of society do we want?
+
+00:25:43.936 --> 00:25:46.719
+What values should guide our systems?
+
+00:25:46.719 --> 00:25:49.088
+What should never be automated?
+
+00:25:49.088 --> 00:25:51.871
+These are not purely technical questions.
+
+00:25:51.871 --> 00:25:53.826
+They are human questions.
+
+00:25:53.826 --> 00:25:59.505
+And perhaps that is the most important
+point about the future of AI.
+
+00:25:59.505 --> 00:26:04.771
+The future will not be determined only by
+how intelligent machines become.
+
+00:26:04.771 --> 00:26:10.037
+It will be determined by how humans choose
+to use that intelligence.
+
+00:26:10.037 --> 00:26:14.061
+We can use AI to automate meaningless
+administrative work.
+
+00:26:14.061 --> 00:26:18.499
+We can use it to help scientists discover
+new medicines.
+
+00:26:18.499 --> 00:26:22.523
+We can use it to give students
+personalized education.
+
+00:26:22.523 --> 00:26:26.547
+We can use it to help small businesses
+compete.
+
+00:26:26.547 --> 00:26:30.985
+We can use it to make software easier to
+build.
+
+00:26:30.985 --> 00:26:34.182
+We can use it to improve accessibility.
+
+00:26:34.182 --> 00:26:38.620
+We can use it to help people communicate
+across languages.
+
+00:26:38.620 --> 00:26:41.403
+But we can also misuse it.
+
+00:26:41.403 --> 00:26:44.600
+We can create systems that invade privacy.
+
+00:26:44.600 --> 00:26:47.797
+We can create systems that manipulate
+people.
+
+00:26:47.797 --> 00:26:50.166
+We can automate bad decisions.
+
+00:26:50.166 --> 00:26:54.604
+We can build organizations that become too
+dependent on machines.
+
+00:26:54.604 --> 00:26:57.801
+So technological progress alone is not
+enough.
+
+00:26:57.801 --> 00:26:59.756
+We need thoughtful design.
+
+00:26:59.756 --> 00:27:00.956
+Good governance.
+
+00:27:00.956 --> 00:27:02.156
+Strong security.
+
+00:27:02.156 --> 00:27:03.356
+Human oversight.
+
+00:27:03.356 --> 00:27:06.553
+And a willingness to question our
+assumptions.
+
+00:27:06.553 --> 00:27:13.887
+The most successful AI systems may
+therefore be those that are not designed
+to replace humans everywhere.
+
+00:27:13.887 --> 00:27:17.911
+They will be designed to make humans more
+capable.
+
+00:27:17.911 --> 00:27:19.866
+Think about a scientist.
+
+00:27:19.866 --> 00:27:23.063
+The AI can search thousands of papers.
+
+00:27:23.063 --> 00:27:24.263
+Generate hypotheses.
+
+00:27:24.263 --> 00:27:25.463
+Analyze data.
+
+00:27:25.463 --> 00:27:26.663
+Run simulations.
+
+00:27:26.663 --> 00:27:30.687
+But the scientist decides which questions
+are worth pursuing.
+
+00:27:30.687 --> 00:27:32.642
+Think about an entrepreneur.
+
+00:27:32.642 --> 00:27:35.011
+The AI can research markets.
+
+00:27:35.011 --> 00:27:36.211
+Write prototypes.
+
+00:27:36.211 --> 00:27:37.411
+Analyze competitors.
+
+00:27:37.411 --> 00:27:38.611
+Prepare presentations.
+
+00:27:38.611 --> 00:27:41.394
+But the entrepreneur chooses the problem.
+
+00:27:41.394 --> 00:27:43.349
+Think about an engineer.
+
+00:27:43.349 --> 00:27:45.718
+The AI can write code.
+
+00:27:45.718 --> 00:27:46.918
+Run tests.
+
+00:27:46.918 --> 00:27:48.118
+Inspect systems.
+
+00:27:48.118 --> 00:27:52.142
+But the engineer remains responsible for
+architecture and safety.
+
+00:27:52.142 --> 00:27:54.097
+Think about a student.
+
+00:27:54.097 --> 00:27:56.880
+The AI can explain a concept.
+
+00:27:56.880 --> 00:27:58.080
+Generate examples.
+
+00:27:58.080 --> 00:27:59.280
+Create exercises.
+
+00:27:59.280 --> 00:28:02.890
+But the student still needs curiosity and
+discipline.
+
+00:28:02.890 --> 00:28:06.087
+The human remains part of the loop.
+
+00:28:06.087 --> 00:28:10.111
+Perhaps the real transformation is not
+human versus machine.
+
+00:28:10.111 --> 00:28:12.480
+It is human plus machine.
+
+00:28:12.480 --> 00:28:17.746
+One person with powerful AI could
+accomplish what once required a team.
+
+00:28:17.746 --> 00:28:23.425
+One small company could operate at the
+scale of a much larger organization.
+
+00:28:23.425 --> 00:28:26.622
+One researcher could explore thousands of
+possibilities.
+
+00:28:26.622 --> 00:28:30.232
+One creator could produce an entire
+production pipeline.
+
+00:28:30.232 --> 00:28:34.670
+This is why the coming years could be so
+interesting.
+
+00:28:34.670 --> 00:28:43.246
+We may be entering a period where the
+limiting factor is less about access to
+information and more about imagination.
+
+00:28:43.246 --> 00:28:46.029
+What do you want to create?
+
+00:28:46.029 --> 00:28:49.226
+What problem do you want to solve?
+
+00:28:49.226 --> 00:28:52.423
+What organization do you want to build?
+
+00:28:52.423 --> 00:28:56.033
+What scientific question do you want to
+investigate?
+
+00:28:56.033 --> 00:29:00.057
+What kind of life do you want to design?
+
+00:29:00.057 --> 00:29:02.840
+AI may increasingly provide the
+capability.
+
+00:29:02.840 --> 00:29:06.037
+Humans still have to provide the
+direction.
+
+00:29:06.037 --> 00:29:09.234
+And there is something else worth
+remembering.
+
+00:29:09.234 --> 00:29:11.603
+Technology rarely changes everything
+overnight.
+
+00:29:11.603 --> 00:29:13.972
+The future usually arrives gradually.
+
+00:29:13.972 --> 00:29:17.996
+At first, a new technology seems like a
+novelty.
+
+00:29:17.996 --> 00:29:20.779
+Then it becomes a useful tool.
+
+00:29:20.779 --> 00:29:22.734
+Then it becomes infrastructure.
+
+00:29:22.734 --> 00:29:27.172
+Eventually, people stop thinking about it
+as technology at all.
+
+00:29:27.172 --> 00:29:29.127
+Electricity became invisible
+infrastructure.
+
+00:29:29.127 --> 00:29:31.082
+The internet became infrastructure.
+
+00:29:31.082 --> 00:29:32.623
+Smartphones became infrastructure.
+
+00:29:32.623 --> 00:29:35.406
+AI may follow the same path.
+
+00:29:35.406 --> 00:29:39.016
+At first, we will talk about using AI.
+
+00:29:39.016 --> 00:29:43.040
+Eventually, we may simply expect software
+to be intelligent.
+
+00:29:43.040 --> 00:29:47.892
+We may be surprised when a system cannot
+understand natural language.
+
+00:29:47.892 --> 00:29:54.399
+We may be surprised when an application
+requires us to manually copy information
+between screens.
+
+00:29:54.399 --> 00:29:59.251
+We may wonder why a computer cannot simply
+complete a task.
+
+00:29:59.251 --> 00:30:04.103
+That is when we will know the
+transformation has become normal.
+
+00:30:04.103 --> 00:30:08.127
+The interface of the future may be
+remarkably simple.
+
+00:30:08.127 --> 00:30:10.082
+You state an objective.
+
+00:30:10.082 --> 00:30:12.451
+The system understands the context.
+
+00:30:12.451 --> 00:30:13.651
+It plans.
+
+00:30:13.651 --> 00:30:14.851
+It acts.
+
+00:30:14.851 --> 00:30:16.051
+It verifies.
+
+00:30:16.051 --> 00:30:18.006
+And it reports back.
+
+00:30:18.006 --> 00:30:22.858
+Behind that simple experience may be an
+enormous amount of technology.
+
+00:30:22.858 --> 00:30:24.058
+Models.
+
+00:30:24.058 --> 00:30:25.258
+Agents.
+
+00:30:25.258 --> 00:30:26.458
+Databases.
+
+00:30:26.458 --> 00:30:27.658
+APIs.
+
+00:30:27.658 --> 00:30:28.858
+Security systems.
+
+00:30:28.858 --> 00:30:30.058
+Workflow engines.
+
+00:30:30.058 --> 00:30:31.258
+Memory.
+
+00:30:31.258 --> 00:30:32.458
+Monitoring.
+
+00:30:32.458 --> 00:30:33.658
+Verification.
+
+00:30:33.658 --> 00:30:38.510
+But the user may not need to see any of
+it.
+
+00:30:38.510 --> 00:30:49.569
+Just as most people do not think about the
+servers behind a website, future users may
+not think about the AI infrastructure
+behind an intelligent assistant.
+
+00:30:49.569 --> 00:30:52.766
+They will simply expect things to work.
+
+00:30:52.766 --> 00:30:55.963
+And that creates an enormous engineering
+challenge.
+
+00:30:55.963 --> 00:31:02.470
+Because when software becomes capable of
+taking action, reliability becomes more
+important than impressive demonstrations.
+
+00:31:02.470 --> 00:31:06.494
+A system that writes a beautiful paragraph
+is useful.
+
+00:31:06.494 --> 00:31:12.173
+A system that safely completes an
+important business process is much more
+valuable.
+
+00:31:12.173 --> 00:31:14.128
+The difference is trust.
+
+00:31:14.128 --> 00:31:19.394
+People will trust AI systems when those
+systems consistently produce correct
+outcomes.
+
+00:31:19.394 --> 00:31:21.763
+Not because they sound confident.
+
+00:31:21.763 --> 00:31:24.132
+Not because they appear intelligent.
+
+00:31:24.132 --> 00:31:28.984
+But because they can be measured, tested,
+monitored, and held accountable.
+
+00:31:28.984 --> 00:31:33.836
+This is where the next generation of AI
+engineering becomes critical.
+
+00:31:33.836 --> 00:31:38.688
+The future will require systems that
+combine models with deterministic
+software.
+
+00:31:38.688 --> 00:31:41.471
+AI can reason about ambiguous problems.
+
+00:31:41.471 --> 00:31:44.254
+Traditional software can enforce strict
+rules.
+
+00:31:44.254 --> 00:31:47.037
+Together, they can create powerful
+systems.
+
+00:31:47.037 --> 00:31:50.647
+The AI can decide what should happen next.
+
+00:31:50.647 --> 00:31:55.085
+The software can ensure that certain
+actions are never allowed.
+
+00:31:55.085 --> 00:31:58.282
+The AI can propose a financial
+transaction.
+
+00:31:58.282 --> 00:32:00.651
+The system can verify permissions.
+
+00:32:00.651 --> 00:32:03.020
+The human can approve it.
+
+00:32:03.020 --> 00:32:05.389
+The transaction can be executed.
+
+00:32:05.389 --> 00:32:07.758
+Every step can be recorded.
+
+00:32:07.758 --> 00:32:11.782
+That combination could become the
+foundation of enterprise AI.
+
+00:32:11.782 --> 00:32:14.979
+And perhaps, eventually, personal AI as
+well.
+
+00:32:14.979 --> 00:32:19.417
+Imagine your personal agent five or ten
+years from now.
+
+00:32:19.417 --> 00:32:22.200
+It does not merely answer questions.
+
+00:32:22.200 --> 00:32:24.155
+It knows your goals.
+
+00:32:24.155 --> 00:32:26.110
+It understands your preferences.
+
+00:32:26.110 --> 00:32:28.065
+It remembers important context.
+
+00:32:28.065 --> 00:32:30.434
+It can interact with services.
+
+00:32:30.434 --> 00:32:32.803
+It can manage routine tasks.
+
+00:32:32.803 --> 00:32:35.172
+It can help you learn.
+
+00:32:35.172 --> 00:32:37.541
+It can help you plan.
+
+00:32:37.541 --> 00:32:39.910
+It can help you create.
+
+00:32:39.910 --> 00:32:42.693
+But ideally, you remain in control.
+
+00:32:42.693 --> 00:32:45.890
+You decide what the AI can access.
+
+00:32:45.890 --> 00:32:49.087
+You decide what it can do automatically.
+
+00:32:49.087 --> 00:32:51.870
+You decide which actions require approval.
+
+00:32:51.870 --> 00:32:54.239
+You can inspect its history.
+
+00:32:54.239 --> 00:32:56.194
+You can revoke permissions.
+
+00:32:56.194 --> 00:32:58.563
+You can replace the system.
+
+00:32:58.563 --> 00:33:02.173
+That model of user control will matter
+enormously.
+
+00:33:02.173 --> 00:33:08.266
+Because the most powerful assistant is not
+necessarily the one with the most access.
+
+00:33:08.266 --> 00:33:14.773
+It is the one that gives you the greatest
+useful capability while preserving your
+control.
+
+00:33:14.773 --> 00:33:18.383
+So where does all of this leave us?
+
+00:33:18.383 --> 00:33:22.821
+We are standing at an unusual moment in
+technological history.
+
+00:33:22.821 --> 00:33:27.259
+The computer is becoming more capable of
+understanding human language.
+
+00:33:27.259 --> 00:33:30.042
+It is becoming better at reasoning.
+
+00:33:30.042 --> 00:33:32.825
+It is gaining access to tools.
+
+00:33:32.825 --> 00:33:35.608
+It is becoming capable of planning.
+
+00:33:35.608 --> 00:33:38.805
+And it is beginning to operate workflows.
+
+00:33:38.805 --> 00:33:42.415
+The next step is not simply smarter
+chatbots.
+
+00:33:42.415 --> 00:33:46.439
+It is systems that can turn intentions
+into actions.
+
+00:33:46.439 --> 00:33:50.049
+That means the way we work may change.
+
+00:33:50.049 --> 00:33:52.832
+The way companies operate may change.
+
+00:33:52.832 --> 00:33:56.029
+The way software is built may change.
+
+00:33:56.029 --> 00:33:58.812
+The way we learn may change.
+
+00:33:58.812 --> 00:34:02.422
+The way we interact with computers may
+change.
+
+00:34:02.422 --> 00:34:06.032
+And perhaps the biggest change will be
+psychological.
+
+00:34:06.032 --> 00:34:11.298
+For decades, we have thought of computers
+as tools that we operate.
+
+00:34:11.298 --> 00:34:16.150
+We may soon think of them as collaborators
+that we direct.
+
+00:34:16.150 --> 00:34:19.347
+That does not mean they become human.
+
+00:34:19.347 --> 00:34:22.130
+They will not have our experiences.
+
+00:34:22.130 --> 00:34:26.568
+They will not share our lives in the same
+way.
+
+00:34:26.568 --> 00:34:31.006
+But they may become increasingly capable
+partners in intellectual work.
+
+00:34:31.006 --> 00:34:34.616
+And that creates a new responsibility for
+us.
+
+00:34:34.616 --> 00:34:38.640
+We have to learn how to work with them.
+
+00:34:38.640 --> 00:34:42.250
+We have to learn how to verify them.
+
+00:34:42.250 --> 00:34:45.033
+We have to understand their limitations.
+
+00:34:45.033 --> 00:34:47.402
+We have to build safeguards.
+
+00:34:47.402 --> 00:34:53.495
+And most importantly, we have to decide
+what we want their capabilities to
+accomplish.
+
+00:34:53.495 --> 00:34:57.519
+Because AI does not automatically create a
+better future.
+
+00:34:57.519 --> 00:34:59.060
+It creates possibilities.
+
+00:34:59.060 --> 00:35:02.670
+Humans choose what to do with those
+possibilities.
+
+00:35:02.670 --> 00:35:09.177
+The future could be a world where
+intelligent systems eliminate enormous
+amounts of boring work.
+
+00:35:09.177 --> 00:35:11.960
+Where small teams build extraordinary
+companies.
+
+00:35:11.960 --> 00:35:14.329
+Where students have personalized tutors.
+
+00:35:14.329 --> 00:35:17.112
+Where scientists can explore ideas faster.
+
+00:35:17.112 --> 00:35:19.895
+Where software becomes easier to create.
+
+00:35:19.895 --> 00:35:24.747
+Where people have more time for
+creativity, relationships, and meaningful
+work.
+
+00:35:24.747 --> 00:35:34.564
+Or it could become a world filled with
+poorly controlled automation,
+misinformation, surveillance, insecurity,
+and systems that make decisions people no
+longer understand.
+
+00:35:34.564 --> 00:35:39.002
+The technology itself does not determine
+which future we get.
+
+00:35:39.002 --> 00:35:40.543
+Our choices do.
+
+00:35:40.543 --> 00:35:46.636
+And perhaps that is why the most important
+question about artificial intelligence is
+not:
+
+00:35:46.636 --> 00:35:49.005
+“How intelligent will machines become?”
+
+00:35:49.005 --> 00:35:51.374
+The more important question is:
+
+00:35:51.374 --> 00:35:55.398
+“What will we choose to do with that
+intelligence?”
+
+00:35:55.398 --> 00:36:02.319
+Imagine a world where intelligence is no
+longer something you have to access
+through a specialist.
+
+00:36:02.319 --> 00:36:04.688
+It is available to everyone.
+
+00:36:04.688 --> 00:36:07.885
+A student can ask for a tutor.
+
+00:36:07.885 --> 00:36:11.495
+A founder can ask for a research team.
+
+00:36:11.495 --> 00:36:15.105
+A developer can ask for an engineering
+assistant.
+
+00:36:15.105 --> 00:36:18.715
+A scientist can ask for a research
+partner.
+
+00:36:18.715 --> 00:36:22.325
+A designer can ask for a creative
+collaborator.
+
+00:36:22.325 --> 00:36:26.763
+A small business owner can ask for an
+operations team.
+
+00:36:26.763 --> 00:36:29.960
+And an ordinary person can simply ask:
+
+00:36:29.960 --> 00:36:32.743
+“Help me make sense of this.”
+
+00:36:32.743 --> 00:36:35.526
+That world is still being built.
+
+00:36:35.526 --> 00:36:39.964
+We do not know exactly what it will look
+like.
+
+00:36:39.964 --> 00:36:43.574
+We do not know which companies will
+succeed.
+
+00:36:43.574 --> 00:36:48.012
+We do not know which jobs will change the
+most.
+
+00:36:48.012 --> 00:36:52.036
+We do not know which AI architectures will
+dominate.
+
+00:36:52.036 --> 00:36:56.474
+We do not know how quickly these systems
+will improve.
+
+00:36:56.474 --> 00:36:59.671
+But one thing is becoming increasingly
+clear.
+
+00:36:59.671 --> 00:37:10.730
+The era of software that simply waits for
+instructions is beginning to give way to
+software that can understand goals, reason
+about problems, and take action.
+
+00:37:10.730 --> 00:37:16.409
+And when that happens at scale, artificial
+intelligence stops being just another
+feature.
+
+00:37:16.409 --> 00:37:17.950
+It becomes infrastructure.
+
+00:37:17.950 --> 00:37:21.147
+It becomes part of how society operates.
+
+00:37:21.147 --> 00:37:26.826
+The biggest opportunity may not belong to
+the people who simply use AI.
+
+00:37:26.826 --> 00:37:37.471
+It may belong to the people who understand
+what becomes possible when AI is connected
+to real systems, real data, real
+workflows, and real-world decisions.
+
+00:37:37.471 --> 00:37:38.671
+The builders.
+
+00:37:38.671 --> 00:37:39.871
+The researchers.
+
+00:37:39.871 --> 00:37:41.071
+The entrepreneurs.
+
+00:37:41.071 --> 00:37:42.271
+The engineers.
+
+00:37:42.271 --> 00:37:43.471
+The educators.
+
+00:37:43.471 --> 00:37:44.671
+The creators.
+
+00:37:44.671 --> 00:37:50.350
+And the people willing to rethink old
+processes instead of simply automating
+them.
+
+00:37:50.350 --> 00:37:52.719
+We are at the beginning.
+
+00:37:52.719 --> 00:38:00.467
+The most interesting AI systems of the
+future may not look like the AI systems we
+use today.
+
+00:38:00.467 --> 00:38:02.422
+They may be quieter.
+
+00:38:02.422 --> 00:38:03.622
+More integrated.
+
+00:38:03.622 --> 00:38:04.822
+More reliable.
+
+00:38:04.822 --> 00:38:06.022
+More autonomous.
+
+00:38:06.022 --> 00:38:07.977
+And much more useful.
+
+00:38:07.977 --> 00:38:12.001
+You may not open an AI application at all.
+
+00:38:12.001 --> 00:38:14.784
+You may simply use your computer.
+
+00:38:14.784 --> 00:38:19.222
+And behind everything you do, intelligence
+may already be there.
+
+00:38:19.222 --> 00:38:22.005
+Waiting to understand what you mean.
+
+00:38:22.005 --> 00:38:23.546
+Waiting to help.
+
+00:38:23.546 --> 00:38:25.087
+Waiting to act.
+
+00:38:25.087 --> 00:38:32.008
+And perhaps, for the first time in the
+history of computing, the computer will
+not ask:
+
+00:38:32.008 --> 00:38:34.377
+“What button should I press?”
+
+00:38:34.377 --> 00:38:35.918
+It will ask:
+
+00:38:35.918 --> 00:38:38.701
+“What are you trying to accomplish?”
+
+00:38:38.701 --> 00:38:40.656
+That is the shift.
+
+00:38:40.656 --> 00:38:42.611
+From commands to intentions.
+
+00:38:42.611 --> 00:38:44.566
+From applications to agents.
+
+00:38:44.566 --> 00:38:48.176
+From software that waits to software that
+acts.
+
+00:38:48.176 --> 00:38:52.614
+From computing as a tool to computing as a
+collaborator.
+
+00:38:52.614 --> 00:39:00.776
+And if we build it responsibly, the
+ultimate goal is not to create a world
+where humans become unnecessary.
+
+00:39:00.776 --> 00:39:06.042
+It is to create a world where humans can
+accomplish far more.
+
+00:39:06.042 --> 00:39:13.376
+A world where the limits of what one
+person can learn, build, test, and imagine
+expand dramatically.
+
+00:39:13.376 --> 00:39:17.814
+A world where technology does not simply
+save us seconds.
+
+00:39:17.814 --> 00:39:20.183
+It gives us back time.
+
+00:39:20.183 --> 00:39:22.966
+It does not simply automate work.
+
+00:39:22.966 --> 00:39:24.507
+It expands capability.
+
+00:39:24.507 --> 00:39:27.704
+And it does not replace human ambition.
+
+00:39:27.704 --> 00:39:32.556
+It gives that ambition a much more
+powerful set of tools.
+
+00:39:32.556 --> 00:39:36.994
+The future of AI is therefore not only
+about machines.
+
+00:39:36.994 --> 00:39:38.949
+It is about us.
+
+00:39:38.949 --> 00:39:42.559
+It is about what we choose to build.
+
+00:39:42.559 --> 00:39:44.928
+What we choose to automate.
+
+00:39:44.928 --> 00:39:47.297
+What we choose to protect.
+
+00:39:47.297 --> 00:39:50.907
+And what we choose to remain uniquely
+human.
+
+00:39:50.907 --> 00:39:52.862
+The technology is arriving.
+
+00:39:52.862 --> 00:39:56.059
+The question is what we do next.
+
+00:39:56.059 --> 00:39:59.369
+And that future is closer than it looks.

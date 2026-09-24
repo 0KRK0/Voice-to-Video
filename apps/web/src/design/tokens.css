@@ -1,0 +1,191 @@
+/*
+ * The design system, as approved.
+ *
+ * Every value here was read off the approved Claude Design canvas rather than
+ * invented: the warm neutral ramp, the bronze accent, the terracotta refusal
+ * colour and the serif type. They are declared once, as custom properties, so
+ * that a component cannot quietly introduce a fourteenth grey.
+ *
+ * ## Why warm, and why serif
+ *
+ * The product is a *director's* tool, not a dashboard. A cool blue-grey SaaS
+ * palette and a geometric sans would make it read as analytics software, which
+ * is the wrong promise. The warm paper ground and the transitional serif read
+ * as editorial — the register of someone deciding what a film says.
+ *
+ * ## The one rule this file cannot enforce
+ *
+ * Colour is never the only signal. Every state below has an icon or a shape as
+ * well, defined in `states.css`. A component that reaches for `--state-failed`
+ * without also drawing something is breaking the accessibility contract in
+ * `docs/DESIGN_HANDOFF.md` §11, and no stylesheet can catch that.
+ */
+
+:root {
+  /* -- Neutral ramp -----------------------------------------------------
+   * Warm greys, light to dark. 100–300 are surfaces, 400–500 are lines and
+   * fills, 600–900 are ink. The canvas sits *behind* the surfaces, so it is
+   * darker than 100 — that inversion is deliberate and is what makes a panel
+   * read as a sheet of paper on a desk.
+   */
+  --color-canvas: #dedbd6;
+  --color-bg: #f3f2f2;
+  --color-surface: #faf9f8;
+  --color-sunken: #efece7;
+
+  --color-neutral-100: #f3f2f2;
+  --color-neutral-200: #e8e4de;
+  --color-neutral-300: #ded9d2;
+  --color-neutral-400: #d3cec8;
+  --color-neutral-500: #c9c2b8;
+  --color-neutral-600: #8a7f70;
+  --color-neutral-700: #6c6259;
+  --color-neutral-800: #3b3733;
+  --color-neutral-900: #1c1b19;
+
+  --color-divider: #e3dfda;
+  --color-divider-strong: #d3cec8;
+
+  /* Dark fills: the preview, thumbnails, the video surface. */
+  --color-ink: #1c1b19;
+  --color-ink-soft: #2a2724;
+  --color-ink-softer: #3b3733;
+
+  /* -- Accent -----------------------------------------------------------
+   * Bronze. Used for the primary action, for links, for the playhead and for
+   * the selected state. Never for "success" — a thing that worked is simply
+   * normal, and shouting about it wastes the one loud colour on the page.
+   */
+  --color-accent-100: #fbf3e6;
+  --color-accent-200: #f3e2c6;
+  --color-accent-300: #e6cb9e;
+  --color-accent-400: #d8b47a;
+  --color-accent-500: #c9954a;
+  --color-accent-600: #b8823a;
+  --color-accent: #a9752f;
+  --color-accent-700: #8f5f24;
+  --color-accent-800: #7a4f1d;
+  --color-accent-900: #5e3c15;
+
+  /* -- Semantic ---------------------------------------------------------
+   * Four states, four treatments. `degraded` is deliberately not an error
+   * colour: it worked, just not as planned, and dressing that as a failure
+   * teaches users to ignore real failures.
+   */
+  --color-danger: #8d3b2f;
+  --color-danger-wash: #f6ebe8;
+  --color-danger-line: #dcb5ad;
+
+  --color-warn: #8a6a1d;
+  --color-warn-wash: #fbf3e6;
+  --color-warn-line: #e6cb9e;
+
+  --color-stale: #6c6259;
+  --color-stale-wash: #efece7;
+
+  --color-locked: #3b3733;
+
+  /* -- Type -------------------------------------------------------------
+   * One family. The design is entirely serif, including the small caps
+   * labels, and mixing a sans in for "UI" would split the page into two
+   * documents that happen to be adjacent.
+   */
+  --font-heading: "Spectral", "Source Serif 4", "Iowan Old Style", Georgia,
+    "Times New Roman", serif;
+  --font-body: var(--font-heading);
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas,
+    monospace;
+
+  --text-xs: 10.5px;
+  --text-sm: 11.5px;
+  --text-base: 13px;
+  --text-md: 15px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --text-2xl: 34px;
+  --text-3xl: 46px;
+
+  --leading-tight: 1.22;
+  --leading-normal: 1.5;
+  --leading-loose: 1.62;
+
+  /* The wide-tracked uppercase label used for every section heading. */
+  --label-tracking: 0.14em;
+
+  /* -- Space ------------------------------------------------------------
+   * A 4px base. Not a modular scale: this is a dense professional interface
+   * and a ratio-based scale produces gaps that are either cramped or wasteful
+   * at exactly the sizes a timeline needs.
+   */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 56px;
+
+  /* -- Form -------------------------------------------------------------
+   * Square. The design has almost no radius — a 2px softening at most —
+   * because rounded corners read as consumer software and this is a tool.
+   */
+  --radius-sm: 2px;
+  --radius: 3px;
+  --radius-lg: 4px;
+
+  --shadow-sm: 0 1px 2px rgba(32, 31, 29, 0.045);
+  --shadow-md: 0 1px 3px rgba(32, 31, 29, 0.07), 0 6px 18px rgba(32, 31, 29, 0.045);
+  --shadow-lg: 0 2px 6px rgba(32, 31, 29, 0.08), 0 18px 44px rgba(32, 31, 29, 0.09);
+
+  /* -- Layout -----------------------------------------------------------
+   * Named because several components need the same number and computing it
+   * twice is how a header and a sticky column drift one pixel apart.
+   */
+  --topbar-height: 52px;
+  --track-header-width: 132px;
+  --ruler-height: 26px;
+  --timeline-min-height: 168px;
+  --focus-ring: 2px solid var(--color-accent-700);
+
+  /* -- Motion -----------------------------------------------------------
+   * Short, and only ever to show progress or a relationship. Nothing here
+   * animates for decoration.
+   */
+  --ease: cubic-bezier(0.2, 0, 0.13, 1);
+  --duration-fast: 90ms;
+  --duration: 160ms;
+}
+
+/*
+ * Reduced motion is honoured by removing the animation, not by shortening it.
+ * Every place that animates has a designed static form; see `states.css`.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * High contrast: strengthen every line rather than change any hue. The
+ * semantic colours already carry an icon, so the hues can stay where they are.
+ */
+@media (prefers-contrast: more) {
+  :root {
+    --color-divider: #b9b2a8;
+    --color-divider-strong: #8a7f70;
+    --color-neutral-700: #4a443c;
+  }
+}

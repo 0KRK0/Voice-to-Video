@@ -1,0 +1,239 @@
+{
+  "$defs": {
+    "Status": {
+      "description": "Lifecycle status shared by recordings, scenes, assets and render jobs.",
+      "enum": [
+        "pending",
+        "processing",
+        "ready",
+        "failed",
+        "retrying",
+        "expired",
+        "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "TimeSpan": {
+      "additionalProperties": false,
+      "description": "A half-open interval ``[start, end)`` on the recording clock.",
+      "properties": {
+        "end": {
+          "maximum": 86400,
+          "minimum": 0.0,
+          "title": "End",
+          "type": "number"
+        },
+        "start": {
+          "maximum": 86400,
+          "minimum": 0.0,
+          "title": "Start",
+          "type": "number"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "TimeSpan",
+      "type": "object"
+    },
+    "TranscriptSegment": {
+      "additionalProperties": false,
+      "description": "A contiguous chunk of speech, as emitted by the speech-to-text provider.\n\nA segment is a *transcription* unit, not a *meaning* unit and not a *scene*.\nProviders segment on pauses and their own heuristics; the semantic layer is\nresponsible for regrouping this into ideas (Rule 7).",
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "segment_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/TimeSpan"
+        },
+        "speaker": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Diarisation label if the provider supplies one.",
+          "title": "Speaker"
+        },
+        "text": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "words": {
+          "items": {
+            "$ref": "#/$defs/TranscriptWord"
+          },
+          "title": "Words",
+          "type": "array"
+        }
+      },
+      "required": [
+        "span",
+        "text"
+      ],
+      "title": "TranscriptSegment",
+      "type": "object"
+    },
+    "TranscriptWord": {
+      "additionalProperties": false,
+      "description": "A single word with its own timing.\n\nWord-level timing is optional at the provider level but is what makes\nkaraoke-style caption highlighting possible later (Stage 11), so we model it\nfrom the start rather than retrofitting it.",
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "span": {
+          "$ref": "#/$defs/TimeSpan"
+        },
+        "text": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "span"
+      ],
+      "title": "TranscriptWord",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/transcript.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The full timestamped transcript of one recording.",
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "language": {
+      "default": "en",
+      "maxLength": 16,
+      "title": "Language",
+      "type": "string"
+    },
+    "model": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model"
+    },
+    "organisation_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Organisation Id",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "provider": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider"
+    },
+    "recording_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Recording Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "segments": {
+      "items": {
+        "$ref": "#/$defs/TranscriptSegment"
+      },
+      "title": "Segments",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/Status",
+      "default": "pending"
+    },
+    "transcript_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Transcript Id",
+      "type": "string"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    }
+  },
+  "required": [
+    "recording_id",
+    "organisation_id",
+    "project_id"
+  ],
+  "title": "Transcript",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

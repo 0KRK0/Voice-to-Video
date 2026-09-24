@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voice to Video</title>
+<!--
+  One file, no build step. This is deliberate at this stage: the UI is small,
+  the API is the contract, and a toolchain would be a dependency to maintain
+  before it earns anything. Next.js arrives when there is a second page worth
+  sharing state with.
+-->
+<style>
+  :root {
+    --bg: #0b0d10;
+    --panel: #14171c;
+    --line: #232830;
+    --fg: #f5f7fa;
+    --muted: #7a8598;
+    --accent: #4c8dff;
+    --warn: #ffb65c;
+    --bad: #ff6b6b;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.55 "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    padding: 28px 32px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
+  }
+  h1 { font-size: 20px; margin: 0; letter-spacing: -0.01em; }
+  .tag { color: var(--muted); font-size: 13px; }
+  main { max-width: 1080px; margin: 0 auto; padding: 40px 24px 96px; }
+
+  .stage { display: none; }
+  .stage.active { display: block; }
+
+  .record {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 22px; padding: 64px 24px;
+    border: 1px solid var(--line); border-radius: 22px; background: var(--panel);
+  }
+  .mic {
+    width: 116px; height: 116px; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--accent); color: #06080c; font-size: 40px;
+    transition: transform .15s ease, box-shadow .2s ease;
+  }
+  .mic:hover { transform: scale(1.04); }
+  .mic.recording { background: var(--bad); animation: pulse 1.6s infinite; }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(255,107,107,.45); }
+    50% { box-shadow: 0 0 0 22px rgba(255,107,107,0); }
+  }
+  .timer { font-size: 34px; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+  .hint { color: var(--muted); font-size: 14px; text-align: center; max-width: 46ch; }
+
+  button.action {
+    background: var(--accent); color: #06080c; border: 0; border-radius: 10px;
+    padding: 11px 20px; font-size: 15px; font-weight: 600; cursor: pointer;
+  }
+  button.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+
+  textarea {
+    width: 100%; min-height: 96px; background: #0e1116; color: var(--fg);
+    border: 1px solid var(--line); border-radius: 10px; padding: 12px; font: inherit;
+    font-size: 14px; resize: vertical;
+  }
+  details { margin-top: 18px; }
+  summary { cursor: pointer; color: var(--muted); font-size: 14px; }
+
+  .progress { margin-top: 28px; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .steps li {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+    color: var(--muted); font-size: 14px;
+  }
+  .steps li.active { color: var(--fg); border-color: var(--accent); }
+  .steps li.done { color: var(--fg); }
+  .steps li .dot {
+    width: 9px; height: 9px; border-radius: 50%; background: var(--line); flex: none;
+  }
+  .steps li.done .dot { background: #4ade80; }
+  .steps li.active .dot { background: var(--accent); }
+  .steps li.failed .dot { background: var(--bad); }
+
+  video { width: 100%; border-radius: var(--radius); background: #000; display: block; }
+
+  .summary-row {
+    display: flex; gap: 26px; flex-wrap: wrap; margin: 22px 0 6px;
+    color: var(--muted); font-size: 14px;
+  }
+  .summary-row b { color: var(--fg); font-weight: 600; }
+
+  .scenes { display: grid; gap: 16px; margin-top: 24px; }
+  .scene {
+    display: grid; grid-template-columns: 220px 1fr; gap: 18px;
+    border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--panel); padding: 16px; align-items: start;
+  }
+  .scene img { width: 100%; border-radius: 8px; display: block; background: #000; }
+  .scene h3 { margin: 0 0 6px; font-size: 14px; color: var(--muted); font-weight: 500; }
+  .scene .narration { font-size: 15px; margin: 0 0 10px; }
+  .scene .why { font-size: 13px; color: var(--muted); margin: 0 0 12px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .chip {
+    font-size: 12px; padding: 3px 9px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--muted);
+  }
+  .chip.strategy { border-color: var(--accent); color: var(--accent); }
+  .chip.degraded { border-color: var(--warn); color: var(--warn); }
+  .scene .controls { display: flex; gap: 8px; }
+  .scene .controls button { font-size: 13px; padding: 6px 12px; }
+
+  .error {
+    border: 1px solid var(--bad); color: var(--bad); border-radius: 10px;
+    padding: 14px 16px; margin-top: 20px; font-size: 14px;
+  }
+  .banner {
+    border: 1px solid var(--warn); color: var(--warn); border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 22px; font-size: 13px;
+  }
+  @media (max-width: 720px) { .scene { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Voice to Video</h1>
+  <span class="tag">Speak your idea. The system decides how to show it.</span>
+</header>
+
+<main>
+  <div id="capabilities"></div>
+
+  <!-- 1. Record ------------------------------------------------------- -->
+  <section id="stage-record" class="stage active">
+    <div class="record">
+      <button id="mic" class="mic" title="Start recording">&#9679;</button>
+      <div class="timer" id="timer">00:00</div>
+      <button id="stop" class="action" disabled>Stop &amp; Create</button>
+      <p class="hint" id="hint">
+        Press the button and explain something you know. One to five minutes works best.
+      </p>
+    </div>
+
+    <details id="script-block">
+      <summary>Transcription is not configured — supply what you are going to say</summary>
+      <p class="hint" style="text-align:left;max-width:none">
+        No speech-to-text provider is configured on this install, so the system
+        cannot hear you. Paste the text of what you will say and it will be
+        aligned to the real pauses in your recording. This is a development
+        path, not a product feature.
+      </p>
+      <textarea id="script" placeholder="The transistor was invented in 1947 at Bell Labs. It was smaller and far more efficient than the vacuum tubes that came before it..."></textarea>
+    </details>
+  </section>
+
+  <!-- 2. Progress ----------------------------------------------------- -->
+  <section id="stage-progress" class="stage">
+    <h2 style="font-size:18px;margin:0 0 4px">Building your video</h2>
+    <p class="tag" id="progress-note">This takes a minute or two.</p>
+    <div class="progress">
+      <ul class="steps" id="steps"></ul>
+    </div>
+    <div id="progress-error"></div>
+  </section>
+
+  <!-- 3. Result ------------------------------------------------------- -->
+  <section id="stage-result" class="stage">
+    <video id="player" controls playsinline></video>
+    <div class="summary-row" id="summary"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <a id="download" class="action" style="text-decoration:none;display:inline-block">Download</a>
+      <button id="again" class="action ghost">Record another</button>
+    </div>
+    <h2 style="font-size:18px;margin:34px 0 0">Storyboard</h2>
+    <p class="tag">Every shot, and why the system chose it.</p>
+    <div class="scenes" id="scenes"></div>
+  </section>
+</main>
+
+<script>
+const STAGES = [
+  ["capture", "Listening to what you said"],
+  ["transcription", "Writing it down"],
+  ["understanding", "Understanding your idea"],
+  ["scene_planning", "Building the story"],
+  ["visual_direction", "Choosing visuals"],
+  ["asset_resolution", "Finding and drawing them"],
+  ["composition", "Putting it together"],
+  ["rendering", "Rendering"],
+];
+
+let mediaRecorder = null, chunks = [], startedAt = 0, timerId = null, projectId = null;
+
+const $ = (id) => document.getElementById(id);
+const show = (name) => {
+  document.querySelectorAll(".stage").forEach((el) => el.classList.remove("active"));
+  $("stage-" + name).classList.add("active");
+};
+
+async function boot() {
+  try {
+    const health = await (await fetch("/health")).json();
+    const caps = health.capabilities || {};
+    if (!caps.real_transcription) {
+      $("script-block").open = true;
+    } else {
+      $("script-block").style.display = "none";
+    }
+    const missing = Object.entries(caps).filter(([, v]) => v === false).map(([k]) => k);
+    if (missing.length) {
+      const div = document.createElement("div");
+      div.className = "banner";
+      div.textContent = "This install is running without: " + missing.join(", ").replaceAll("_", " ") +
+        ". Scenes that would need them fall back to visuals the system draws itself.";
+      $("capabilities").appendChild(div);
+    }
+  } catch (e) { /* health is advisory; the UI still works without it */ }
+}
+
+$("mic").onclick = async () => {
+  if (mediaRecorder && mediaRecorder.state === "recording") return;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+    chunks = [];
+    mediaRecorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+    mediaRecorder.onstop = () => stream.getTracks().forEach((t) => t.stop());
+    mediaRecorder.start();
+    startedAt = Date.now();
+    $("mic").classList.add("recording");
+    $("stop").disabled = false;
+    $("hint").textContent = "Recording. Take your time.";
+    timerId = setInterval(() => {
+      const s = Math.floor((Date.now() - startedAt) / 1000);
+      $("timer").textContent =
+        String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+    }, 200);
+  } catch (err) {
+    $("hint").textContent = "Microphone permission is required to record.";
+  }
+};
+
+$("stop").onclick = async () => {
+  if (!mediaRecorder || mediaRecorder.state !== "recording") return;
+  clearInterval(timerId);
+  $("mic").classList.remove("recording");
+  $("stop").disabled = true;
+
+  await new Promise((resolve) => {
+    mediaRecorder.addEventListener("stop", resolve, { once: true });
+    mediaRecorder.stop();
+  });
+
+  const blob = new Blob(chunks, { type: mediaRecorder.mimeType || "audio/webm" });
+  show("progress");
+  renderSteps({});
+
+  const created = await (await fetch("/v1/projects", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ style: "explainer", aspect_ratio: "16:9" }),
+  })).json();
+  projectId = created.project_id;
+
+  const form = new FormData();
+  form.append("audio", blob, "recording.webm");
+  const script = $("script").value.trim();
+  if (script) form.append("script", script);
+  await fetch(`/v1/projects/${projectId}/recordings`, { method: "POST", body: form });
+
+  follow(projectId);
+};
+
+function renderSteps(byStage) {
+  $("steps").innerHTML = STAGES.map(([key, label]) => {
+    const status = byStage[key] || "pending";
+    const cls = status === "ready" ? "done" : status === "processing" ? "active"
+      : status === "failed" ? "failed" : "";
+    return `<li class="${cls}"><span class="dot"></span>${label}</li>`;
+  }).join("");
+}
+
+function follow(id) {
+  // Server-sent events give real progress. Polling backs it up, because a
+  // dropped stream must not leave the user staring at a frozen list.
+  const source = new EventSource(`/v1/projects/${id}/events`);
+  source.onmessage = () => poll(id);
+  source.onerror = () => source.close();
+  poll(id);
+}
+
+async function poll(id) {
+  const data = await (await fetch(`/v1/projects/${id}`)).json();
+  const byStage = {};
+  (data.stages || []).forEach((s) => { byStage[s.stage] = s.status; });
+  renderSteps(byStage);
+
+  if (data.error) {
+    $("progress-error").innerHTML =
+      `<div class="error">${escapeHtml(data.error.message)}</div>`;
+    return;
+  }
+  if (data.video_url) {
+    await showResult(id, data);
+    return;
+  }
+  setTimeout(() => poll(id), 1500);
+}
+
+async function showResult(id, project) {
+  $("player").src = project.video_url;
+  $("download").href = project.video_url;
+  $("download").setAttribute("download", `${id}.mp4`);
+
+  const track = document.createElement("track");
+  track.kind = "captions"; track.srclang = "en"; track.label = "English";
+  track.src = project.captions_url; track.default = true;
+  $("player").appendChild(track);
+
+  const board = await (await fetch(`/v1/projects/${id}/storyboard`)).json();
+  const mix = Object.entries(board.strategy_mix || {})
+    .map(([k, v]) => `${v}× ${k.replaceAll("_", " ")}`).join(", ");
+  $("summary").innerHTML = `
+    <span>Topic <b>${escapeHtml(board.topic || "—")}</b></span>
+    <span>Scenes <b>${(board.scenes || []).length}</b></span>
+    <span>Length <b>${Math.round(project.duration_seconds || 0)}s</b></span>
+    <span>Visuals <b>${escapeHtml(mix || "—")}</b></span>
+    <span>Cost <b>$${((board.cost || {}).total_usd || 0).toFixed(3)}</b></span>`;
+
+  $("scenes").innerHTML = (board.scenes || []).map(sceneCard).join("");
+  document.querySelectorAll("[data-revise]").forEach((btn) => {
+    btn.onclick = async () => {
+      btn.disabled = true;
+      await fetch(`/v1/projects/${id}/scenes/${btn.dataset.revise}/revise`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "next_strategy" }),
+      });
+      const refreshed = await (await fetch(`/v1/projects/${id}/storyboard`)).json();
+      $("scenes").innerHTML = (refreshed.scenes || []).map(sceneCard).join("");
+    };
+  });
+  show("result");
+}
+
+function sceneCard(scene) {
+  const chips = [
+    `<span class="chip strategy">${escapeHtml((scene.strategy || "").replaceAll("_", " "))}</span>`,
+    `<span class="chip">${escapeHtml(scene.visual_goal.replaceAll("_", " "))}</span>`,
+    scene.degraded ? `<span class="chip degraded">degraded</span>` : "",
+    scene.source ? `<span class="chip">${escapeHtml(scene.source)}</span>` : "",
+  ].join("");
+  return `
+    <article class="scene">
+      <img src="${scene.thumbnail}" alt="" loading="lazy">
+      <div>
+        <h3>Scene ${scene.index + 1} · ${scene.start.toFixed(1)}s – ${scene.end.toFixed(1)}s · ${escapeHtml(scene.purpose)}</h3>
+        <p class="narration">${escapeHtml(scene.narration)}</p>
+        <div class="chips">${chips}</div>
+        <p class="why">${escapeHtml(scene.rationale || "")}</p>
+        <div class="controls">
+          ${(scene.fallbacks || []).length
+            ? `<button class="action ghost" data-revise="${scene.scene_id}">Try a different approach</button>`
+            : ""}
+        </div>
+      </div>
+    </article>`;
+}
+
+$("again").onclick = () => {
+  $("timer").textContent = "00:00";
+  $("hint").textContent = "Press the button and explain something you know.";
+  $("player").innerHTML = "";
+  show("record");
+};
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+}
+
+boot();
+</script>
+</body>
+</html>

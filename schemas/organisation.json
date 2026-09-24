@@ -1,0 +1,145 @@
+{
+  "$defs": {
+    "DataResidency": {
+      "description": "Where this tenant's content may be processed.\n\nA commitment enterprise customers buy and auditors verify. Enforced at\nprovider selection: a provider whose region does not match is not a\ncandidate, exactly as an unverified data policy excludes one from the voice\npath.",
+      "enum": [
+        "any",
+        "eu",
+        "us",
+        "india"
+      ],
+      "title": "DataResidency",
+      "type": "string"
+    },
+    "PlanTier": {
+      "description": "Commercial tier. Drives quotas and rate limits, never features in code.\n\nFeature flags read from the plan record; branching on the tier name inside\nbusiness logic is how a pricing change becomes a code change.",
+      "enum": [
+        "free",
+        "starter",
+        "professional",
+        "business",
+        "enterprise"
+      ],
+      "title": "PlanTier",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/organisation.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The tenant. Every piece of content in the system belongs to exactly one.",
+  "properties": {
+    "allow_human_review": {
+      "default": false,
+      "title": "Allow Human Review",
+      "type": "boolean"
+    },
+    "allow_product_improvement": {
+      "default": false,
+      "title": "Allow Product Improvement",
+      "type": "boolean"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "deleted_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Deleted At"
+    },
+    "name": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "organisation_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Organisation Id",
+      "type": "string"
+    },
+    "plan": {
+      "$ref": "#/$defs/PlanTier",
+      "default": "free"
+    },
+    "residency": {
+      "$ref": "#/$defs/DataResidency",
+      "default": "any"
+    },
+    "retention_days": {
+      "anyOf": [
+        {
+          "maximum": 3650,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Retention Days"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "slug": {
+      "maxLength": 64,
+      "minLength": 2,
+      "pattern": "^[a-z0-9][a-z0-9-]{1,63}$",
+      "title": "Slug",
+      "type": "string"
+    },
+    "suspended": {
+      "default": false,
+      "title": "Suspended",
+      "type": "boolean"
+    },
+    "suspended_reason": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Suspended Reason"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    }
+  },
+  "required": [
+    "name",
+    "slug"
+  ],
+  "title": "Organisation",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

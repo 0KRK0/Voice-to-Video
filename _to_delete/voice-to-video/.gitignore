@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node (arrives with the web app and the renderer in later stages)
+node_modules/
+.next/
+out/
+
+# Secrets. Nothing resembling a credential belongs in this repository — see
+# docs/SECURITY.md.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Media. Audio, images and rendered video live in object storage, never in git.
+*.mp4
+*.mov
+*.webm
+*.wav
+*.mp3
+/tmp/
+/scratch/
+/out/

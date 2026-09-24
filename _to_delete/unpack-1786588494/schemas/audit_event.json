@@ -1,0 +1,181 @@
+{
+  "$defs": {
+    "AuditAction": {
+      "description": "What happened. A closed vocabulary, so the log is queryable.",
+      "enum": [
+        "auth.login.succeeded",
+        "auth.login.failed",
+        "apikey.created",
+        "apikey.revoked",
+        "apikey.used",
+        "member.added",
+        "member.role_changed",
+        "member.removed",
+        "project.created",
+        "project.deleted",
+        "project.exported",
+        "document.uploaded",
+        "render.submitted",
+        "data.deleted",
+        "data.exported",
+        "settings.changed",
+        "auth.permission_denied",
+        "auth.rate_limited",
+        "upload.rejected"
+      ],
+      "title": "AuditAction",
+      "type": "string"
+    },
+    "Role": {
+      "description": "What a member may do, in the vocabulary administrators think in.\n\nOrdered by privilege so comparisons are possible, but code should ask for a\npermission rather than compare roles — see :func:`capabilities_for`.",
+      "enum": [
+        "viewer",
+        "editor",
+        "admin",
+        "owner",
+        "service"
+      ],
+      "title": "Role",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/audit_event.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One entry in the append-only audit log.\n\nAppend-only is the whole point: an actor who can edit the record of what\nthey did has not been audited. The storage layer enforces it; this contract\ncarries no mutation methods and every field is set once at construction.",
+  "properties": {
+    "action": {
+      "$ref": "#/$defs/AuditAction"
+    },
+    "actor": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Actor",
+      "type": "string"
+    },
+    "actor_role": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Role"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "audit_event_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Audit Event Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "detail": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Detail",
+      "type": "object"
+    },
+    "ip_address": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ip Address"
+    },
+    "organisation_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Organisation Id"
+    },
+    "request_id": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Request Id"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "succeeded": {
+      "default": true,
+      "title": "Succeeded",
+      "type": "boolean"
+    },
+    "target": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    },
+    "user_agent": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "User Agent"
+    }
+  },
+  "required": [
+    "action",
+    "actor"
+  ],
+  "title": "AuditEvent",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@vtv/web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Voice to Video \u2014 the Studio. TypeScript, native ES modules, no runtime dependencies.",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "npm run clean && tsc && node scripts/build.mjs",
+    "dev": "tsc --watch --preserveWatchOutput",
+    "test": "node --test tests/*.test.mjs",
+    "e2e": "node scripts/e2e.mjs",
+    "pretest": "tsc --outDir dist-test/js --sourceMap false"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

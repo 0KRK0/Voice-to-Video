@@ -1,0 +1,347 @@
+/*
+ * The primitives every screen is built from: the reset, the type scale in use,
+ * buttons, fields, labels, panels and the focus treatment.
+ *
+ * There is no utility layer. A timeline editor has perhaps thirty distinct
+ * visual jobs, and thirty semantic classes are easier to keep honest than four
+ * hundred utilities that let any component invent its own spacing.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-canvas);
+  color: var(--color-neutral-900);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Old-style figures read better in prose; the timeline overrides this to
+   * tabular, because a clock that shimmers as it counts is unreadable. */
+  font-variant-numeric: oldstyle-nums;
+}
+
+#app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Set while an application route is mounted — see `body.is-app .shell`. */
+body.is-app,
+body.is-app #app {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+  margin: 0;
+}
+
+h1 {
+  font-size: var(--text-3xl);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: var(--text-xl);
+}
+h3 {
+  font-size: var(--text-lg);
+}
+h4 {
+  font-size: var(--text-md);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--color-accent-700);
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+a:hover {
+  color: var(--color-accent-800);
+}
+
+/* -- Focus ---------------------------------------------------------------
+ * Visible on every interactive element and against every fill, including the
+ * dark clips on the timeline. Two rings: an inner light one and the outer
+ * bronze, so it survives both a paper background and a near-black one.
+ */
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 1px;
+  box-shadow: 0 0 0 1px var(--color-bg);
+}
+
+/* -- Labels --------------------------------------------------------------
+ * The wide-tracked uppercase caption used above every section. Small, quiet,
+ * and load-bearing: it is how a dense screen stays navigable.
+ */
+.label {
+  font-size: var(--text-sm);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+  font-variant-numeric: lining-nums;
+}
+
+.muted {
+  color: var(--color-neutral-700);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* -- Panels --------------------------------------------------------------- */
+
+.panel {
+  background: var(--color-bg);
+  border: 1px solid var(--color-divider);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.panel__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-divider);
+  flex: none;
+}
+
+.panel__body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.panel__footer {
+  border-top: 1px solid var(--color-divider);
+  padding: var(--space-3) var(--space-4);
+  flex: none;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* -- Buttons -------------------------------------------------------------
+ * Three weights. `primary` is the one action a screen wants; there is at most
+ * one on screen at a time, which is the only thing that makes it primary.
+ */
+.btn {
+  font: inherit;
+  font-size: var(--text-base);
+  color: var(--color-neutral-900);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider-strong);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+  transition: background var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--color-neutral-100);
+  border-color: var(--color-neutral-600);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--color-accent-700);
+  border-color: var(--color-accent-800);
+  color: #fdfaf4;
+}
+.btn--primary:hover:not(:disabled) {
+  background: var(--color-accent-800);
+  border-color: var(--color-accent-900);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-accent-700);
+  padding: 4px 8px;
+}
+.btn--ghost:hover:not(:disabled) {
+  background: var(--color-accent-100);
+  border-color: var(--color-accent-200);
+}
+
+.btn--danger {
+  color: var(--color-danger);
+  border-color: var(--color-danger-line);
+}
+.btn--danger:hover:not(:disabled) {
+  background: var(--color-danger-wash);
+}
+
+.btn--sm {
+  font-size: var(--text-sm);
+  padding: 3px 9px;
+}
+
+/* A split button: a primary action and a menu of variants on the same control,
+ * used for Regenerate, where the default and the ten intents are one idea. */
+.split {
+  display: inline-flex;
+  align-items: stretch;
+}
+.split > .btn:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.split > .btn:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: 0;
+  padding-inline: 8px;
+}
+
+/* -- Fields --------------------------------------------------------------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.input,
+.select,
+.textarea {
+  font: inherit;
+  font-size: var(--text-base);
+  color: var(--color-neutral-900);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider-strong);
+  border-radius: var(--radius-sm);
+  padding: 6px 9px;
+  width: 100%;
+}
+
+.textarea {
+  resize: vertical;
+  line-height: var(--leading-loose);
+  font-size: var(--text-md);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--color-accent-600);
+}
+
+/* -- Badges --------------------------------------------------------------
+ * The origin badge and the state chip. Bordered rather than filled, so a row
+ * of them does not turn a card into a colour swatch.
+ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  font-variant-numeric: lining-nums;
+}
+
+/* -- Tables --------------------------------------------------------------- */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-base);
+}
+
+.table th {
+  text-align: left;
+  font-weight: 400;
+  font-size: var(--text-sm);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-divider);
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background: var(--color-neutral-100);
+}
+
+/* -- Scrollbars ----------------------------------------------------------
+ * Styled because the timeline is a horizontal scroll surface and the default
+ * bar on some platforms overlaps the last track.
+ */
+.panel__body::-webkit-scrollbar,
+.scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.panel__body::-webkit-scrollbar-thumb,
+.scroll::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-400);
+  border: 3px solid var(--color-bg);
+  border-radius: 6px;
+}
+.panel__body::-webkit-scrollbar-thumb:hover,
+.scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-600);
+}

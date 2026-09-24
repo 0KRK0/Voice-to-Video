@@ -1,0 +1,22 @@
+{
+  "contracts_version": "1.0",
+  "documents": [
+    "api_key",
+    "asset",
+    "audit_event",
+    "generation_request",
+    "generation_result",
+    "organisation",
+    "project",
+    "recording",
+    "render_job",
+    "scene_graph",
+    "source_document",
+    "timeline",
+    "transcript",
+    "understanding",
+    "user",
+    "visual_bible",
+    "visual_plan"
+  ]
+}

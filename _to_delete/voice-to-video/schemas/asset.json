@@ -1,0 +1,468 @@
+{
+  "$defs": {
+    "AssetDimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_seconds": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 86400,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration Seconds"
+        },
+        "frame_rate": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 240,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Frame Rate"
+        },
+        "height": {
+          "maximum": 16384,
+          "minimum": 1,
+          "title": "Height",
+          "type": "integer"
+        },
+        "width": {
+          "maximum": 16384,
+          "minimum": 1,
+          "title": "Width",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "width",
+        "height"
+      ],
+      "title": "AssetDimensions",
+      "type": "object"
+    },
+    "AssetKind": {
+      "enum": [
+        "image",
+        "video",
+        "audio",
+        "vector",
+        "font"
+      ],
+      "title": "AssetKind",
+      "type": "string"
+    },
+    "AssetProvenance": {
+      "additionalProperties": false,
+      "description": "The complete origin record for an external asset.",
+      "properties": {
+        "creator": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator"
+        },
+        "creator_url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator Url"
+        },
+        "license": {
+          "$ref": "#/$defs/License"
+        },
+        "original_url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Url"
+        },
+        "raw_metadata": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Raw Metadata",
+          "type": "object"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/AssetSource"
+        },
+        "source_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "source",
+        "source_id",
+        "license"
+      ],
+      "title": "AssetProvenance",
+      "type": "object"
+    },
+    "AssetSource": {
+      "description": "Where an asset came from.\n\n``WEB_SCRAPE`` exists in this enum only so that it can be *rejected* by\nname. Naming the forbidden case makes the prohibition testable; leaving it\nout would just mean someone eventually mislabels scraped material as\n``OPENVERSE``.",
+      "enum": [
+        "internal_library",
+        "user_upload",
+        "programmatic",
+        "generated",
+        "openverse",
+        "wikimedia_commons",
+        "stock_partner",
+        "web_scrape"
+      ],
+      "title": "AssetSource",
+      "type": "string"
+    },
+    "License": {
+      "additionalProperties": false,
+      "description": "The terms under which an asset may be used.",
+      "properties": {
+        "attribution_required": {
+          "default": true,
+          "title": "Attribution Required",
+          "type": "boolean"
+        },
+        "commercial_use": {
+          "$ref": "#/$defs/Permission",
+          "default": "unknown"
+        },
+        "modification": {
+          "$ref": "#/$defs/Permission",
+          "default": "unknown"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "restrictions": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Restrictions",
+          "type": "array"
+        },
+        "share_alike": {
+          "default": false,
+          "title": "Share Alike",
+          "type": "boolean"
+        },
+        "spdx_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Spdx Id"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "License",
+      "type": "object"
+    },
+    "ObjectRef": {
+      "additionalProperties": false,
+      "description": "A pointer to a blob in object storage.\n\nBusiness logic never learns a filesystem path, a bucket URL, or a vendor\nname from this type. Turning an ``ObjectRef`` into readable bytes or a signed\nURL is the sole responsibility of the ``StorageProvider`` port.",
+      "properties": {
+        "bucket": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Bucket",
+          "type": "string"
+        },
+        "checksum_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checksum Sha256"
+        },
+        "content_type": {
+          "description": "IANA media type, e.g. 'audio/webm' or 'image/png'.",
+          "maxLength": 128,
+          "minLength": 3,
+          "title": "Content Type",
+          "type": "string"
+        },
+        "key": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "retention": {
+          "$ref": "#/$defs/RetentionClass",
+          "default": "ephemeral"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        }
+      },
+      "required": [
+        "bucket",
+        "key",
+        "content_type"
+      ],
+      "title": "ObjectRef",
+      "type": "object"
+    },
+    "Permission": {
+      "description": "Tri-state right. ``UNKNOWN`` is treated as ``DENIED`` at every decision\npoint; it exists as a distinct value only so that we can tell \"we checked and\nthe answer was no\" apart from \"we never established the answer\".",
+      "enum": [
+        "allowed",
+        "denied",
+        "unknown"
+      ],
+      "title": "Permission",
+      "type": "string"
+    },
+    "RetentionClass": {
+      "description": "How long the bytes behind an :class:`ObjectRef` are allowed to live.\n\nRetention is a property of the object itself so that lifecycle rules can be\napplied by the storage layer without it having to understand the domain\n(see ``docs/STORAGE_POLICY.md``).",
+      "enum": [
+        "ephemeral",
+        "project",
+        "archive"
+      ],
+      "title": "RetentionClass",
+      "type": "string"
+    },
+    "Status": {
+      "description": "Lifecycle status shared by recordings, scenes, assets and render jobs.",
+      "enum": [
+        "pending",
+        "processing",
+        "ready",
+        "failed",
+        "retrying",
+        "expired",
+        "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/asset.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A concrete piece of media the renderer can place on screen.",
+  "properties": {
+    "asset_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Asset Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "dimensions": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AssetDimensions"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "generation_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Generation Id"
+    },
+    "kind": {
+      "$ref": "#/$defs/AssetKind"
+    },
+    "object": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ObjectRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "project_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Null for shared library assets reusable across projects.",
+      "title": "Project Id"
+    },
+    "provenance": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AssetProvenance"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/AssetSource"
+    },
+    "status": {
+      "$ref": "#/$defs/Status",
+      "default": "pending"
+    },
+    "tags": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Tags",
+      "type": "array"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    }
+  },
+  "required": [
+    "kind",
+    "source"
+  ],
+  "title": "Asset",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

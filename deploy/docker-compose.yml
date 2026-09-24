@@ -1,0 +1,135 @@
+# The production topology, small enough to run on one machine.
+#
+# The point of this file is not convenience. It is that the architecture the
+# documentation describes — an API that only enqueues, workers that only
+# consume, state that no single process owns — is the architecture that actually
+# starts. Two API replicas and two workers are declared deliberately: if the
+# system could not run more than one of each, this file would not work, and that
+# is the check.
+#
+# WHAT THIS IS NOT
+#
+# There is no `postgres` service and no `redis` service here. An earlier draft
+# of this file had both, with `VTV_DATABASE_URL: postgresql://…` — and the code
+# does not implement a PostgreSQL backend or use Redis at all. Every replica
+# would have silently written to its own private SQLite file while the compose
+# file looked like a distributed deployment. A deployment artifact that starts
+# services the application never contacts is worse than no artifact: it is a
+# claim of scale that nothing checks.
+#
+# So this file deploys what exists. `repository_path()` now raises on any URL
+# scheme it does not implement, so the substitution that made the old file look
+# right cannot happen again. PostgreSQL + RLS is P1-5 in docs/REMEDIATION.md;
+# when it lands, the services come back and this comment goes away.
+#
+# SCALING CEILING, STATED PLAINLY
+#
+# SQLite on a shared volume is genuinely correct across processes on one host —
+# every correctness-critical operation is a single atomic statement under
+# `BEGIN IMMEDIATE` (see `security/shared_state.py` and `adapters/queue/
+# durable.py`). It is *not* correct across a network filesystem with weak
+# locking, so this topology scales to one machine's worth of replicas and no
+# further. That ceiling is the reason P1-5 exists, and it is written here rather
+# than discovered at the point someone adds a second node.
+
+name: vtv
+
+x-app: &app
+  build:
+    context: ..
+    dockerfile: Dockerfile
+  environment: &env
+    VTV_ENV: production
+    VTV_LOG_LEVEL: info
+    # All four databases live under /var/lib/vtv, which is one shared volume.
+    # This is load-bearing: the queue, the rate-limit buckets and the project
+    # repository must be the *same files* for every replica, or the API accepts
+    # work no worker can see and each pod enforces its own rate limit.
+    VTV_DATABASE_URL: sqlite:////var/lib/vtv/vtv.db
+    VTV_STORAGE_ROOT: /var/lib/vtv/storage
+    VTV_STORAGE_BUCKET: ${VTV_STORAGE_BUCKET:-vtv-media}
+    VTV_ALLOWED_ORIGINS: ${VTV_ALLOWED_ORIGINS:-}
+    # Signing key for media URLs. Required: without a shared key, a URL signed
+    # by one replica is rejected by the other.
+    VTV_SIGNING_KEY: ${VTV_SIGNING_KEY:?set VTV_SIGNING_KEY}
+    # Provider credentials. Absent by default: the system degrades honestly
+    # rather than pretending, and `/health` reports which are missing.
+    VTV_SPEECH_TO_TEXT_ENDPOINT: ${VTV_SPEECH_TO_TEXT_ENDPOINT:-}
+    VTV_SPEECH_TO_TEXT_API_KEY: ${VTV_SPEECH_TO_TEXT_API_KEY:-}
+    VTV_SPEECH_SYNTHESIS_ENDPOINT: ${VTV_SPEECH_SYNTHESIS_ENDPOINT:-}
+    VTV_SPEECH_SYNTHESIS_API_KEY: ${VTV_SPEECH_SYNTHESIS_API_KEY:-}
+    VTV_TEXT_GENERATION_ENDPOINT: ${VTV_TEXT_GENERATION_ENDPOINT:-}
+    VTV_TEXT_GENERATION_API_KEY: ${VTV_TEXT_GENERATION_API_KEY:-}
+    VTV_IMAGE_GENERATION_ENDPOINT: ${VTV_IMAGE_GENERATION_ENDPOINT:-}
+    VTV_IMAGE_GENERATION_API_KEY: ${VTV_IMAGE_GENERATION_API_KEY:-}
+  volumes:
+    # One volume, not one per service. In a real multi-host deployment the
+    # object storage becomes S3 and the databases become PostgreSQL; until then
+    # this is what makes "two replicas" mean anything.
+    - state:/var/lib/vtv
+  restart: unless-stopped
+
+services:
+  # Runs to completion before anything serves traffic. Forward-only; see
+  # migrations/README.md for why there are no down-migrations.
+  migrate:
+    <<: *app
+    command: ["python", "-m", "vtv.migrate", "upgrade"]
+    restart: "no"
+
+  api:
+    <<: *app
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command:
+      - uvicorn
+      - vtv.api.app:application
+      - --host=0.0.0.0
+      - --port=8000
+      # A render no longer happens in this process, so one uvicorn worker per
+      # replica is right: scale by adding replicas, which shared state permits.
+      - --workers=1
+    # TWO. Declared on purpose. Rate limits, quota reservations, job identity
+    # and artifact retrieval must be identical whichever one answers.
+    deploy:
+      replicas: 2
+    # Readiness, not liveness. The Dockerfile's HEALTHCHECK hits /health/live
+    # ("is this process able to answer"); this one hits /health/ready ("should
+    # it receive traffic"), which additionally checks the database, the queue,
+    # writable storage and whether migrations are outstanding.
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - |
+          import sys, urllib.request
+          try:
+              r = urllib.request.urlopen("http://127.0.0.1:8000/health/ready", timeout=3)
+              sys.exit(0 if r.status == 200 else 1)
+          except Exception:
+              sys.exit(1)
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    ports:
+      - "${VTV_PORT:-8000}:8000"
+
+  worker:
+    <<: *app
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: ["python", "-m", "vtv.worker", "--concurrency", "2"]
+    deploy:
+      replicas: 2
+    # Rendering is CPU-bound; give the worker room and let the API stay light.
+    # 150s exceeds the worker's own SHUTDOWN_GRACE_SECONDS (120s) so a rolling
+    # deploy lets an in-flight render finish rather than killing it. A worker
+    # that *is* killed loses nothing: the job is reclaimed by the next one.
+    stop_grace_period: 150s
+
+volumes:
+  state:

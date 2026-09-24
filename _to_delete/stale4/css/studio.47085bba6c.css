@@ -1,0 +1,1905 @@
+/*
+ * The Studio panels: script, preview, inspector, media, timeline.
+ *
+ * The state classes at the end are shared by every panel, which is what makes
+ * a `failed` visual look the same in the script gutter, the inspector and the
+ * timeline. Each carries a glyph as well as a colour — see `states.ts`.
+ */
+
+/* -- Script --------------------------------------------------------------- */
+
+.script {
+  flex: 1;
+  min-height: 0;
+}
+
+.script__notices {
+  display: flex;
+  flex-direction: column;
+}
+
+.script__list {
+  padding: var(--space-2) 0 var(--space-10);
+}
+
+.block {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  position: relative;
+}
+
+.block.is-selected {
+  background: var(--color-accent-100);
+}
+
+.block.is-in-unit {
+  background: color-mix(in srgb, var(--color-accent-100) 45%, transparent);
+}
+
+.block__gutter {
+  flex: none;
+  width: 22px;
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 3px;
+}
+
+.block__number {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-600);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/*
+ * The grouping bracket: a hairline down the gutter for every line after the
+ * first in a group. Drawing the thumbnail four times would say four visuals.
+ */
+.block:not(.starts-group) .block__bracket {
+  position: absolute;
+  right: -6px;
+  top: -8px;
+  bottom: -8px;
+  width: 1px;
+  background: var(--color-accent-300);
+}
+
+.block__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.block__text {
+  font-size: var(--text-md);
+  line-height: var(--leading-loose);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+.block__text:hover {
+  background: var(--color-neutral-100);
+}
+
+.block.is-stale .block__text {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 5px,
+    var(--color-stale-wash) 5px,
+    var(--color-stale-wash) 10px
+  );
+}
+
+.block.is-muted .block__text {
+  color: var(--color-neutral-600);
+  text-decoration: line-through;
+}
+
+.block__editor {
+  font-size: var(--text-md);
+  line-height: var(--leading-loose);
+}
+
+.block__unit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding: var(--space-2);
+  border: 1px solid var(--color-divider);
+  background: var(--color-surface);
+  cursor: pointer;
+}
+.block__unit:hover {
+  border-color: var(--color-accent-400);
+}
+
+.block__thumb {
+  flex: none;
+  width: 74px;
+  height: 42px;
+  background: var(--color-ink-soft);
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.block__thumb.thumb-failed {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--color-neutral-200),
+    var(--color-neutral-200) 6px,
+    var(--color-neutral-100) 6px,
+    var(--color-neutral-100) 12px
+  );
+  color: var(--color-danger);
+}
+
+.block__thumb-label {
+  font-size: 9px;
+  color: inherit;
+}
+
+.block__unit-meta {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-sm);
+}
+
+.script__empty {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.script__composer {
+  width: 100%;
+  min-height: 260px;
+}
+
+/* -- Preview -------------------------------------------------------------- */
+
+/* Sizes to the video and its transport. Nothing here stretches. */
+.preview {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+/*
+ * The surround. Holds the stage, gives it a little air, and is the only thing
+ * here that stretches — the stage's size comes from the project's aspect
+ * ratio, not from this.
+ */
+.preview__frame {
+  position: relative;
+  background: var(--color-canvas);
+  flex: none;
+  min-width: 0;
+  padding: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*
+ * The video area, shaped by the project's aspect ratio.
+ *
+ * `--preview-ratio` is written per project by `applyAspectRatio()`, so a 16:9
+ * project shows a 16:9 box and a 9:16 one shows a tall box — which is the
+ * whole point of choosing an aspect before you shoot.
+ *
+ * `max-height` is the one concession: a 9:16 project in a wide column would
+ * otherwise be taller than the screen. When it binds, the box stops obeying
+ * the ratio and `object-fit: contain` on the video takes over — the video is
+ * still drawn at its true shape, with the stage's black either side. So the
+ * ratio governs the common case exactly, and the extreme case degrades to
+ * what a video player does anyway rather than to a broken layout.
+ */
+.preview__stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--preview-ratio, 16 / 9);
+  max-height: 68vh;
+  min-width: 0;
+  background: #000;
+  cursor: pointer;
+  outline-offset: -2px;
+}
+
+.preview__stage.is-empty {
+  cursor: default;
+}
+
+.preview__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+/* The brief centred glyph a click/key action shows — see `showGlyph` in preview.ts. */
+.preview__glyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 380ms var(--ease);
+}
+.preview__glyph.is-active {
+  opacity: 1;
+  transition: opacity 60ms var(--ease);
+}
+
+/* Fills the stage, which is already the right shape. */
+.preview__placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  gap: var(--space-3);
+  align-content: center;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.preview__nothing {
+  color: inherit;
+}
+
+.preview__cannot {
+  color: inherit;
+  font-size: var(--text-sm);
+  max-width: 42ch;
+  text-align: center;
+  padding: 0 var(--space-4);
+}
+
+.preview__stale {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  background: var(--color-warn-wash);
+  border: 1px solid var(--color-warn-line);
+  color: var(--color-warn);
+  font-size: var(--text-sm);
+  padding: 3px 9px;
+}
+
+/*
+ * Two rows, always present: the scrub bar, then the transport. Disabled
+ * buttons (see `.preview__play:disabled` etc. below) are how "nothing has
+ * rendered yet" is shown here now, rather than the row itself coming and
+ * going — see the comment on `hasVideo()` in preview.ts for why that
+ * mattered.
+ */
+.preview__controls {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-divider);
+  flex: none;
+}
+
+.preview__scrubrow {
+  padding: var(--space-2) var(--space-4) 0;
+}
+
+/*
+ * A custom track rather than `<input type="range">`, because a range input
+ * has no standard way to also show a buffered region, and a scrub bar with
+ * no sense of how much of the video is loaded is a worse affordance than the
+ * extra markup costs. `touch-action: none` keeps a drag from also scrolling
+ * the panel on a touchscreen.
+ */
+.preview__scrub {
+  position: relative;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  touch-action: none;
+}
+.preview__scrub::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-divider-strong);
+}
+.preview__scrub-buffered,
+.preview__scrub-progress {
+  position: absolute;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  pointer-events: none;
+}
+.preview__scrub-buffered {
+  background: var(--color-neutral-600);
+}
+.preview__scrub-progress {
+  background: var(--color-accent-600);
+}
+.preview__scrub-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--color-accent-700);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  box-shadow: 0 0 0 1px var(--color-bg);
+}
+.preview__scrub.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.preview__buttonrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+}
+
+.preview__play,
+.preview__step,
+.preview__icon {
+  font: inherit;
+  background: none;
+  border: 1px solid var(--color-divider-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  padding: 3px 10px;
+  color: var(--color-neutral-900);
+}
+.preview__play {
+  min-width: 44px;
+}
+.preview__play:hover,
+.preview__step:hover,
+.preview__icon:hover {
+  background: var(--color-neutral-100);
+}
+.preview__play:disabled,
+.preview__step:disabled,
+.preview__icon:disabled,
+.preview__volume:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: none;
+}
+
+.preview__volume {
+  width: 72px;
+  accent-color: var(--color-accent-700);
+}
+
+.preview__time {
+  font-size: var(--text-base);
+}
+
+.preview__context {
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--color-divider);
+  font-size: var(--text-sm);
+  min-height: 30px;
+  flex: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview__line {
+  font-style: italic;
+}
+
+/* True fullscreen: the panel's own chrome (border, shadow) would otherwise
+ * float uselessly in the middle of a black screen. */
+.preview:fullscreen {
+  border: none;
+  box-shadow: none;
+}
+.preview:fullscreen .preview__frame {
+  background: #000;
+}
+
+/* -- Inspector ------------------------------------------------------------ */
+
+/* Takes whatever is left under the player, and scrolls inside itself. */
+.inspector {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.inspector__inner {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.inspector__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.inspector__name {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+}
+
+.inspector__detail {
+  font-size: var(--text-base);
+  color: var(--color-neutral-700);
+  border-left: 2px solid var(--color-divider-strong);
+  padding-left: var(--space-3);
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.facts--tight {
+  gap: var(--space-1);
+}
+
+.facts__row {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: var(--space-3);
+  align-items: baseline;
+}
+
+.facts__name {
+  font-size: var(--text-xs);
+}
+
+.facts__value {
+  margin: 0;
+  font-size: var(--text-base);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+/* The rationale, in the director's own words, at rest. */
+.facts__why {
+  font-style: italic;
+  color: var(--color-neutral-800);
+  line-height: var(--leading-loose);
+  quotes: "\201C" "\201D";
+}
+
+.verdict.is-good {
+  color: var(--color-neutral-800);
+}
+.verdict.is-warn {
+  color: var(--color-warn);
+}
+.verdict.is-bad {
+  color: var(--color-danger);
+}
+
+.inspector__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  position: relative;
+}
+
+.inspector__actions .btn.is-on {
+  background: var(--color-neutral-900);
+  color: var(--color-bg);
+  border-color: var(--color-neutral-900);
+}
+
+/*
+ * `position: fixed` rather than `absolute`: the inspector's own body scrolls
+ * (`overflow: auto`), and an absolutely-positioned menu is clipped by and
+ * scrolls with the nearest scrolling ancestor — which is exactly that body.
+ * Fixed positioning takes the menu out of that flow entirely; its `top` /
+ * `left` (or `bottom`, when flipped above the button) are set in viewport
+ * coordinates by `positionMenu` in inspector.ts, computed from the trigger
+ * button's `getBoundingClientRect()` each time it opens.
+ *
+ * The z-index sits above the toast rail (60) so a toast firing while the menu
+ * is open cannot cover it, and below the refusal banner (90), which reports a
+ * failure and should stay visible over any transient menu.
+ */
+.menu {
+  position: fixed;
+  z-index: 80;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider-strong);
+  box-shadow: var(--shadow-md);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(160px, 1fr));
+  min-width: 340px;
+  max-width: calc(100vw - 8px);
+}
+
+.menu__item {
+  font: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--color-divider);
+  border-right: 1px solid var(--color-divider);
+  padding: 7px 11px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.menu__item:hover:not(:disabled) {
+  background: var(--color-accent-100);
+}
+.menu__item.is-unavailable {
+  color: var(--color-neutral-600);
+  cursor: not-allowed;
+}
+.menu__note {
+  font-size: var(--text-xs);
+}
+
+/* -- Versions ------------------------------------------------------------- */
+
+.versions {
+  border-top: 1px solid var(--color-divider);
+  padding-top: var(--space-3);
+}
+
+.versions__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.versions__strip {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+
+.version {
+  font: inherit;
+  flex: none;
+  width: 96px;
+  background: none;
+  border: 1px solid var(--color-divider);
+  padding: var(--space-1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+}
+.version.is-current {
+  border-color: var(--color-accent-600);
+  box-shadow: inset 0 0 0 1px var(--color-accent-300);
+}
+.version:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.version__thumb {
+  height: 48px;
+  background: var(--color-ink-soft);
+}
+.version__thumb.is-refused {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--color-neutral-200),
+    var(--color-neutral-200) 5px,
+    var(--color-neutral-100) 5px,
+    var(--color-neutral-100) 10px
+  );
+}
+
+.version__meta,
+.version__cost {
+  font-size: var(--text-xs);
+}
+
+.provenance {
+  border-top: 1px solid var(--color-divider);
+  padding-top: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.provenance__own {
+  font-size: var(--text-base);
+  color: var(--color-neutral-800);
+}
+.provenance__file {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+.provenance__link {
+  font-size: var(--text-sm);
+}
+
+/* -- Media ---------------------------------------------------------------- */
+
+.media {
+  flex: 0 0 246px;
+  min-height: 0;
+}
+.media.is-dropping {
+  outline: 2px dashed var(--color-accent-500);
+  outline-offset: -3px;
+}
+
+.media__tabs {
+  display: flex;
+  gap: 1px;
+}
+
+.media__tab {
+  font: inherit;
+  font-size: var(--text-sm);
+  background: none;
+  border: 1px solid transparent;
+  padding: 2px 8px;
+  cursor: pointer;
+  display: flex;
+  gap: 5px;
+  align-items: baseline;
+}
+.media__tab.is-on {
+  border-color: var(--color-divider-strong);
+  background: var(--color-surface);
+}
+
+.media__count {
+  font-size: var(--text-xs);
+}
+
+/*
+ * `auto-fit`, not `auto-fill`.
+ *
+ * The two differ only in what happens to a track nothing has been placed in:
+ * `auto-fill` leaves it at its track size, `auto-fit` collapses it to zero and
+ * hands the space to the tracks that do hold something. With one grid item —
+ * the empty state, when the library has nothing to show — `auto-fill` still
+ * lays out as many ~112px columns as the panel is wide enough for and puts
+ * that one item in the first of them, so the item's *actual* rendered width
+ * is one column's worth regardless of how wide the panel really is. A full
+ * sentence poured into a box that narrow wraps one word per line, which is
+ * exactly the bug this rule exists to prevent. With real thumbnails filling
+ * the grid the two behave identically, so this costs nothing on the common
+ * path and fixes the empty one.
+ */
+.media__grid {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  gap: var(--space-2);
+  padding: var(--space-3);
+  align-content: start;
+}
+
+/*
+ * Belt and braces on top of `auto-fit` above: force the empty state across
+ * every column track there is, so it reads as "the panel has nothing" rather
+ * than "the panel's first column has nothing" even if a future change to the
+ * grid's sizing brings `auto-fill`'s collapsing quirk back.
+ */
+.media__grid > .media__empty {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+.media__empty .empty {
+  align-items: center;
+  text-align: center;
+  max-width: 30ch;
+  padding: var(--space-6) var(--space-3);
+}
+
+.media__card {
+  margin: 0;
+  border: 1px solid var(--color-divider);
+  background: var(--color-surface);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+.media__card:hover {
+  border-color: var(--color-accent-400);
+}
+.media__card.is-dragging {
+  opacity: 0.5;
+}
+.media__card.is-pending {
+  opacity: 0.75;
+}
+
+.media__thumb {
+  height: 64px;
+  background: var(--color-ink-soft);
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.media__glyph svg {
+  width: 42px;
+  height: 24px;
+}
+
+.media__duration,
+.media__state {
+  position: absolute;
+  bottom: 3px;
+  right: 4px;
+  font-size: 9.5px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  padding: 0 4px;
+}
+.media__state {
+  left: 4px;
+  right: auto;
+}
+
+/*
+ * The delete affordance, at rest but out of the way.
+ *
+ * Visible only on hover or focus — a permanent × in the corner of every
+ * thumbnail in a forty-file library reads as clutter, not as an offer — but
+ * `:focus-within` keeps it reachable by keyboard without hovering anything,
+ * which a hover-only reveal would quietly fail to provide.
+ */
+.media__delete {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s var(--ease), background 0.12s var(--ease);
+}
+.media__card:hover .media__delete,
+.media__card:focus-within .media__delete,
+.media__delete:focus-visible {
+  opacity: 1;
+}
+.media__delete:hover,
+.media__delete:focus-visible {
+  background: var(--color-danger);
+}
+
+.media__caption {
+  padding: 4px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--text-xs);
+}
+
+.media__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.media__detail {
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+  padding: 0 6px 5px;
+}
+
+.media__drop {
+  font: inherit;
+  font-size: var(--text-xs);
+  border: 1px dashed var(--color-divider-strong);
+  background: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 92px;
+  color: var(--color-neutral-700);
+}
+
+/* -- The library picker ("Replace from Media") ----------------------------- */
+
+.libpick {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.libpick__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.libpick__item {
+  font: inherit;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+.libpick__item:hover,
+.libpick__item:focus-visible {
+  border-color: var(--color-accent-400);
+  background: var(--color-surface);
+}
+
+/* Doubled class beats the base `.media__thumb` rule regardless of source
+   order — the picker's rows are smaller than the grid's cards. */
+.media__thumb.libpick__thumb {
+  flex: none;
+  width: 48px;
+  height: 48px;
+}
+
+.libpick__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.libpick__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.libpick__foot {
+  border-top: 1px solid var(--color-divider);
+  padding-top: var(--space-3);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* -- Asset detail --------------------------------------------------------- */
+
+.assetdetail {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(260px, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.assetdetail__stage {
+  grid-row: span 3;
+  background: var(--color-ink);
+  display: grid;
+  place-items: center;
+  min-height: 240px;
+}
+
+.assetdetail__media {
+  max-width: 100%;
+  max-height: 380px;
+}
+
+.assetdetail__blank {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.assetdetail__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-top: 1px solid var(--color-divider);
+  padding-top: var(--space-3);
+}
+
+.assetdetail__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.assetdetail__slider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.slider {
+  flex: 1;
+  accent-color: var(--color-accent-700);
+}
+
+.checkline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-base);
+  cursor: pointer;
+}
+
+.assetdetail__use {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.assetdetail__usebox {
+  border: 1px solid var(--color-divider);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.assetdetail__lede {
+  font-size: var(--text-base);
+  color: var(--color-neutral-700);
+  line-height: var(--leading-loose);
+}
+
+/* -- Timeline ------------------------------------------------------------- */
+
+.tl {
+  flex: 1 1 38%;
+  min-height: var(--timeline-min-height);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-divider);
+}
+
+.tl__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-bottom: 1px solid var(--color-divider);
+  flex: none;
+  font-size: var(--text-sm);
+}
+
+.tl__clock {
+  font-size: var(--text-base);
+}
+
+.tl__zoom,
+.tl__viewport {
+  font-size: var(--text-xs);
+}
+
+.tl__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.tl__headers {
+  flex: none;
+  width: var(--track-header-width);
+  border-right: 1px solid var(--color-divider);
+  background: var(--color-bg);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+}
+
+.tl__headers-spacer {
+  height: var(--ruler-height);
+  border-bottom: 1px solid var(--color-divider);
+  flex: none;
+}
+
+.tl__header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 var(--space-2);
+  border-bottom: 1px solid var(--color-divider);
+  font-size: var(--text-xs);
+  height: 34px;
+  flex: none;
+}
+.tl__header.is-visual {
+  height: 56px;
+}
+.tl__header.is-derived {
+  background: var(--color-sunken);
+}
+
+.tl__header-name {
+  font-size: var(--text-sm);
+}
+
+.tl__chip {
+  font-size: 8.5px;
+  color: var(--color-neutral-600);
+  border-color: var(--color-neutral-500);
+}
+
+.tl__icon {
+  font: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-neutral-600);
+  padding: 0 3px;
+  font-size: var(--text-sm);
+}
+.tl__icon.is-on {
+  color: var(--color-accent-700);
+}
+
+.tl__scroll {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+.tl__surface {
+  position: relative;
+  min-width: 100%;
+}
+
+.tl__ruler {
+  height: var(--ruler-height);
+  border-bottom: 1px solid var(--color-divider);
+  position: sticky;
+  top: 0;
+  background: var(--color-bg);
+  z-index: 2;
+  cursor: pointer;
+}
+
+.tl__tick {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+  height: 5px;
+  background: var(--color-divider-strong);
+}
+.tl__tick.is-major {
+  height: 10px;
+  background: var(--color-neutral-600);
+}
+
+.tl__ticklabel {
+  position: absolute;
+  top: 2px;
+  font-size: 9.5px;
+  color: var(--color-neutral-700);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.tl__target {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-accent-600);
+}
+.tl__target-label {
+  position: absolute;
+  top: 1px;
+  left: 3px;
+  font-size: 8.5px;
+  color: var(--color-accent-700);
+  white-space: nowrap;
+}
+
+.tl__lanes {
+  position: relative;
+}
+
+.tl__lane {
+  height: 34px;
+  border-bottom: 1px solid var(--color-divider);
+  position: relative;
+}
+.tl__lane.is-visual {
+  height: 56px;
+}
+.tl__lane.is-derived {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--color-sunken),
+    var(--color-sunken) 6px,
+    var(--color-bg) 6px,
+    var(--color-bg) 12px
+  );
+}
+.tl__lane.is-muted {
+  opacity: 0.55;
+}
+.tl__lane.is-droptarget {
+  box-shadow: inset 0 0 0 2px var(--color-accent-500);
+}
+
+.tl__gap {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    var(--color-neutral-300) 4px,
+    var(--color-neutral-300) 8px
+  );
+  display: grid;
+  place-items: center;
+}
+.tl__gap-label {
+  font-size: 9px;
+  color: var(--color-neutral-700);
+  background: var(--color-bg);
+  padding: 0 3px;
+}
+
+.tl__clip {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  background: var(--color-neutral-800);
+  border: 1px solid var(--color-neutral-900);
+  color: rgba(255, 255, 255, 0.86);
+  font-size: var(--text-xs);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 5px;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+}
+.tl__clip:active {
+  cursor: grabbing;
+}
+.tl__clip.is-dragging {
+  z-index: 5;
+  box-shadow: var(--shadow-md);
+}
+.tl__clip.is-selected {
+  border-color: var(--color-accent-500);
+  box-shadow: inset 0 0 0 1px var(--color-accent-400);
+}
+.tl__clip.is-locked {
+  border-width: 2px;
+  cursor: not-allowed;
+}
+.tl__clip.is-derived {
+  cursor: default;
+}
+
+.tl__clip.src-text {
+  background: var(--color-neutral-300);
+  color: var(--color-neutral-900);
+  border-color: var(--color-neutral-500);
+}
+.tl__clip.src-empty {
+  background: transparent;
+  border-style: dashed;
+  color: var(--color-neutral-700);
+}
+.tl__clip.src-programmatic {
+  background: var(--color-ink-softer);
+}
+
+.tl__clip.unit-failed {
+  background: var(--color-danger-wash);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+.tl__clip.unit-degraded {
+  background: var(--color-warn-wash);
+  border-color: var(--color-warn-line);
+  color: var(--color-warn);
+}
+.tl__clip.unit-timing_invalidated {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    rgba(255, 255, 255, 0.14) 4px,
+    rgba(255, 255, 255, 0.14) 8px
+  );
+}
+.tl__clip.unit-generating,
+.tl__clip.unit-searching,
+.tl__clip.unit-regenerating {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.09),
+    rgba(255, 255, 255, 0.09) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+  background-size: 28px 100%;
+  animation: stripe 900ms linear infinite;
+}
+
+@keyframes stripe {
+  to {
+    background-position: 28px 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl__clip.unit-generating,
+  .tl__clip.unit-searching,
+  .tl__clip.unit-regenerating {
+    animation: none;
+  }
+}
+
+.tl__clip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tl__clip-lock {
+  flex: none;
+  font-size: 10px;
+}
+
+.tl__handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: ew-resize;
+  opacity: 0;
+}
+.tl__handle--l {
+  left: 0;
+}
+.tl__handle--r {
+  right: 0;
+}
+.tl__clip:hover .tl__handle,
+.tl__clip:focus-visible .tl__handle {
+  opacity: 1;
+  background: var(--color-accent-500);
+}
+
+.tl__wedge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  pointer-events: none;
+}
+.tl__wedge--in {
+  left: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.24), transparent);
+}
+.tl__wedge--out {
+  right: 0;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.24), transparent);
+}
+
+.tl__dragreadout {
+  position: absolute;
+  top: -19px;
+  left: 0;
+  background: var(--color-neutral-900);
+  color: var(--color-bg);
+  font-size: 9.5px;
+  padding: 1px 5px;
+  white-space: nowrap;
+  z-index: 6;
+}
+
+.tl__band {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  background: var(--color-neutral-200);
+  border: 1px solid var(--color-divider-strong);
+  display: grid;
+  place-items: center;
+  cursor: zoom-in;
+}
+.tl__band.has-locked {
+  background: var(--color-neutral-300);
+  border-color: var(--color-neutral-600);
+}
+.tl__band.has-failed {
+  background: var(--color-danger-wash);
+  border-color: var(--color-danger-line);
+}
+.tl__band-label {
+  font-size: 9.5px;
+  color: var(--color-neutral-800);
+}
+
+.tl__playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-accent-700);
+  pointer-events: none;
+  z-index: 4;
+}
+.tl__playhead::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid var(--color-accent-700);
+}
+
+.tl__snap {
+  position: absolute;
+  top: var(--ruler-height);
+  bottom: 0;
+  width: 1px;
+  background: var(--color-accent-500);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.tl__scope {
+  position: absolute;
+  top: var(--ruler-height);
+  bottom: 0;
+  background: color-mix(in srgb, var(--color-accent-100) 60%, transparent);
+  border-inline: 1px solid var(--color-accent-500);
+  pointer-events: none;
+}
+
+/* -- Building ------------------------------------------------------------- */
+
+.building {
+  width: min(520px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.buildstages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.buildstage {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-divider);
+  color: var(--color-neutral-600);
+}
+.buildstage.is-done {
+  color: var(--color-neutral-900);
+}
+.buildstage.is-active {
+  color: var(--color-accent-700);
+}
+.buildstage.is-failed {
+  color: var(--color-danger);
+}
+/* Stages after the failure. They will not run, and an untouched circle reads
+   as "still queued" — which is the impression this panel used to leave for as
+   long as the reader was willing to wait. */
+.buildstage.is-skipped {
+  color: var(--color-neutral-500);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.building__note--failed {
+  color: var(--color-danger);
+}
+/* The exception, in development only. Monospaced because it is a machine
+   string — presenting it as prose invites a reader to act on it as advice. */
+.building__detail {
+  display: block;
+  margin-top: var(--space-2);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--text-sm);
+  color: var(--color-neutral-700);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.building__note--failed .muted {
+  color: var(--color-neutral-600);
+}
+
+.buildstage__mark {
+  width: 16px;
+}
+
+.buildstage__detail {
+  margin-left: auto;
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* -- Recorder ------------------------------------------------------------- */
+
+.recorder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.recorder__title {
+  font-size: var(--text-xl);
+  font-weight: 400;
+}
+
+.recorder__wave {
+  width: 100%;
+  max-width: 480px;
+  height: 96px;
+  color: var(--color-accent-700);
+}
+
+.recorder__time {
+  font-size: var(--text-2xl);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.recorder__hint {
+  color: var(--color-neutral-700);
+  max-width: 320px;
+}
+
+.recorder__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.recorder__stop {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid var(--color-accent-700);
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.recorder__stop-mark {
+  width: 18px;
+  height: 18px;
+  background: var(--color-accent-700);
+}
+
+/* ---------------------------------------------------------------------------
+   The overview
+
+   The whole project as one strip. Deliberately eight pixels tall and drawn
+   from the visual lane alone: four lanes stacked at two pixels each is a
+   smear, and the thing being aimed at here is the window, not the clips.
+   --------------------------------------------------------------------------- */
+
+.tl__ov {
+  position: relative;
+  height: 18px;
+  margin: 0 var(--space-3) var(--space-1);
+  background: var(--color-sunken);
+  border: 1px solid var(--color-divider);
+  cursor: grab;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+.tl__ov:active {
+  cursor: grabbing;
+}
+
+.tl__ov-track {
+  position: absolute;
+  inset: 4px 0;
+}
+
+.tl__ov-clip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--color-neutral-500);
+}
+.tl__ov-clip.is-locked {
+  background: var(--color-locked);
+}
+.tl__ov-clip.is-failed {
+  background: var(--color-danger);
+}
+.tl__ov-clip.is-degraded {
+  background: var(--color-warn);
+}
+
+.tl__ov-window {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border: 1.5px solid var(--color-accent);
+  background: rgba(169, 117, 47, 0.12);
+  min-width: 6px;
+}
+.tl__ov-window:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.tl__addlane {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-right: var(--space-3);
+}
+
+.tl__level {
+  font-size: 9.5px;
+  color: var(--color-neutral-700);
+}
+
+.tl__band.has-degraded {
+  background: var(--color-warn-wash);
+  border-color: var(--color-warn-line);
+}
+.tl__band.has-gaps {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 3px,
+    var(--color-divider-strong) 3px,
+    var(--color-divider-strong) 4px
+  );
+}
+
+/* ---------------------------------------------------------------------------
+   Refusals, in place
+
+   A refused edit puts the clip back and says why *next to the clip*. The rail
+   in the corner is for things that need no action.
+   --------------------------------------------------------------------------- */
+
+.refusal {
+  position: fixed;
+  z-index: 90;
+  max-width: 320px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-ink);
+  color: var(--color-bg);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  box-shadow: var(--shadow-md);
+}
+.refusal::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  margin-left: -5px;
+  border: 5px solid transparent;
+  border-top-color: var(--color-ink);
+  bottom: -10px;
+}
+.refusal.is-below::after {
+  bottom: auto;
+  top: -10px;
+  border-top-color: transparent;
+  border-bottom-color: var(--color-ink);
+}
+
+/* ---------------------------------------------------------------------------
+   Media: progress, refusals, the project mark
+   --------------------------------------------------------------------------- */
+
+.media__track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.media__bar {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--color-accent-400);
+  transition: width 120ms linear;
+}
+
+.media__state.is-bad {
+  background: var(--color-danger);
+}
+
+.media__card.is-refused {
+  border-color: var(--color-danger-line);
+  background: var(--color-danger-wash);
+}
+.media__card.is-refused .media__thumb {
+  background: var(--color-neutral-800);
+}
+.media__card.is-refused .btn {
+  margin: 0 var(--space-2) var(--space-2);
+}
+
+.media__card.is-mark {
+  border-color: var(--color-accent);
+}
+.media__mark {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  font-size: 9.5px;
+  background: var(--color-accent);
+  color: #fff;
+  padding: 0 4px;
+}
+
+.assetdetail__fields--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.assetdetail__places {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: var(--space-2) 0;
+}
+.assetdetail__danger {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-divider);
+}
+
+/* The script's drop target: replace this visual with a file you brought. */
+.block.is-droptarget {
+  outline: 2px dashed var(--color-accent);
+  outline-offset: -2px;
+  background: var(--color-accent-100);
+}
+.block.is-droptarget .block__unit::after {
+  content: "Replace this visual with your upload";
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--color-accent-700);
+  padding: var(--space-1) var(--space-2);
+}
+
+.block__unitwrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.block__unitdetail {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-neutral-700);
+  line-height: var(--leading-normal);
+}
+.block__unitactions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* The origin mark on a clip: two letters where the word will not fit. */
+.tl__clip-origin {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.02em;
+  padding: 0 2px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--color-neutral-800);
+  pointer-events: none;
+}
+.tl__clip-origin.origin-user_upload {
+  background: var(--color-accent);
+  color: #fff;
+}
+.tl__clip-origin.origin-ai_generated {
+  background: var(--color-warn);
+  color: #fff;
+}
+.tl__clip-origin.origin-licensed_source {
+  background: var(--color-neutral-700);
+  color: #fff;
+}
+
+/* ---------------------------------------------------------------------------
+   Compare — two versions, same size, side by side.
+
+   Not a wipe and not a slider: the question is "which of these is better",
+   and two pictures at the same size answers it.
+   --------------------------------------------------------------------------- */
+
+.compare {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-divider);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.compare__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.compare__pane {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.compare__thumb {
+  aspect-ratio: 16 / 9;
+  display: grid;
+  place-items: center;
+  background: var(--color-neutral-300);
+  color: var(--color-neutral-700);
+  border: 1px solid var(--color-divider-strong);
+}
+.compare__thumb.origin-user_upload {
+  background: var(--color-accent-200);
+  border-color: var(--color-accent-400);
+}
+.compare__thumb.origin-ai_generated {
+  background: var(--color-warn-wash);
+  border-color: var(--color-warn-line);
+}
+.compare__thumb.is-refused {
+  background: var(--color-danger-wash);
+  border-color: var(--color-danger-line);
+}
+
+.compare__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+}
+
+.compare__why {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-700);
+  line-height: var(--leading-normal);
+}
+
+.compare__refused {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+}
+
+/* ---------------------------------------------------------------------------
+   "Use my own media" — the phone's answer to a visual that failed.
+
+   No grid, no trim, no crop: those need a pointer and a wide screen.
+   --------------------------------------------------------------------------- */
+
+.ownmedia__actions {
+  display: flex;
+  gap: var(--space-2);
+  margin: var(--space-3) 0;
+}
+.ownmedia__actions .btn {
+  flex: 1;
+}
+
+.ownmedia__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 var(--space-3);
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.ownmedia__item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-divider);
+  background: var(--color-surface);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.ownmedia__item:hover {
+  border-color: var(--color-accent-400);
+}
+.ownmedia__name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.projects__search {
+  max-width: 260px;
+}
+
+.settings__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-3);
+}
+
+.settings__usage .table {
+  margin-top: var(--space-2);
+}
+
+.renders__sidecars {
+  margin-top: var(--space-4);
+}
+.renders__sidecar-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}

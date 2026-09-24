@@ -1,0 +1,24 @@
+.git
+.github
+var
+tests
+docs
+*.md
+# ...except this one. `Dockerfile` copies it because `pyproject.toml` declares
+# `readme = "README.md"`, and pip refuses to build package metadata without the
+# file the metadata points at.
+#
+# Found by running the build for the first time: `*.md` excluded it, the COPY at
+# Dockerfile:21 could not find it, and the production image failed to build. The
+# Dockerfile was consistent with the repository and inconsistent with what the
+# build context actually contained — which is a thing no amount of reading
+# either file would reveal.
+!README.md
+__pycache__
+.mypy_cache
+.ruff_cache
+.pytest_cache
+*.mp4
+node_modules
+dist
+dist-test

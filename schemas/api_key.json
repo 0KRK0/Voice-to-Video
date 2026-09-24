@@ -1,0 +1,169 @@
+{
+  "$defs": {
+    "Capability": {
+      "description": "The atomic questions code is allowed to ask.\n\nNamed for the action rather than the resource shape, because that is how\nthey are checked at the call site: ``require(principal, Capability.\nPROJECT_DELETE)``.",
+      "enum": [
+        "project:read",
+        "project:create",
+        "project:update",
+        "project:delete",
+        "render:submit",
+        "member:read",
+        "member:manage",
+        "apikey:manage",
+        "billing:read",
+        "billing:manage",
+        "audit:read",
+        "organisation:manage",
+        "device:manage",
+        "device:execute"
+      ],
+      "title": "Capability",
+      "type": "string"
+    },
+    "Role": {
+      "description": "What a member may do, in the vocabulary administrators think in.\n\nOrdered by privilege so comparisons are possible, but code should ask for a\npermission rather than compare roles — see :func:`capabilities_for`.",
+      "enum": [
+        "viewer",
+        "editor",
+        "admin",
+        "owner",
+        "service",
+        "device"
+      ],
+      "title": "Role",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/api_key.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A machine credential. The secret is never stored — only its digest.\n\nThe prefix is stored in the clear so a key can be identified in a log, in an\naudit entry and in the UI list without the secret being recoverable. That is\nthe difference between \"revoke the key ending in 4f2a\" being a usable\ninstruction and being a guess.",
+  "properties": {
+    "api_key_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Api Key Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Created By"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expires At"
+    },
+    "last_used_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Used At"
+    },
+    "name": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "organisation_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Organisation Id",
+      "type": "string"
+    },
+    "prefix": {
+      "maxLength": 32,
+      "minLength": 4,
+      "title": "Prefix",
+      "type": "string"
+    },
+    "revoked_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revoked At"
+    },
+    "role": {
+      "$ref": "#/$defs/Role",
+      "default": "service"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "scopes": {
+      "items": {
+        "$ref": "#/$defs/Capability"
+      },
+      "maxItems": 32,
+      "title": "Scopes",
+      "type": "array"
+    },
+    "secret_hash": {
+      "maxLength": 128,
+      "minLength": 64,
+      "title": "Secret Hash",
+      "type": "string"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    }
+  },
+  "required": [
+    "organisation_id",
+    "name",
+    "prefix",
+    "secret_hash"
+  ],
+  "title": "ApiKey",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

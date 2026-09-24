@@ -1,0 +1,1477 @@
+{
+  "$defs": {
+    "AspectRatio": {
+      "description": "Delivery shape. Chosen up front because it changes composition, not just\ncropping: a portrait explainer wants stacked layouts, not letterboxed ones.",
+      "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+      ],
+      "title": "AspectRatio",
+      "type": "string"
+    },
+    "AssetClipSource": {
+      "additionalProperties": false,
+      "description": "Play a resolved asset: a licensed photograph, generated frame or footage.",
+      "properties": {
+        "asset_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "attribution": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attribution"
+        },
+        "illustrative_label": {
+          "default": false,
+          "title": "Illustrative Label",
+          "type": "boolean"
+        },
+        "object": {
+          "$ref": "#/$defs/ObjectRef"
+        },
+        "source_type": {
+          "const": "asset",
+          "default": "asset",
+          "title": "Source Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id",
+        "object"
+      ],
+      "title": "AssetClipSource",
+      "type": "object"
+    },
+    "CameraMotion": {
+      "description": "Motion applied to a still image so it does not sit dead on screen.",
+      "enum": [
+        "none",
+        "zoom_in",
+        "zoom_out",
+        "pan_left",
+        "pan_right",
+        "pan_up",
+        "pan_down",
+        "ken_burns"
+      ],
+      "title": "CameraMotion",
+      "type": "string"
+    },
+    "CaptionCue": {
+      "additionalProperties": false,
+      "description": "One caption, timed against the narration it transcribes.",
+      "properties": {
+        "cue_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Cue Id",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/TimeSpan"
+        },
+        "text": {
+          "maxLength": 400,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "word_spans": {
+          "items": {
+            "$ref": "#/$defs/TimeSpan"
+          },
+          "maxItems": 64,
+          "title": "Word Spans",
+          "type": "array"
+        }
+      },
+      "required": [
+        "span",
+        "text"
+      ],
+      "title": "CaptionCue",
+      "type": "object"
+    },
+    "ChartKind": {
+      "enum": [
+        "line",
+        "bar",
+        "column",
+        "area",
+        "pie",
+        "scatter"
+      ],
+      "title": "ChartKind",
+      "type": "string"
+    },
+    "ChartSeries": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/DataPoint"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "title": "Points",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "points"
+      ],
+      "title": "ChartSeries",
+      "type": "object"
+    },
+    "ChartSpec": {
+      "additionalProperties": false,
+      "description": "A quantitative claim, drawn.\n\n\"The population went from one billion to eight billion\" is a chart. Asking a\nvideo model for it costs orders of magnitude more, takes far longer, and is\nless accurate (Rule 6).",
+      "properties": {
+        "animate_in": {
+          "default": true,
+          "title": "Animate In",
+          "type": "boolean"
+        },
+        "emphasis": {
+          "$ref": "#/$defs/Emphasis",
+          "default": "normal"
+        },
+        "kind": {
+          "$ref": "#/$defs/ChartKind"
+        },
+        "preferred_duration": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Preferred Duration",
+          "type": "number"
+        },
+        "primitive": {
+          "const": "chart",
+          "default": "chart",
+          "title": "Primitive",
+          "type": "string"
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/ChartSeries"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Series",
+          "type": "array"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "x_label": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "X Label"
+        },
+        "y_label": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Y Label"
+        }
+      },
+      "required": [
+        "kind",
+        "series"
+      ],
+      "title": "ChartSpec",
+      "type": "object"
+    },
+    "ColorPalette": {
+      "additionalProperties": false,
+      "description": "A small, deliberate palette. Hex strings, validated.",
+      "properties": {
+        "accent": {
+          "default": "#4C8DFF",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Accent",
+          "type": "string"
+        },
+        "background": {
+          "default": "#0B0D10",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Background",
+          "type": "string"
+        },
+        "foreground": {
+          "default": "#F5F7FA",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Foreground",
+          "type": "string"
+        },
+        "muted": {
+          "default": "#7A8598",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Muted",
+          "type": "string"
+        },
+        "secondary": {
+          "default": "#FFB65C",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Secondary",
+          "type": "string"
+        }
+      },
+      "title": "ColorPalette",
+      "type": "object"
+    },
+    "ComparisonSide": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_query": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset Query"
+        },
+        "points": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 6,
+          "title": "Points",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "ComparisonSide",
+      "type": "object"
+    },
+    "ComparisonSpec": {
+      "additionalProperties": false,
+      "description": "Two things held against each other. Split screen, then difference.",
+      "properties": {
+        "connector": {
+          "default": "versus",
+          "enum": [
+            "versus",
+            "arrow",
+            "none"
+          ],
+          "title": "Connector",
+          "type": "string"
+        },
+        "emphasis": {
+          "$ref": "#/$defs/Emphasis",
+          "default": "normal"
+        },
+        "left": {
+          "$ref": "#/$defs/ComparisonSide"
+        },
+        "preferred_duration": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Preferred Duration",
+          "type": "number"
+        },
+        "primitive": {
+          "const": "comparison",
+          "default": "comparison",
+          "title": "Primitive",
+          "type": "string"
+        },
+        "right": {
+          "$ref": "#/$defs/ComparisonSide"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "ComparisonSpec",
+      "type": "object"
+    },
+    "DataPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "label",
+        "value"
+      ],
+      "title": "DataPoint",
+      "type": "object"
+    },
+    "DegradationReason": {
+      "description": "Why the system settled for something other than its first choice.",
+      "enum": [
+        "provider_failed",
+        "budget_exceeded",
+        "latency_exceeded",
+        "license_unacceptable",
+        "no_suitable_asset",
+        "quality_rejected",
+        "safety_refused"
+      ],
+      "title": "DegradationReason",
+      "type": "string"
+    },
+    "DegradationStep": {
+      "additionalProperties": false,
+      "description": "One rung of the fallback ladder that was taken for a scene.\n\nRecording these makes the pipeline auditable: given a finished video we can\nsay exactly which shots are the system's first choice and which are\ncompromises, which is the raw material for the evaluation system (Stage 16).",
+      "properties": {
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ErrorInfo"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "from_strategy": {
+          "title": "From Strategy",
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/DegradationReason"
+        },
+        "to_strategy": {
+          "title": "To Strategy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from_strategy",
+        "to_strategy",
+        "reason"
+      ],
+      "title": "DegradationStep",
+      "type": "object"
+    },
+    "Emphasis": {
+      "description": "How strongly a visual should assert itself against the narration.",
+      "enum": [
+        "subtle",
+        "normal",
+        "strong"
+      ],
+      "title": "Emphasis",
+      "type": "string"
+    },
+    "ErrorCategory": {
+      "description": "Coarse classification that determines how the system reacts.",
+      "enum": [
+        "validation",
+        "provider",
+        "provider_refused",
+        "policy",
+        "not_found",
+        "timeout",
+        "internal"
+      ],
+      "title": "ErrorCategory",
+      "type": "string"
+    },
+    "ErrorCode": {
+      "description": "Stable, machine-readable error codes.\n\nThese are part of the public contract: they appear in API responses and in\nmetrics, so they may be added to but must not be renamed.",
+      "enum": [
+        "schema_invalid",
+        "audio_unreadable",
+        "audio_too_long",
+        "audio_silent",
+        "transcription_failed",
+        "understanding_failed",
+        "scene_planning_failed",
+        "visual_planning_failed",
+        "asset_not_found",
+        "asset_license_unacceptable",
+        "generation_failed",
+        "generation_refused",
+        "budget_exceeded",
+        "latency_exceeded",
+        "render_failed",
+        "storage_unavailable",
+        "object_expired",
+        "provider_unavailable",
+        "rate_limited",
+        "not_authenticated",
+        "permission_denied",
+        "quota_exceeded",
+        "upload_refused",
+        "tenant_suspended",
+        "internal_error"
+      ],
+      "title": "ErrorCode",
+      "type": "string"
+    },
+    "ErrorInfo": {
+      "additionalProperties": false,
+      "description": "Serialisable description of a failure, safe to store and to return.\n\n``message`` is for engineers and goes to logs. ``user_message`` is for the\nperson who spoke into the microphone and must never leak provider names,\nstack traces, prompts or internal identifiers.",
+      "properties": {
+        "attempt": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Attempt",
+          "type": "integer"
+        },
+        "category": {
+          "$ref": "#/$defs/ErrorCategory"
+        },
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        },
+        "context": {
+          "additionalProperties": true,
+          "title": "Context",
+          "type": "object"
+        },
+        "message": {
+          "maxLength": 2000,
+          "title": "Message",
+          "type": "string"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "retryable": {
+          "default": false,
+          "title": "Retryable",
+          "type": "boolean"
+        },
+        "user_message": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Message"
+        }
+      },
+      "required": [
+        "code",
+        "category",
+        "message"
+      ],
+      "title": "ErrorInfo",
+      "type": "object"
+    },
+    "FitPolicy": {
+      "description": "How a clip reconciles its media duration with its slot on the timeline.",
+      "enum": [
+        "trim",
+        "loop",
+        "hold_last",
+        "speed_ramp",
+        "still"
+      ],
+      "title": "FitPolicy",
+      "type": "string"
+    },
+    "MapMarker": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "latitude": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Longitude",
+          "type": "number"
+        }
+      },
+      "required": [
+        "label",
+        "latitude",
+        "longitude"
+      ],
+      "title": "MapMarker",
+      "type": "object"
+    },
+    "MapSpec": {
+      "additionalProperties": false,
+      "description": "Where something happened.",
+      "properties": {
+        "connect_markers": {
+          "default": false,
+          "title": "Connect Markers",
+          "type": "boolean"
+        },
+        "emphasis": {
+          "$ref": "#/$defs/Emphasis",
+          "default": "normal"
+        },
+        "markers": {
+          "items": {
+            "$ref": "#/$defs/MapMarker"
+          },
+          "maxItems": 12,
+          "minItems": 1,
+          "title": "Markers",
+          "type": "array"
+        },
+        "preferred_duration": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Preferred Duration",
+          "type": "number"
+        },
+        "primitive": {
+          "const": "map",
+          "default": "map",
+          "title": "Primitive",
+          "type": "string"
+        },
+        "scope": {
+          "default": "world",
+          "enum": [
+            "world",
+            "continent",
+            "country",
+            "region",
+            "city"
+          ],
+          "title": "Scope",
+          "type": "string"
+        }
+      },
+      "required": [
+        "markers"
+      ],
+      "title": "MapSpec",
+      "type": "object"
+    },
+    "MotionIntensity": {
+      "enum": [
+        "calm",
+        "moderate",
+        "energetic"
+      ],
+      "title": "MotionIntensity",
+      "type": "string"
+    },
+    "NarrationTrack": {
+      "additionalProperties": false,
+      "description": "The user's voice. The spine of the whole timeline.",
+      "properties": {
+        "audio": {
+          "$ref": "#/$defs/ObjectRef"
+        },
+        "duration_seconds": {
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "gain_db": {
+          "default": 0.0,
+          "maximum": 12.0,
+          "minimum": -24.0,
+          "title": "Gain Db",
+          "type": "number"
+        },
+        "offset_seconds": {
+          "default": 0.0,
+          "minimum": 0.0,
+          "title": "Offset Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "audio",
+        "duration_seconds"
+      ],
+      "title": "NarrationTrack",
+      "type": "object"
+    },
+    "NetworkEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "directed": {
+          "default": true,
+          "title": "Directed",
+          "type": "boolean"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "maxLength": 48,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "source": {
+          "maxLength": 48,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "maxLength": 48,
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "target"
+      ],
+      "title": "NetworkEdge",
+      "type": "object"
+    },
+    "NetworkNode": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "key": {
+          "maxLength": 48,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label"
+      ],
+      "title": "NetworkNode",
+      "type": "object"
+    },
+    "NetworkSpec": {
+      "additionalProperties": false,
+      "description": "Nodes and edges: relationships, systems, architectures, distributed ideas.\n\nThis is the direct rendering of the relation graph from the semantic layer,\nwhich is why relations are modelled as first-class data rather than prose.",
+      "properties": {
+        "animation": {
+          "default": "build",
+          "enum": [
+            "appear",
+            "propagate",
+            "build",
+            "pulse"
+          ],
+          "title": "Animation",
+          "type": "string"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/NetworkEdge"
+          },
+          "maxItems": 64,
+          "title": "Edges",
+          "type": "array"
+        },
+        "emphasis": {
+          "$ref": "#/$defs/Emphasis",
+          "default": "normal"
+        },
+        "layout": {
+          "default": "force",
+          "enum": [
+            "force",
+            "radial",
+            "layered",
+            "circular"
+          ],
+          "title": "Layout",
+          "type": "string"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/NetworkNode"
+          },
+          "maxItems": 24,
+          "minItems": 2,
+          "title": "Nodes",
+          "type": "array"
+        },
+        "preferred_duration": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Preferred Duration",
+          "type": "number"
+        },
+        "primitive": {
+          "const": "network",
+          "default": "network",
+          "title": "Primitive",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "nodes"
+      ],
+      "title": "NetworkSpec",
+      "type": "object"
+    },
+    "ObjectRef": {
+      "additionalProperties": false,
+      "description": "A pointer to a blob in object storage.\n\nBusiness logic never learns a filesystem path, a bucket URL, or a vendor\nname from this type. Turning an ``ObjectRef`` into readable bytes or a signed\nURL is the sole responsibility of the ``StorageProvider`` port.",
+      "properties": {
+        "bucket": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Bucket",
+          "type": "string"
+        },
+        "checksum_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checksum Sha256"
+        },
+        "content_type": {
+          "description": "IANA media type, e.g. 'audio/webm' or 'image/png'.",
+          "maxLength": 128,
+          "minLength": 3,
+          "title": "Content Type",
+          "type": "string"
+        },
+        "key": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "retention": {
+          "$ref": "#/$defs/RetentionClass",
+          "default": "ephemeral"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        }
+      },
+      "required": [
+        "bucket",
+        "key",
+        "content_type"
+      ],
+      "title": "ObjectRef",
+      "type": "object"
+    },
+    "PlaceholderClipSource": {
+      "additionalProperties": false,
+      "description": "The controlled failure state.\n\nWhen every rung of the fallback ladder has been exhausted, the timeline gets\none of these rather than a hole. The video still renders, the narration is\nstill heard, and the storyboard shows the user exactly which shot needs\nattention (Rule 8, Section 29).",
+      "properties": {
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ErrorInfo"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "message": {
+          "default": "Visual unavailable",
+          "maxLength": 200,
+          "title": "Message",
+          "type": "string"
+        },
+        "source_type": {
+          "const": "placeholder",
+          "default": "placeholder",
+          "title": "Source Type",
+          "type": "string"
+        }
+      },
+      "title": "PlaceholderClipSource",
+      "type": "object"
+    },
+    "ProgrammaticClipSource": {
+      "additionalProperties": false,
+      "description": "Draw the animation at render time from its specification.\n\nNothing is pre-baked into a file: the renderer holds the spec and draws it,\nwhich keeps these shots resolution-independent, instantly re-editable and\nfree to regenerate.",
+      "properties": {
+        "source_type": {
+          "const": "programmatic",
+          "default": "programmatic",
+          "title": "Source Type",
+          "type": "string"
+        },
+        "spec": {
+          "discriminator": {
+            "mapping": {
+              "chart": "#/$defs/ChartSpec",
+              "comparison": "#/$defs/ComparisonSpec",
+              "map": "#/$defs/MapSpec",
+              "network": "#/$defs/NetworkSpec",
+              "timeline": "#/$defs/TimelineSpec",
+              "typography": "#/$defs/TypographySpec"
+            },
+            "propertyName": "primitive"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/TypographySpec"
+            },
+            {
+              "$ref": "#/$defs/ChartSpec"
+            },
+            {
+              "$ref": "#/$defs/TimelineSpec"
+            },
+            {
+              "$ref": "#/$defs/NetworkSpec"
+            },
+            {
+              "$ref": "#/$defs/ComparisonSpec"
+            },
+            {
+              "$ref": "#/$defs/MapSpec"
+            }
+          ],
+          "title": "Spec"
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "title": "ProgrammaticClipSource",
+      "type": "object"
+    },
+    "RetentionClass": {
+      "description": "How long the bytes behind an :class:`ObjectRef` are allowed to live.\n\nRetention is a property of the object itself so that lifecycle rules can be\napplied by the storage layer without it having to understand the domain\n(see ``docs/STORAGE_POLICY.md``).",
+      "enum": [
+        "ephemeral",
+        "project",
+        "archive"
+      ],
+      "title": "RetentionClass",
+      "type": "string"
+    },
+    "Status": {
+      "description": "Lifecycle status shared by recordings, scenes, assets and render jobs.",
+      "enum": [
+        "pending",
+        "processing",
+        "ready",
+        "failed",
+        "retrying",
+        "expired",
+        "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "StyleProfile": {
+      "additionalProperties": false,
+      "description": "The style contract every scene must honour.",
+      "properties": {
+        "aspect_ratio": {
+          "$ref": "#/$defs/AspectRatio",
+          "default": "16:9"
+        },
+        "captions_enabled": {
+          "default": true,
+          "title": "Captions Enabled",
+          "type": "boolean"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Direction"
+        },
+        "motion": {
+          "$ref": "#/$defs/MotionIntensity",
+          "default": "moderate"
+        },
+        "palette": {
+          "$ref": "#/$defs/ColorPalette"
+        },
+        "style": {
+          "$ref": "#/$defs/VisualStyle",
+          "default": "explainer"
+        },
+        "typeface": {
+          "default": "grotesque",
+          "maxLength": 32,
+          "title": "Typeface",
+          "type": "string"
+        }
+      },
+      "title": "StyleProfile",
+      "type": "object"
+    },
+    "TimeSpan": {
+      "additionalProperties": false,
+      "description": "A half-open interval ``[start, end)`` on the recording clock.",
+      "properties": {
+        "end": {
+          "maximum": 86400,
+          "minimum": 0.0,
+          "title": "End",
+          "type": "number"
+        },
+        "start": {
+          "maximum": 86400,
+          "minimum": 0.0,
+          "title": "Start",
+          "type": "number"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "TimeSpan",
+      "type": "object"
+    },
+    "TimelineEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "detail": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detail"
+        },
+        "label": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "sort_value": {
+          "title": "Sort Value",
+          "type": "number"
+        },
+        "when": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "When",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "when",
+        "sort_value"
+      ],
+      "title": "TimelineEvent",
+      "type": "object"
+    },
+    "TimelineSpec": {
+      "additionalProperties": false,
+      "description": "Events in order. The default form for anything historical.",
+      "properties": {
+        "emphasis": {
+          "$ref": "#/$defs/Emphasis",
+          "default": "normal"
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/TimelineEvent"
+          },
+          "maxItems": 12,
+          "minItems": 1,
+          "title": "Events",
+          "type": "array"
+        },
+        "orientation": {
+          "default": "horizontal",
+          "enum": [
+            "horizontal",
+            "vertical"
+          ],
+          "title": "Orientation",
+          "type": "string"
+        },
+        "preferred_duration": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Preferred Duration",
+          "type": "number"
+        },
+        "primitive": {
+          "const": "timeline",
+          "default": "timeline",
+          "title": "Primitive",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "events"
+      ],
+      "title": "TimelineSpec",
+      "type": "object"
+    },
+    "Transition": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_seconds": {
+          "default": 0.0,
+          "maximum": 3.0,
+          "minimum": 0.0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "kind": {
+          "$ref": "#/$defs/TransitionKind",
+          "default": "cut"
+        }
+      },
+      "title": "Transition",
+      "type": "object"
+    },
+    "TransitionKind": {
+      "enum": [
+        "cut",
+        "fade",
+        "dissolve",
+        "wipe",
+        "push"
+      ],
+      "title": "TransitionKind",
+      "type": "string"
+    },
+    "TypographySpec": {
+      "additionalProperties": false,
+      "description": "Animated text. The correct answer far more often than it feels like.\n\nA plain factual statement, a definition, a punchy conclusion — these are\ncommunicated better and more cheaply by well-set moving type than by a\nliteral image of the words' subject.",
+      "properties": {
+        "emphasis": {
+          "$ref": "#/$defs/Emphasis",
+          "default": "normal"
+        },
+        "headline": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Headline",
+          "type": "string"
+        },
+        "highlight": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Highlight",
+          "type": "array"
+        },
+        "preferred_duration": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Preferred Duration",
+          "type": "number"
+        },
+        "primitive": {
+          "const": "typography",
+          "default": "typography",
+          "title": "Primitive",
+          "type": "string"
+        },
+        "reveal": {
+          "default": "word_by_word",
+          "enum": [
+            "fade",
+            "typewriter",
+            "word_by_word",
+            "slide"
+          ],
+          "title": "Reveal",
+          "type": "string"
+        },
+        "subline": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subline"
+        }
+      },
+      "required": [
+        "headline"
+      ],
+      "title": "TypographySpec",
+      "type": "object"
+    },
+    "VisualClip": {
+      "additionalProperties": false,
+      "description": "One visual occupying one span of the timeline.",
+      "properties": {
+        "camera_motion": {
+          "$ref": "#/$defs/CameraMotion",
+          "default": "none"
+        },
+        "clip_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Clip Id",
+          "type": "string"
+        },
+        "degradation": {
+          "items": {
+            "$ref": "#/$defs/DegradationStep"
+          },
+          "maxItems": 6,
+          "title": "Degradation",
+          "type": "array"
+        },
+        "fit": {
+          "$ref": "#/$defs/FitPolicy",
+          "default": "still"
+        },
+        "media_duration_seconds": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 86400,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Duration Seconds"
+        },
+        "scene_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "source": {
+          "discriminator": {
+            "mapping": {
+              "asset": "#/$defs/AssetClipSource",
+              "placeholder": "#/$defs/PlaceholderClipSource",
+              "programmatic": "#/$defs/ProgrammaticClipSource"
+            },
+            "propertyName": "source_type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/AssetClipSource"
+            },
+            {
+              "$ref": "#/$defs/ProgrammaticClipSource"
+            },
+            {
+              "$ref": "#/$defs/PlaceholderClipSource"
+            }
+          ],
+          "title": "Source"
+        },
+        "span": {
+          "$ref": "#/$defs/TimeSpan"
+        },
+        "transition_in": {
+          "$ref": "#/$defs/Transition"
+        }
+      },
+      "required": [
+        "scene_id",
+        "span",
+        "source"
+      ],
+      "title": "VisualClip",
+      "type": "object"
+    },
+    "VisualStyle": {
+      "description": "The register of the finished video.",
+      "enum": [
+        "documentary",
+        "explainer",
+        "editorial",
+        "technical",
+        "cinematic",
+        "minimal",
+        "playful"
+      ],
+      "title": "VisualStyle",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/timeline.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The complete, render-ready description of one video.",
+  "properties": {
+    "aspect_ratio": {
+      "$ref": "#/$defs/AspectRatio",
+      "default": "16:9"
+    },
+    "captions": {
+      "items": {
+        "$ref": "#/$defs/CaptionCue"
+      },
+      "maxItems": 20000,
+      "title": "Captions",
+      "type": "array"
+    },
+    "clips": {
+      "items": {
+        "$ref": "#/$defs/VisualClip"
+      },
+      "maxItems": 2880,
+      "title": "Clips",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "entity_colours": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "maxProperties": 200,
+      "title": "Entity Colours",
+      "type": "object"
+    },
+    "fill_seconds": {
+      "default": 0.0,
+      "maximum": 3600.0,
+      "minimum": 0.0,
+      "title": "Fill Seconds",
+      "type": "number"
+    },
+    "frame_rate": {
+      "default": 30,
+      "maximum": 60,
+      "minimum": 24,
+      "title": "Frame Rate",
+      "type": "integer"
+    },
+    "narration": {
+      "$ref": "#/$defs/NarrationTrack"
+    },
+    "narration_start_seconds": {
+      "default": 0.0,
+      "maximum": 600.0,
+      "minimum": 0.0,
+      "title": "Narration Start Seconds",
+      "type": "number"
+    },
+    "organisation_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Organisation Id",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "scene_graph_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Scene Graph Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/Status",
+      "default": "pending"
+    },
+    "style": {
+      "$ref": "#/$defs/StyleProfile"
+    },
+    "timeline_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Timeline Id",
+      "type": "string"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    }
+  },
+  "required": [
+    "organisation_id",
+    "project_id",
+    "scene_graph_id",
+    "narration"
+  ],
+  "title": "Timeline",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

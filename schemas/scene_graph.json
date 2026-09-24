@@ -1,0 +1,466 @@
+{
+  "$defs": {
+    "AspectRatio": {
+      "description": "Delivery shape. Chosen up front because it changes composition, not just\ncropping: a portrait explainer wants stacked layouts, not letterboxed ones.",
+      "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+      ],
+      "title": "AspectRatio",
+      "type": "string"
+    },
+    "ColorPalette": {
+      "additionalProperties": false,
+      "description": "A small, deliberate palette. Hex strings, validated.",
+      "properties": {
+        "accent": {
+          "default": "#4C8DFF",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Accent",
+          "type": "string"
+        },
+        "background": {
+          "default": "#0B0D10",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Background",
+          "type": "string"
+        },
+        "foreground": {
+          "default": "#F5F7FA",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Foreground",
+          "type": "string"
+        },
+        "muted": {
+          "default": "#7A8598",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Muted",
+          "type": "string"
+        },
+        "secondary": {
+          "default": "#FFB65C",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Secondary",
+          "type": "string"
+        }
+      },
+      "title": "ColorPalette",
+      "type": "object"
+    },
+    "Continuity": {
+      "additionalProperties": false,
+      "description": "What this scene inherits from the one before it.\n\nCarrying entities and motifs forward explicitly is how narrative coherence\nbecomes a property the system can be *tested* on rather than a quality we\nhope emerges from independent per-scene generation.",
+      "properties": {
+        "carried_entity_ids": {
+          "items": {
+            "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Carried Entity Ids",
+          "type": "array"
+        },
+        "continues_previous_visual": {
+          "default": false,
+          "title": "Continues Previous Visual",
+          "type": "boolean"
+        },
+        "motifs": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Motifs",
+          "type": "array"
+        }
+      },
+      "title": "Continuity",
+      "type": "object"
+    },
+    "MotionIntensity": {
+      "enum": [
+        "calm",
+        "moderate",
+        "energetic"
+      ],
+      "title": "MotionIntensity",
+      "type": "string"
+    },
+    "NarrativeArc": {
+      "additionalProperties": false,
+      "description": "The story the whole video tells, stated once.\n\nEvery scene is checked against this. A scene that does not serve the thesis\nis a signal that the Scene Engine mis-segmented, and that is measurable.",
+      "properties": {
+        "beats": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 24,
+          "title": "Beats",
+          "type": "array"
+        },
+        "motifs": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Motifs",
+          "type": "array"
+        },
+        "thesis": {
+          "default": "",
+          "maxLength": 400,
+          "title": "Thesis",
+          "type": "string"
+        }
+      },
+      "title": "NarrativeArc",
+      "type": "object"
+    },
+    "Scene": {
+      "additionalProperties": false,
+      "description": "One coherent visual idea, anchored to a span of the narration.",
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "continuity": {
+          "$ref": "#/$defs/Continuity"
+        },
+        "entity_ids": {
+          "items": {
+            "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Entity Ids",
+          "type": "array"
+        },
+        "importance": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Importance",
+          "type": "number"
+        },
+        "index": {
+          "description": "Position in the video, zero-based.",
+          "minimum": 0,
+          "title": "Index",
+          "type": "integer"
+        },
+        "narration": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Narration",
+          "type": "string"
+        },
+        "purpose": {
+          "$ref": "#/$defs/ScenePurpose"
+        },
+        "scene_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "semantic_unit_ids": {
+          "items": {
+            "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Semantic Unit Ids",
+          "type": "array"
+        },
+        "shots": {
+          "items": {
+            "$ref": "#/$defs/Shot"
+          },
+          "maxItems": 12,
+          "title": "Shots",
+          "type": "array"
+        },
+        "span": {
+          "$ref": "#/$defs/TimeSpan"
+        },
+        "status": {
+          "$ref": "#/$defs/Status",
+          "default": "pending"
+        },
+        "visual_brief": {
+          "maxLength": 400,
+          "minLength": 1,
+          "title": "Visual Brief",
+          "type": "string"
+        },
+        "visual_goal": {
+          "$ref": "#/$defs/VisualGoal"
+        }
+      },
+      "required": [
+        "index",
+        "span",
+        "narration",
+        "purpose",
+        "visual_goal",
+        "visual_brief"
+      ],
+      "title": "Scene",
+      "type": "object"
+    },
+    "ScenePurpose": {
+      "description": "The role a scene plays in the narrative arc.\n\nPurpose is what allows pacing to be reasoned about: an opening and a\nconclusion deserve production value, a supporting detail does not.",
+      "enum": [
+        "opening",
+        "context",
+        "definition",
+        "explanation",
+        "evidence",
+        "example",
+        "contrast",
+        "turning_point",
+        "implication",
+        "conclusion"
+      ],
+      "title": "ScenePurpose",
+      "type": "string"
+    },
+    "Shot": {
+      "additionalProperties": false,
+      "description": "A subdivision of a scene, used when one idea needs more than one image.\n\nShots exist so that a long scene can breathe without being torn into\nunrelated scenes. They inherit the scene's visual goal.",
+      "properties": {
+        "beat": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Beat",
+          "type": "string"
+        },
+        "shot_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Shot Id",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/TimeSpan"
+        }
+      },
+      "required": [
+        "span",
+        "beat"
+      ],
+      "title": "Shot",
+      "type": "object"
+    },
+    "Status": {
+      "description": "Lifecycle status shared by recordings, scenes, assets and render jobs.",
+      "enum": [
+        "pending",
+        "processing",
+        "ready",
+        "failed",
+        "retrying",
+        "expired",
+        "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "StyleProfile": {
+      "additionalProperties": false,
+      "description": "The style contract every scene must honour.",
+      "properties": {
+        "aspect_ratio": {
+          "$ref": "#/$defs/AspectRatio",
+          "default": "16:9"
+        },
+        "captions_enabled": {
+          "default": true,
+          "title": "Captions Enabled",
+          "type": "boolean"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Direction"
+        },
+        "motion": {
+          "$ref": "#/$defs/MotionIntensity",
+          "default": "moderate"
+        },
+        "palette": {
+          "$ref": "#/$defs/ColorPalette"
+        },
+        "style": {
+          "$ref": "#/$defs/VisualStyle",
+          "default": "explainer"
+        },
+        "typeface": {
+          "default": "grotesque",
+          "maxLength": 32,
+          "title": "Typeface",
+          "type": "string"
+        }
+      },
+      "title": "StyleProfile",
+      "type": "object"
+    },
+    "TimeSpan": {
+      "additionalProperties": false,
+      "description": "A half-open interval ``[start, end)`` on the recording clock.",
+      "properties": {
+        "end": {
+          "maximum": 86400,
+          "minimum": 0.0,
+          "title": "End",
+          "type": "number"
+        },
+        "start": {
+          "maximum": 86400,
+          "minimum": 0.0,
+          "title": "Start",
+          "type": "number"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "TimeSpan",
+      "type": "object"
+    },
+    "VisualGoal": {
+      "description": "What the visual has to *accomplish* for this scene.\n\nThis is the Scene Engine's brief to the Visual Director. It is intentionally\nstated in terms of communication rather than medium: the Scene Engine says\n\"show change over time\"; choosing a chart, a timeline or a dissolve between\ntwo photographs is the Director's decision.",
+      "enum": [
+        "establish_subject",
+        "show_entity",
+        "show_place",
+        "show_quantity",
+        "show_change_over_time",
+        "show_structure",
+        "show_process",
+        "show_contrast",
+        "show_cause_effect",
+        "illustrate_abstract",
+        "emphasise_statement",
+        "set_mood"
+      ],
+      "title": "VisualGoal",
+      "type": "string"
+    },
+    "VisualStyle": {
+      "description": "The register of the finished video.",
+      "enum": [
+        "documentary",
+        "explainer",
+        "editorial",
+        "technical",
+        "cinematic",
+        "minimal",
+        "playful"
+      ],
+      "title": "VisualStyle",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/scene_graph.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The complete scene structure for one project.",
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "narrative": {
+      "$ref": "#/$defs/NarrativeArc"
+    },
+    "organisation_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Organisation Id",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "scene_graph_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Scene Graph Id",
+      "type": "string"
+    },
+    "scenes": {
+      "items": {
+        "$ref": "#/$defs/Scene"
+      },
+      "maxItems": 400,
+      "title": "Scenes",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/Status",
+      "default": "pending"
+    },
+    "style": {
+      "$ref": "#/$defs/StyleProfile"
+    },
+    "transcript_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Transcript Id",
+      "type": "string"
+    },
+    "understanding_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Understanding Id",
+      "type": "string"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    }
+  },
+  "required": [
+    "organisation_id",
+    "project_id",
+    "understanding_id",
+    "transcript_id"
+  ],
+  "title": "SceneGraph",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

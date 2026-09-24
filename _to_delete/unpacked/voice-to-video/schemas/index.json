@@ -1,0 +1,16 @@
+{
+  "contracts_version": "1.0",
+  "documents": [
+    "asset",
+    "generation_request",
+    "generation_result",
+    "project",
+    "recording",
+    "render_job",
+    "scene_graph",
+    "timeline",
+    "transcript",
+    "understanding",
+    "visual_plan"
+  ]
+}

@@ -1,0 +1,503 @@
+{
+  "$defs": {
+    "Entity": {
+      "additionalProperties": false,
+      "description": "A thing the speaker referred to.",
+      "properties": {
+        "aliases": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Aliases",
+          "type": "array"
+        },
+        "canonical_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canonical Name"
+        },
+        "entity_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "external": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExternalReference"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "salience": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Salience",
+          "type": "number"
+        },
+        "type": {
+          "$ref": "#/$defs/EntityType"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "title": "Entity",
+      "type": "object"
+    },
+    "EntityType": {
+      "description": "What kind of thing an entity is.\n\nThe type is a strong prior for visual strategy — a ``PERSON`` suggests a\nportrait, a ``LOCATION`` suggests a map, a ``QUANTITY`` suggests a chart —\nbut it is only a prior. The Visual Director makes the actual decision.",
+      "enum": [
+        "person",
+        "organization",
+        "location",
+        "product",
+        "technology",
+        "work",
+        "event",
+        "concept",
+        "quantity",
+        "date",
+        "other"
+      ],
+      "title": "EntityType",
+      "type": "string"
+    },
+    "ExternalReference": {
+      "additionalProperties": false,
+      "description": "A link to a public knowledge base, used to disambiguate entities.\n\nResolving \"Bell Labs\" to a stable identifier is what later allows the asset\nengine to search for the *right* Bell Labs, and what allows a factual-accuracy\ncheck to exist at all (Stage 16).",
+      "properties": {
+        "identifier": {
+          "maxLength": 128,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "e.g. 'wikidata', 'wikipedia', 'openlibrary'",
+          "maxLength": 32,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "namespace",
+        "identifier"
+      ],
+      "title": "ExternalReference",
+      "type": "object"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "description": "A number the speaker asserted, in a form a chart can consume directly.",
+      "properties": {
+        "at": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When it applies, verbatim from speech, e.g. '1947'.",
+          "title": "At"
+        },
+        "of_what": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the number measures.",
+          "title": "Of What"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "Relation": {
+      "additionalProperties": false,
+      "description": "A directed statement connecting two entities.\n\nRelations are what make a *diagram* possible rather than a slideshow: they\nare the edges the animation engine draws.",
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "object_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "predicate": {
+          "description": "snake_case verb phrase, e.g. 'invented_at', 'replaced'.",
+          "maxLength": 48,
+          "minLength": 2,
+          "title": "Predicate",
+          "type": "string"
+        },
+        "relation_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Relation Id",
+          "type": "string"
+        },
+        "subject_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Subject Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subject_id",
+        "predicate",
+        "object_id"
+      ],
+      "title": "Relation",
+      "type": "object"
+    },
+    "SemanticIntent": {
+      "description": "What the speaker is *doing* with a given stretch of speech.\n\nIntent drives visual grammar far more reliably than topic does. \"X is\ndefined as Y\" wants typography or a diagram whatever X happens to be;\n\"X grew from A to B\" wants a chart whatever X happens to be.",
+      "enum": [
+        "definition",
+        "claim",
+        "example",
+        "comparison",
+        "process",
+        "causation",
+        "enumeration",
+        "numeric_fact",
+        "event_narration",
+        "question",
+        "conclusion",
+        "transition",
+        "aside",
+        "filler"
+      ],
+      "title": "SemanticIntent",
+      "type": "string"
+    },
+    "SemanticUnit": {
+      "additionalProperties": false,
+      "description": "One meaningful idea, grounded in a time span of the recording.\n\nThis is the atom of understanding. It is **not** a sentence and **not** a\nscene. A single sentence can contain three units; three sentences can\ncontain one (Rule 7).",
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "entity_ids": {
+          "items": {
+            "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Entity Ids",
+          "type": "array"
+        },
+        "intent": {
+          "$ref": "#/$defs/SemanticIntent"
+        },
+        "keyphrases": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Keyphrases",
+          "type": "array"
+        },
+        "proposition": {
+          "maxLength": 400,
+          "minLength": 1,
+          "title": "Proposition",
+          "type": "string"
+        },
+        "quantities": {
+          "items": {
+            "$ref": "#/$defs/Quantity"
+          },
+          "maxItems": 32,
+          "title": "Quantities",
+          "type": "array"
+        },
+        "relation_ids": {
+          "items": {
+            "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Relation Ids",
+          "type": "array"
+        },
+        "salience": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Salience",
+          "type": "number"
+        },
+        "segment_ids": {
+          "items": {
+            "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+            "type": "string"
+          },
+          "title": "Segment Ids",
+          "type": "array"
+        },
+        "span": {
+          "$ref": "#/$defs/TimeSpan"
+        },
+        "text": {
+          "description": "The narration this unit covers, verbatim from the transcript.",
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "unit_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Unit Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "span",
+        "text",
+        "proposition",
+        "intent"
+      ],
+      "title": "SemanticUnit",
+      "type": "object"
+    },
+    "Status": {
+      "description": "Lifecycle status shared by recordings, scenes, assets and render jobs.",
+      "enum": [
+        "pending",
+        "processing",
+        "ready",
+        "failed",
+        "retrying",
+        "expired",
+        "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "TimeSpan": {
+      "additionalProperties": false,
+      "description": "A half-open interval ``[start, end)`` on the recording clock.",
+      "properties": {
+        "end": {
+          "maximum": 86400,
+          "minimum": 0.0,
+          "title": "End",
+          "type": "number"
+        },
+        "start": {
+          "maximum": 86400,
+          "minimum": 0.0,
+          "title": "Start",
+          "type": "number"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "TimeSpan",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/understanding.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The complete semantic reading of one transcript.\n\nInvariants enforced here are the contract between the understanding stage\nand everything after it. If this validates, the Scene Engine can rely on\nentity references resolving and on units being in narrative order.",
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "entities": {
+      "items": {
+        "$ref": "#/$defs/Entity"
+      },
+      "title": "Entities",
+      "type": "array"
+    },
+    "model": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model"
+    },
+    "project_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "provider": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider"
+    },
+    "relations": {
+      "items": {
+        "$ref": "#/$defs/Relation"
+      },
+      "title": "Relations",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/Status",
+      "default": "pending"
+    },
+    "summary": {
+      "default": "",
+      "maxLength": 2000,
+      "title": "Summary",
+      "type": "string"
+    },
+    "topic": {
+      "default": "",
+      "maxLength": 200,
+      "title": "Topic",
+      "type": "string"
+    },
+    "transcript_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Transcript Id",
+      "type": "string"
+    },
+    "understanding_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Understanding Id",
+      "type": "string"
+    },
+    "units": {
+      "items": {
+        "$ref": "#/$defs/SemanticUnit"
+      },
+      "title": "Units",
+      "type": "array"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    }
+  },
+  "required": [
+    "project_id",
+    "transcript_id"
+  ],
+  "title": "Understanding",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

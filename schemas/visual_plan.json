@@ -1,0 +1,1360 @@
+{
+  "$defs": {
+    "AspectRatio": {
+      "description": "Delivery shape. Chosen up front because it changes composition, not just\ncropping: a portrait explainer wants stacked layouts, not letterboxed ones.",
+      "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+      ],
+      "title": "AspectRatio",
+      "type": "string"
+    },
+    "AssetKind": {
+      "enum": [
+        "image",
+        "video",
+        "audio",
+        "vector",
+        "font"
+      ],
+      "title": "AssetKind",
+      "type": "string"
+    },
+    "Budget": {
+      "additionalProperties": false,
+      "description": "A hard ceiling attached to a unit of work.\n\nEvery request that can spend money or time carries one of these. A provider\nthat cannot satisfy the budget must decline rather than overspend, which is\nwhat makes the cost strategy in ``docs/AI_PROVIDER_POLICY.md`` enforceable\ninstead of aspirational.",
+      "properties": {
+        "max_cost_usd": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Cost Usd"
+        },
+        "max_latency_seconds": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 86400,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Latency Seconds"
+        }
+      },
+      "title": "Budget",
+      "type": "object"
+    },
+    "CameraMotion": {
+      "description": "Motion applied to a still image so it does not sit dead on screen.",
+      "enum": [
+        "none",
+        "zoom_in",
+        "zoom_out",
+        "pan_left",
+        "pan_right",
+        "pan_up",
+        "pan_down",
+        "ken_burns"
+      ],
+      "title": "CameraMotion",
+      "type": "string"
+    },
+    "ChartKind": {
+      "enum": [
+        "line",
+        "bar",
+        "column",
+        "area",
+        "pie",
+        "scatter"
+      ],
+      "title": "ChartKind",
+      "type": "string"
+    },
+    "ChartSeries": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/DataPoint"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "title": "Points",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "points"
+      ],
+      "title": "ChartSeries",
+      "type": "object"
+    },
+    "ChartSpec": {
+      "additionalProperties": false,
+      "description": "A quantitative claim, drawn.\n\n\"The population went from one billion to eight billion\" is a chart. Asking a\nvideo model for it costs orders of magnitude more, takes far longer, and is\nless accurate (Rule 6).",
+      "properties": {
+        "animate_in": {
+          "default": true,
+          "title": "Animate In",
+          "type": "boolean"
+        },
+        "emphasis": {
+          "$ref": "#/$defs/Emphasis",
+          "default": "normal"
+        },
+        "kind": {
+          "$ref": "#/$defs/ChartKind"
+        },
+        "preferred_duration": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Preferred Duration",
+          "type": "number"
+        },
+        "primitive": {
+          "const": "chart",
+          "default": "chart",
+          "title": "Primitive",
+          "type": "string"
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/ChartSeries"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Series",
+          "type": "array"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "x_label": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "X Label"
+        },
+        "y_label": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Y Label"
+        }
+      },
+      "required": [
+        "kind",
+        "series"
+      ],
+      "title": "ChartSpec",
+      "type": "object"
+    },
+    "ComparisonSide": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_query": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset Query"
+        },
+        "points": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 6,
+          "title": "Points",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "ComparisonSide",
+      "type": "object"
+    },
+    "ComparisonSpec": {
+      "additionalProperties": false,
+      "description": "Two things held against each other. Split screen, then difference.",
+      "properties": {
+        "connector": {
+          "default": "versus",
+          "enum": [
+            "versus",
+            "arrow",
+            "none"
+          ],
+          "title": "Connector",
+          "type": "string"
+        },
+        "emphasis": {
+          "$ref": "#/$defs/Emphasis",
+          "default": "normal"
+        },
+        "left": {
+          "$ref": "#/$defs/ComparisonSide"
+        },
+        "preferred_duration": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Preferred Duration",
+          "type": "number"
+        },
+        "primitive": {
+          "const": "comparison",
+          "default": "comparison",
+          "title": "Primitive",
+          "type": "string"
+        },
+        "right": {
+          "$ref": "#/$defs/ComparisonSide"
+        }
+      },
+      "required": [
+        "left",
+        "right"
+      ],
+      "title": "ComparisonSpec",
+      "type": "object"
+    },
+    "CompositeLayer": {
+      "additionalProperties": false,
+      "description": "One layer of a composite shot, back to front.",
+      "properties": {
+        "bounds": {
+          "default": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bounds",
+          "type": "array"
+        },
+        "opacity": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Opacity",
+          "type": "number"
+        },
+        "requirements": {
+          "discriminator": {
+            "mapping": {
+              "existing_asset": "#/$defs/ExistingAssetRequirements",
+              "generated_image": "#/$defs/ImageGenerationRequirements",
+              "generated_video": "#/$defs/VideoGenerationRequirements",
+              "licensed_media": "#/$defs/LicensedMediaRequirements",
+              "programmatic": "#/$defs/ProgrammaticRequirements"
+            },
+            "propertyName": "strategy"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ExistingAssetRequirements"
+            },
+            {
+              "$ref": "#/$defs/ProgrammaticRequirements"
+            },
+            {
+              "$ref": "#/$defs/LicensedMediaRequirements"
+            },
+            {
+              "$ref": "#/$defs/ImageGenerationRequirements"
+            },
+            {
+              "$ref": "#/$defs/VideoGenerationRequirements"
+            }
+          ],
+          "title": "Requirements"
+        }
+      },
+      "required": [
+        "requirements"
+      ],
+      "title": "CompositeLayer",
+      "type": "object"
+    },
+    "CompositeRequirements": {
+      "additionalProperties": false,
+      "description": "Layered shots: a licensed photograph under an animated annotation, a map\nwith a chart in the corner. Often the most communicative option and rarely\nthe most expensive one.",
+      "properties": {
+        "layers": {
+          "items": {
+            "$ref": "#/$defs/CompositeLayer"
+          },
+          "maxItems": 4,
+          "minItems": 2,
+          "title": "Layers",
+          "type": "array"
+        },
+        "strategy": {
+          "const": "composite",
+          "default": "composite",
+          "title": "Strategy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "layers"
+      ],
+      "title": "CompositeRequirements",
+      "type": "object"
+    },
+    "CostEstimate": {
+      "additionalProperties": false,
+      "description": "What the Director believes a directive will cost in money and time.\n\nEstimates are supplied by the generation router from provider capability\ndata, not guessed by a language model. They are what make the trade-off in\nSection 28 of the brief an actual computation rather than a slogan.",
+      "properties": {
+        "latency_seconds": {
+          "default": 0.0,
+          "minimum": 0.0,
+          "title": "Latency Seconds",
+          "type": "number"
+        },
+        "usd": {
+          "default": 0.0,
+          "minimum": 0.0,
+          "title": "Usd",
+          "type": "number"
+        }
+      },
+      "title": "CostEstimate",
+      "type": "object"
+    },
+    "DataPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "label",
+        "value"
+      ],
+      "title": "DataPoint",
+      "type": "object"
+    },
+    "Emphasis": {
+      "description": "How strongly a visual should assert itself against the narration.",
+      "enum": [
+        "subtle",
+        "normal",
+        "strong"
+      ],
+      "title": "Emphasis",
+      "type": "string"
+    },
+    "ExistingAssetRequirements": {
+      "additionalProperties": false,
+      "description": "Reuse something we already have.",
+      "properties": {
+        "asset_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset Id"
+        },
+        "camera_motion": {
+          "$ref": "#/$defs/CameraMotion",
+          "default": "ken_burns"
+        },
+        "kind": {
+          "$ref": "#/$defs/AssetKind",
+          "default": "image"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "strategy": {
+          "const": "existing_asset",
+          "default": "existing_asset",
+          "title": "Strategy",
+          "type": "string"
+        }
+      },
+      "title": "ExistingAssetRequirements",
+      "type": "object"
+    },
+    "ImageGenerationRequirements": {
+      "additionalProperties": false,
+      "description": "Generate a still image.",
+      "properties": {
+        "aspect_ratio": {
+          "$ref": "#/$defs/AspectRatio",
+          "default": "16:9"
+        },
+        "camera_motion": {
+          "$ref": "#/$defs/CameraMotion",
+          "default": "zoom_in"
+        },
+        "depicts_reality": {
+          "default": false,
+          "title": "Depicts Reality",
+          "type": "boolean"
+        },
+        "negative_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Negative Prompt"
+        },
+        "prompt": {
+          "maxLength": 2000,
+          "minLength": 8,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "strategy": {
+          "const": "generated_image",
+          "default": "generated_image",
+          "title": "Strategy",
+          "type": "string"
+        },
+        "style_reference_asset_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Style Reference Asset Id"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "ImageGenerationRequirements",
+      "type": "object"
+    },
+    "LicensedMediaRequirements": {
+      "additionalProperties": false,
+      "description": "Find real footage or photography we are allowed to use.",
+      "properties": {
+        "alternate_queries": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 4,
+          "title": "Alternate Queries",
+          "type": "array"
+        },
+        "camera_motion": {
+          "$ref": "#/$defs/CameraMotion",
+          "default": "ken_burns"
+        },
+        "constraints": {
+          "$ref": "#/$defs/MediaSearchConstraints"
+        },
+        "kind": {
+          "$ref": "#/$defs/AssetKind",
+          "default": "image"
+        },
+        "must_depict": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Must Depict"
+        },
+        "query": {
+          "maxLength": 300,
+          "minLength": 2,
+          "title": "Query",
+          "type": "string"
+        },
+        "strategy": {
+          "const": "licensed_media",
+          "default": "licensed_media",
+          "title": "Strategy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "LicensedMediaRequirements",
+      "type": "object"
+    },
+    "MapMarker": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "latitude": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Longitude",
+          "type": "number"
+        }
+      },
+      "required": [
+        "label",
+        "latitude",
+        "longitude"
+      ],
+      "title": "MapMarker",
+      "type": "object"
+    },
+    "MapSpec": {
+      "additionalProperties": false,
+      "description": "Where something happened.",
+      "properties": {
+        "connect_markers": {
+          "default": false,
+          "title": "Connect Markers",
+          "type": "boolean"
+        },
+        "emphasis": {
+          "$ref": "#/$defs/Emphasis",
+          "default": "normal"
+        },
+        "markers": {
+          "items": {
+            "$ref": "#/$defs/MapMarker"
+          },
+          "maxItems": 12,
+          "minItems": 1,
+          "title": "Markers",
+          "type": "array"
+        },
+        "preferred_duration": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Preferred Duration",
+          "type": "number"
+        },
+        "primitive": {
+          "const": "map",
+          "default": "map",
+          "title": "Primitive",
+          "type": "string"
+        },
+        "scope": {
+          "default": "world",
+          "enum": [
+            "world",
+            "continent",
+            "country",
+            "region",
+            "city"
+          ],
+          "title": "Scope",
+          "type": "string"
+        }
+      },
+      "required": [
+        "markers"
+      ],
+      "title": "MapSpec",
+      "type": "object"
+    },
+    "MediaSearchConstraints": {
+      "additionalProperties": false,
+      "description": "Non-negotiable constraints applied to every media search.\n\nThese are defaults that the search adapter must honour, not preferences.\nRequiring commercial use and modification rights at *query* time means we\nnever spend engineering effort or user attention on assets we could not have\nused anyway.",
+      "properties": {
+        "exclude_share_alike": {
+          "default": false,
+          "title": "Exclude Share Alike",
+          "type": "boolean"
+        },
+        "min_height": {
+          "default": 720,
+          "minimum": 1,
+          "title": "Min Height",
+          "type": "integer"
+        },
+        "min_width": {
+          "default": 1280,
+          "minimum": 1,
+          "title": "Min Width",
+          "type": "integer"
+        },
+        "require_commercial_use": {
+          "default": true,
+          "title": "Require Commercial Use",
+          "type": "boolean"
+        },
+        "require_modification": {
+          "default": true,
+          "title": "Require Modification",
+          "type": "boolean"
+        }
+      },
+      "title": "MediaSearchConstraints",
+      "type": "object"
+    },
+    "NetworkEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "directed": {
+          "default": true,
+          "title": "Directed",
+          "type": "boolean"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "maxLength": 48,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "source": {
+          "maxLength": 48,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "maxLength": 48,
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "target"
+      ],
+      "title": "NetworkEdge",
+      "type": "object"
+    },
+    "NetworkNode": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "key": {
+          "maxLength": 48,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label"
+      ],
+      "title": "NetworkNode",
+      "type": "object"
+    },
+    "NetworkSpec": {
+      "additionalProperties": false,
+      "description": "Nodes and edges: relationships, systems, architectures, distributed ideas.\n\nThis is the direct rendering of the relation graph from the semantic layer,\nwhich is why relations are modelled as first-class data rather than prose.",
+      "properties": {
+        "animation": {
+          "default": "build",
+          "enum": [
+            "appear",
+            "propagate",
+            "build",
+            "pulse"
+          ],
+          "title": "Animation",
+          "type": "string"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/NetworkEdge"
+          },
+          "maxItems": 64,
+          "title": "Edges",
+          "type": "array"
+        },
+        "emphasis": {
+          "$ref": "#/$defs/Emphasis",
+          "default": "normal"
+        },
+        "layout": {
+          "default": "force",
+          "enum": [
+            "force",
+            "radial",
+            "layered",
+            "circular"
+          ],
+          "title": "Layout",
+          "type": "string"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/NetworkNode"
+          },
+          "maxItems": 24,
+          "minItems": 2,
+          "title": "Nodes",
+          "type": "array"
+        },
+        "preferred_duration": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Preferred Duration",
+          "type": "number"
+        },
+        "primitive": {
+          "const": "network",
+          "default": "network",
+          "title": "Primitive",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "nodes"
+      ],
+      "title": "NetworkSpec",
+      "type": "object"
+    },
+    "ProgrammaticRequirements": {
+      "additionalProperties": false,
+      "description": "Draw it ourselves.\n\nThe spec is validated data consumed by our renderer. No model-authored code\nis ever executed — see :mod:`vtv.contracts.visual_language`.",
+      "properties": {
+        "spec": {
+          "discriminator": {
+            "mapping": {
+              "chart": "#/$defs/ChartSpec",
+              "comparison": "#/$defs/ComparisonSpec",
+              "map": "#/$defs/MapSpec",
+              "network": "#/$defs/NetworkSpec",
+              "timeline": "#/$defs/TimelineSpec",
+              "typography": "#/$defs/TypographySpec"
+            },
+            "propertyName": "primitive"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/TypographySpec"
+            },
+            {
+              "$ref": "#/$defs/ChartSpec"
+            },
+            {
+              "$ref": "#/$defs/TimelineSpec"
+            },
+            {
+              "$ref": "#/$defs/NetworkSpec"
+            },
+            {
+              "$ref": "#/$defs/ComparisonSpec"
+            },
+            {
+              "$ref": "#/$defs/MapSpec"
+            }
+          ],
+          "title": "Spec"
+        },
+        "strategy": {
+          "const": "programmatic",
+          "default": "programmatic",
+          "title": "Strategy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "title": "ProgrammaticRequirements",
+      "type": "object"
+    },
+    "SceneVisualPlan": {
+      "additionalProperties": false,
+      "description": "The Director's complete answer for one scene.",
+      "properties": {
+        "budget": {
+          "$ref": "#/$defs/Budget"
+        },
+        "fallbacks": {
+          "items": {
+            "$ref": "#/$defs/VisualDirective"
+          },
+          "maxItems": 4,
+          "title": "Fallbacks",
+          "type": "array"
+        },
+        "plan_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "primary": {
+          "$ref": "#/$defs/VisualDirective"
+        },
+        "scene_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/Status",
+          "default": "pending"
+        }
+      },
+      "required": [
+        "scene_id",
+        "primary"
+      ],
+      "title": "SceneVisualPlan",
+      "type": "object"
+    },
+    "Status": {
+      "description": "Lifecycle status shared by recordings, scenes, assets and render jobs.",
+      "enum": [
+        "pending",
+        "processing",
+        "ready",
+        "failed",
+        "retrying",
+        "expired",
+        "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "TimelineEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "detail": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detail"
+        },
+        "label": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "sort_value": {
+          "title": "Sort Value",
+          "type": "number"
+        },
+        "when": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "When",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "when",
+        "sort_value"
+      ],
+      "title": "TimelineEvent",
+      "type": "object"
+    },
+    "TimelineSpec": {
+      "additionalProperties": false,
+      "description": "Events in order. The default form for anything historical.",
+      "properties": {
+        "emphasis": {
+          "$ref": "#/$defs/Emphasis",
+          "default": "normal"
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/TimelineEvent"
+          },
+          "maxItems": 12,
+          "minItems": 1,
+          "title": "Events",
+          "type": "array"
+        },
+        "orientation": {
+          "default": "horizontal",
+          "enum": [
+            "horizontal",
+            "vertical"
+          ],
+          "title": "Orientation",
+          "type": "string"
+        },
+        "preferred_duration": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Preferred Duration",
+          "type": "number"
+        },
+        "primitive": {
+          "const": "timeline",
+          "default": "timeline",
+          "title": "Primitive",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "events"
+      ],
+      "title": "TimelineSpec",
+      "type": "object"
+    },
+    "TypographySpec": {
+      "additionalProperties": false,
+      "description": "Animated text. The correct answer far more often than it feels like.\n\nA plain factual statement, a definition, a punchy conclusion — these are\ncommunicated better and more cheaply by well-set moving type than by a\nliteral image of the words' subject.",
+      "properties": {
+        "emphasis": {
+          "$ref": "#/$defs/Emphasis",
+          "default": "normal"
+        },
+        "headline": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Headline",
+          "type": "string"
+        },
+        "highlight": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Highlight",
+          "type": "array"
+        },
+        "preferred_duration": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Preferred Duration",
+          "type": "number"
+        },
+        "primitive": {
+          "const": "typography",
+          "default": "typography",
+          "title": "Primitive",
+          "type": "string"
+        },
+        "reveal": {
+          "default": "word_by_word",
+          "enum": [
+            "fade",
+            "typewriter",
+            "word_by_word",
+            "slide"
+          ],
+          "title": "Reveal",
+          "type": "string"
+        },
+        "subline": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subline"
+        }
+      },
+      "required": [
+        "headline"
+      ],
+      "title": "TypographySpec",
+      "type": "object"
+    },
+    "VideoGenerationRequirements": {
+      "additionalProperties": false,
+      "description": "Generate moving footage. The expensive option; justify it.",
+      "properties": {
+        "aspect_ratio": {
+          "$ref": "#/$defs/AspectRatio",
+          "default": "16:9"
+        },
+        "depicts_reality": {
+          "default": false,
+          "title": "Depicts Reality",
+          "type": "boolean"
+        },
+        "duration_seconds": {
+          "default": 5.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "motion_description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Motion Description"
+        },
+        "negative_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Negative Prompt"
+        },
+        "prompt": {
+          "maxLength": 2000,
+          "minLength": 8,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "strategy": {
+          "const": "generated_video",
+          "default": "generated_video",
+          "title": "Strategy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "VideoGenerationRequirements",
+      "type": "object"
+    },
+    "VisualDirective": {
+      "additionalProperties": false,
+      "description": "One way of realising a scene's visual, with its justification.",
+      "properties": {
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "estimate": {
+          "$ref": "#/$defs/CostEstimate"
+        },
+        "rationale": {
+          "maxLength": 600,
+          "minLength": 4,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "requirements": {
+          "discriminator": {
+            "mapping": {
+              "composite": "#/$defs/CompositeRequirements",
+              "existing_asset": "#/$defs/ExistingAssetRequirements",
+              "generated_image": "#/$defs/ImageGenerationRequirements",
+              "generated_video": "#/$defs/VideoGenerationRequirements",
+              "licensed_media": "#/$defs/LicensedMediaRequirements",
+              "programmatic": "#/$defs/ProgrammaticRequirements"
+            },
+            "propertyName": "strategy"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ExistingAssetRequirements"
+            },
+            {
+              "$ref": "#/$defs/ProgrammaticRequirements"
+            },
+            {
+              "$ref": "#/$defs/LicensedMediaRequirements"
+            },
+            {
+              "$ref": "#/$defs/ImageGenerationRequirements"
+            },
+            {
+              "$ref": "#/$defs/VideoGenerationRequirements"
+            },
+            {
+              "$ref": "#/$defs/CompositeRequirements"
+            }
+          ],
+          "title": "Requirements"
+        },
+        "strategy": {
+          "$ref": "#/$defs/VisualStrategy"
+        }
+      },
+      "required": [
+        "strategy",
+        "requirements",
+        "rationale"
+      ],
+      "title": "VisualDirective",
+      "type": "object"
+    },
+    "VisualStrategy": {
+      "description": "How a visual is obtained.\n\nListed in the order the Director should prefer them, all else being equal.\nAll else is frequently not equal — a generated image can be the right answer\nfor scene one — but the ordering encodes the default economic and quality\nposture described in ``docs/AI_PROVIDER_POLICY.md``.",
+      "enum": [
+        "existing_asset",
+        "programmatic",
+        "licensed_media",
+        "generated_image",
+        "generated_video",
+        "composite"
+      ],
+      "title": "VisualStrategy",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/visual_plan.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Visual decisions for an entire project.",
+  "properties": {
+    "budget": {
+      "$ref": "#/$defs/Budget"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "organisation_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Organisation Id",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "scene_graph_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Scene Graph Id",
+      "type": "string"
+    },
+    "scene_plans": {
+      "items": {
+        "$ref": "#/$defs/SceneVisualPlan"
+      },
+      "maxItems": 400,
+      "title": "Scene Plans",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/Status",
+      "default": "pending"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    },
+    "visual_plan_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Visual Plan Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "organisation_id",
+    "project_id",
+    "scene_graph_id"
+  ],
+  "title": "VisualPlan",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

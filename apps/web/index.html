@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Voice to Video — Visual Director</title>
+    <meta
+      name="description"
+      content="Speak or write your idea. The system directs the visual story. You remain the director."
+    />
+
+    <!--
+      Where the API is. Empty means same origin, which is the intended
+      deployment: the application serves this app itself, and CORS never enters
+      the picture. Override with ?api=… for a split deployment or a test run.
+    -->
+    <meta name="vtv-api" content="" />
+
+    <!--
+      A strict policy for a frontend that has no third-party runtime code. This
+      application loads nothing from another origin, evaluates no strings, and
+      writes no user content as markup, so the policy costs nothing and closes
+      the whole class.
+
+      `frame-ancestors` is deliberately absent: browsers ignore it in a meta
+      element, so declaring it here would be a clickjacking defence that only
+      looks present. The API sends it as a real header instead.
+
+      `connect-src` is broad because the API host is configurable at runtime;
+      a single-origin deployment should tighten it to 'self'.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src *; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="color-scheme" content="light" />
+
+    <link rel="stylesheet" href="/css/tokens.css" />
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <link rel="stylesheet" href="/css/studio.css" />
+    <link rel="stylesheet" href="/css/states.css" />
+
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <div id="app">
+      <!--
+        The pre-boot state. Replaced within a frame of the module loading; it
+        exists so that a slow network shows the product's name rather than a
+        white rectangle.
+      -->
+      <main class="signin">
+        <div class="signin__form panel">
+          <h1 class="signin__title">Voice to Video</h1>
+          <p class="signin__lede muted">Starting…</p>
+        </div>
+      </main>
+    </div>
+
+    <noscript>
+      <p style="padding: 2rem; font-family: Georgia, serif">
+        This editor needs JavaScript. The API it talks to does not — see the
+        documentation for using it directly.
+      </p>
+    </noscript>
+
+    <script type="module" src="/js/main.js"></script>
+  </body>
+</html>

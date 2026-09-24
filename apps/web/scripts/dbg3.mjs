@@ -1,0 +1,11 @@
+import { chromium } from "playwright";
+const b = await chromium.launch();
+const p = await b.newPage();
+p.on("response", r => { if (r.status() >= 400) console.log("HTTP", r.status(), r.url()); });
+p.on("console", m => { if (m.type()==="error") console.log("ERR", m.text().slice(0,140)); });
+await p.goto(process.argv[2] + "/?token=" + process.argv[3]);
+await p.waitForSelector(".start__title", {timeout: 15000});
+await p.click(".modecard:nth-child(2) .btn");
+await p.waitForSelector(".studio", {timeout: 15000});
+await p.waitForTimeout(3000);
+await b.close();

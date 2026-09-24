@@ -1,0 +1,530 @@
+{
+  "$defs": {
+    "BlockKind": {
+      "description": "The structural role a piece of content played in its source.\n\nThis is the part that survives from the original format and that a flat\ntext extraction destroys. A `HEADING` marks a topic boundary the scene\nengine should respect; a `TABLE` is data a chart can be built from; a\n`CAPTION` describes a figure rather than asserting a fact.",
+      "enum": [
+        "title",
+        "heading",
+        "paragraph",
+        "list_item",
+        "quote",
+        "table",
+        "caption",
+        "code",
+        "footnote",
+        "speaker_note",
+        "figure",
+        "metadata"
+      ],
+      "title": "BlockKind",
+      "type": "string"
+    },
+    "InputKind": {
+      "description": "What the user gave us.",
+      "enum": [
+        "voice",
+        "text",
+        "markdown",
+        "pdf",
+        "docx",
+        "pptx",
+        "html",
+        "web_url",
+        "spreadsheet",
+        "csv",
+        "json",
+        "image",
+        "video"
+      ],
+      "title": "InputKind",
+      "type": "string"
+    },
+    "Language": {
+      "additionalProperties": false,
+      "description": "A BCP-47 language tag, resolved into the parts the system needs.",
+      "properties": {
+        "code": {
+          "default": "en",
+          "maxLength": 3,
+          "minLength": 2,
+          "title": "Code",
+          "type": "string"
+        },
+        "name": {
+          "default": "English",
+          "title": "Name",
+          "type": "string"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "maxLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "script": {
+          "$ref": "#/$defs/Script",
+          "default": "latin"
+        },
+        "tag": {
+          "default": "en",
+          "maxLength": 32,
+          "minLength": 2,
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "title": "Language",
+      "type": "object"
+    },
+    "ObjectRef": {
+      "additionalProperties": false,
+      "description": "A pointer to a blob in object storage.\n\nBusiness logic never learns a filesystem path, a bucket URL, or a vendor\nname from this type. Turning an ``ObjectRef`` into readable bytes or a signed\nURL is the sole responsibility of the ``StorageProvider`` port.",
+      "properties": {
+        "bucket": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Bucket",
+          "type": "string"
+        },
+        "checksum_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checksum Sha256"
+        },
+        "content_type": {
+          "description": "IANA media type, e.g. 'audio/webm' or 'image/png'.",
+          "maxLength": 128,
+          "minLength": 3,
+          "title": "Content Type",
+          "type": "string"
+        },
+        "key": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "retention": {
+          "$ref": "#/$defs/RetentionClass",
+          "default": "ephemeral"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        }
+      },
+      "required": [
+        "bucket",
+        "key",
+        "content_type"
+      ],
+      "title": "ObjectRef",
+      "type": "object"
+    },
+    "RetentionClass": {
+      "description": "How long the bytes behind an :class:`ObjectRef` are allowed to live.\n\nRetention is a property of the object itself so that lifecycle rules can be\napplied by the storage layer without it having to understand the domain\n(see ``docs/STORAGE_POLICY.md``).",
+      "enum": [
+        "ephemeral",
+        "project",
+        "archive"
+      ],
+      "title": "RetentionClass",
+      "type": "string"
+    },
+    "Script": {
+      "description": "Writing systems, by ISO 15924 family.\n\nOnly scripts we have a rendering story for are listed. Adding one is a\ncommitment to source a font and test the layout, not just an enum member.",
+      "enum": [
+        "latin",
+        "devanagari",
+        "telugu",
+        "tamil",
+        "kannada",
+        "malayalam",
+        "bengali",
+        "gujarati",
+        "gurmukhi",
+        "arabic",
+        "cyrillic",
+        "greek",
+        "hebrew",
+        "thai",
+        "han",
+        "kana",
+        "hangul",
+        "unknown"
+      ],
+      "title": "Script",
+      "type": "string"
+    },
+    "SourceBlock": {
+      "additionalProperties": false,
+      "description": "One structural piece of a source document.",
+      "properties": {
+        "block_id": {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "title": "Block Id",
+          "type": "string"
+        },
+        "image": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ObjectRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "kind": {
+          "$ref": "#/$defs/BlockKind"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Language"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "level": {
+          "anyOf": [
+            {
+              "maximum": 6,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level"
+        },
+        "location": {
+          "$ref": "#/$defs/SourceLocation"
+        },
+        "table": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TableData"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "text": {
+          "default": "",
+          "maxLength": 20000,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "SourceBlock",
+      "type": "object"
+    },
+    "SourceLocation": {
+      "additionalProperties": false,
+      "description": "Where in the original a block came from.\n\nKept so that a claim in the finished video can be traced to page 14, or to\nslide 3's speaker notes. Enterprise customers ask for this, and Stage 24's\ngrounding needs it.",
+      "properties": {
+        "anchor": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Anchor"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offset"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "section": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section"
+        },
+        "sheet": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sheet"
+        },
+        "slide": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slide"
+        }
+      },
+      "title": "SourceLocation",
+      "type": "object"
+    },
+    "Status": {
+      "description": "Lifecycle status shared by recordings, scenes, assets and render jobs.",
+      "enum": [
+        "pending",
+        "processing",
+        "ready",
+        "failed",
+        "retrying",
+        "expired",
+        "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "TableData": {
+      "additionalProperties": false,
+      "description": "A table, kept as a table.\n\nFlattening a table into prose destroys the one thing that makes it useful:\na chart can be built directly from rows and columns, and cannot be built\nfrom \"the first column says 2019 and the second says forty-two percent\".",
+      "properties": {
+        "caption": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "headers": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Headers",
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "maxItems": 500,
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "title": "TableData",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/source_document.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Any input, normalised.\n\nEverything the platform accepts — a recording, a PDF, a deck, a page, a\nspreadsheet — becomes one of these, and one of these becomes a `Transcript`.\nStages 3 through 30 never learn which it was.",
+  "properties": {
+    "blocks": {
+      "items": {
+        "$ref": "#/$defs/SourceBlock"
+      },
+      "maxItems": 5000,
+      "title": "Blocks",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "extraction_confidence": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Extraction Confidence"
+    },
+    "kind": {
+      "$ref": "#/$defs/InputKind"
+    },
+    "language": {
+      "$ref": "#/$defs/Language"
+    },
+    "metadata": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Metadata",
+      "type": "object"
+    },
+    "organisation_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Organisation Id",
+      "type": "string"
+    },
+    "origin": {
+      "anyOf": [
+        {
+          "maxLength": 2048,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Origin"
+    },
+    "parser": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parser"
+    },
+    "project_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_document_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Source Document Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/Status",
+      "default": "pending"
+    },
+    "title": {
+      "anyOf": [
+        {
+          "maxLength": 500,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Title"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    }
+  },
+  "required": [
+    "organisation_id",
+    "project_id",
+    "kind"
+  ],
+  "title": "SourceDocument",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

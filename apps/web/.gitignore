@@ -1,0 +1,5 @@
+# Build output. `npm run build` produces `dist/` with content-hashed names;
+# `npm test` produces `dist-test/` with plain ones so tests can import them.
+dist/
+dist-test/
+node_modules/

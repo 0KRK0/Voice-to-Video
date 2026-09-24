@@ -1,0 +1,659 @@
+{
+  "$defs": {
+    "AspectRatio": {
+      "description": "Delivery shape. Chosen up front because it changes composition, not just\ncropping: a portrait explainer wants stacked layouts, not letterboxed ones.",
+      "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+      ],
+      "title": "AspectRatio",
+      "type": "string"
+    },
+    "ColorPalette": {
+      "additionalProperties": false,
+      "description": "A small, deliberate palette. Hex strings, validated.",
+      "properties": {
+        "accent": {
+          "default": "#4C8DFF",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Accent",
+          "type": "string"
+        },
+        "background": {
+          "default": "#0B0D10",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Background",
+          "type": "string"
+        },
+        "foreground": {
+          "default": "#F5F7FA",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Foreground",
+          "type": "string"
+        },
+        "muted": {
+          "default": "#7A8598",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Muted",
+          "type": "string"
+        },
+        "secondary": {
+          "default": "#FFB65C",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Secondary",
+          "type": "string"
+        }
+      },
+      "title": "ColorPalette",
+      "type": "object"
+    },
+    "ErrorCategory": {
+      "description": "Coarse classification that determines how the system reacts.",
+      "enum": [
+        "validation",
+        "provider",
+        "provider_refused",
+        "policy",
+        "not_found",
+        "timeout",
+        "internal"
+      ],
+      "title": "ErrorCategory",
+      "type": "string"
+    },
+    "ErrorCode": {
+      "description": "Stable, machine-readable error codes.\n\nThese are part of the public contract: they appear in API responses and in\nmetrics, so they may be added to but must not be renamed.",
+      "enum": [
+        "schema_invalid",
+        "audio_unreadable",
+        "audio_too_long",
+        "audio_silent",
+        "transcription_failed",
+        "understanding_failed",
+        "scene_planning_failed",
+        "visual_planning_failed",
+        "asset_not_found",
+        "asset_license_unacceptable",
+        "generation_failed",
+        "generation_refused",
+        "budget_exceeded",
+        "latency_exceeded",
+        "render_failed",
+        "storage_unavailable",
+        "object_expired",
+        "provider_unavailable",
+        "rate_limited",
+        "not_authenticated",
+        "permission_denied",
+        "quota_exceeded",
+        "upload_refused",
+        "tenant_suspended",
+        "internal_error"
+      ],
+      "title": "ErrorCode",
+      "type": "string"
+    },
+    "ErrorInfo": {
+      "additionalProperties": false,
+      "description": "Serialisable description of a failure, safe to store and to return.\n\n``message`` is for engineers and goes to logs. ``user_message`` is for the\nperson who spoke into the microphone and must never leak provider names,\nstack traces, prompts or internal identifiers.",
+      "properties": {
+        "attempt": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Attempt",
+          "type": "integer"
+        },
+        "category": {
+          "$ref": "#/$defs/ErrorCategory"
+        },
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        },
+        "context": {
+          "additionalProperties": true,
+          "title": "Context",
+          "type": "object"
+        },
+        "message": {
+          "maxLength": 2000,
+          "title": "Message",
+          "type": "string"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "retryable": {
+          "default": false,
+          "title": "Retryable",
+          "type": "boolean"
+        },
+        "user_message": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Message"
+        }
+      },
+      "required": [
+        "code",
+        "category",
+        "message"
+      ],
+      "title": "ErrorInfo",
+      "type": "object"
+    },
+    "MotionIntensity": {
+      "enum": [
+        "calm",
+        "moderate",
+        "energetic"
+      ],
+      "title": "MotionIntensity",
+      "type": "string"
+    },
+    "PersistenceMode": {
+      "description": "How long this project's data is kept.",
+      "enum": [
+        "temporary",
+        "saved"
+      ],
+      "title": "PersistenceMode",
+      "type": "string"
+    },
+    "PipelineStage": {
+      "description": "The ordered stages every project passes through.\n\nNaming them lets progress be reported honestly (\"understanding your\nrecording\" rather than a spinner), lets failures be attributed precisely, and\ngives the evaluation system its natural unit of measurement.",
+      "enum": [
+        "capture",
+        "transcription",
+        "understanding",
+        "scene_planning",
+        "visual_direction",
+        "asset_resolution",
+        "composition",
+        "rendering"
+      ],
+      "title": "PipelineStage",
+      "type": "string"
+    },
+    "ProcessingConsent": {
+      "additionalProperties": false,
+      "description": "What the user has agreed to.\n\nConsent is stored per project and defaults to the most conservative setting.\nNothing about a recording may be used to improve the product unless this\nsays so explicitly, and the flag travels with the data so that a later\ntraining-data export cannot accidentally include material that was never\noffered (``docs/SECURITY.md``).",
+      "properties": {
+        "accepted_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accepted At"
+        },
+        "human_review": {
+          "default": false,
+          "title": "Human Review",
+          "type": "boolean"
+        },
+        "improve_product": {
+          "default": false,
+          "title": "Improve Product",
+          "type": "boolean"
+        }
+      },
+      "title": "ProcessingConsent",
+      "type": "object"
+    },
+    "StageState": {
+      "additionalProperties": false,
+      "description": "Status of one pipeline stage.",
+      "properties": {
+        "cost_usd": {
+          "default": 0.0,
+          "minimum": 0.0,
+          "title": "Cost Usd",
+          "type": "number"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detail"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ErrorInfo"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finished At"
+        },
+        "stage": {
+          "$ref": "#/$defs/PipelineStage"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Started At"
+        },
+        "status": {
+          "$ref": "#/$defs/Status",
+          "default": "pending"
+        }
+      },
+      "required": [
+        "stage"
+      ],
+      "title": "StageState",
+      "type": "object"
+    },
+    "Status": {
+      "description": "Lifecycle status shared by recordings, scenes, assets and render jobs.",
+      "enum": [
+        "pending",
+        "processing",
+        "ready",
+        "failed",
+        "retrying",
+        "expired",
+        "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "StyleProfile": {
+      "additionalProperties": false,
+      "description": "The style contract every scene must honour.",
+      "properties": {
+        "aspect_ratio": {
+          "$ref": "#/$defs/AspectRatio",
+          "default": "16:9"
+        },
+        "captions_enabled": {
+          "default": true,
+          "title": "Captions Enabled",
+          "type": "boolean"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Direction"
+        },
+        "motion": {
+          "$ref": "#/$defs/MotionIntensity",
+          "default": "moderate"
+        },
+        "palette": {
+          "$ref": "#/$defs/ColorPalette"
+        },
+        "style": {
+          "$ref": "#/$defs/VisualStyle",
+          "default": "explainer"
+        },
+        "typeface": {
+          "default": "grotesque",
+          "maxLength": 32,
+          "title": "Typeface",
+          "type": "string"
+        }
+      },
+      "title": "StyleProfile",
+      "type": "object"
+    },
+    "VisualFidelity": {
+      "description": "How good the picture needs to be, in the user's terms rather than a\nvendor's.\n\n## Why not just pass the vendor's word through\n\nOpenAI calls these `low`, `medium` and `high`; other image APIs call them\n`standard`/`hd`, or a step count, or nothing at all. Putting one vendor's\nvocabulary in the contract would mean either lying to the others or teaching\nevery caller which vendor is configured — and the second is Rule 3 inverted.\n\n## Why three, and why these\n\nBecause there are three real prices, and they are fifteen times apart. For\nthe 1536x1024 a 16:9 shot lands on, OpenAI publishes $0.016, $0.063 and\n$0.25. Any product decision here is a decision about money:\n\n* ``DRAFT`` — $0.016 a shot. Still 1.5 megapixels. A ten-minute video costs\n  about $1.70. This is the default, and the right one for the great majority\n  of work.\n* ``STANDARD`` — $0.063. Four times draft. Worth it where the picture is the\n  point rather than the illustration.\n* ``FINE`` — $0.25. Sixteen times draft. An hour of video at this tier is\n  about $163, which is why the budget planner exists.\n\nNote this is *fidelity*, not resolution: every tier renders at the same\npixel dimensions. What rises is how much compute the vendor spends getting\nthere.",
+      "enum": [
+        "draft",
+        "standard",
+        "fine"
+      ],
+      "title": "VisualFidelity",
+      "type": "string"
+    },
+    "VisualStyle": {
+      "description": "The register of the finished video.",
+      "enum": [
+        "documentary",
+        "explainer",
+        "editorial",
+        "technical",
+        "cinematic",
+        "minimal",
+        "playful"
+      ],
+      "title": "VisualStyle",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/project.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The root aggregate for one voice-to-video run.",
+  "properties": {
+    "budget_usd": {
+      "anyOf": [
+        {
+          "maximum": 10000.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Usd"
+    },
+    "consent": {
+      "$ref": "#/$defs/ProcessingConsent"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "degradation_notes": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Degradation Notes",
+      "type": "array"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expires At"
+    },
+    "narration_has_speech": {
+      "default": true,
+      "title": "Narration Has Speech",
+      "type": "boolean"
+    },
+    "organisation_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Organisation Id",
+      "type": "string"
+    },
+    "outcome": {
+      "anyOf": [
+        {
+          "maxLength": 32,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Outcome"
+    },
+    "owner_id": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Owner Id"
+    },
+    "persistence": {
+      "$ref": "#/$defs/PersistenceMode",
+      "default": "temporary"
+    },
+    "project_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "recording_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Recording Id"
+    },
+    "render_job_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Render Job Id"
+    },
+    "rendered_duration_seconds": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rendered Duration Seconds"
+    },
+    "rendered_timeline_version": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rendered Timeline Version"
+    },
+    "scene_graph_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Scene Graph Id"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "stages": {
+      "items": {
+        "$ref": "#/$defs/StageState"
+      },
+      "title": "Stages",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/Status",
+      "default": "pending"
+    },
+    "style": {
+      "$ref": "#/$defs/StyleProfile"
+    },
+    "timeline_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Timeline Id"
+    },
+    "title": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Title"
+    },
+    "total_cost_usd": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Total Cost Usd",
+      "type": "number"
+    },
+    "transcript_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Transcript Id"
+    },
+    "understanding_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Understanding Id"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    },
+    "visual_fidelity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VisualFidelity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "visual_plan_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Visual Plan Id"
+    }
+  },
+  "required": [
+    "organisation_id"
+  ],
+  "title": "Project",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

@@ -1,0 +1,447 @@
+{
+  "$defs": {
+    "AspectRatio": {
+      "description": "Delivery shape. Chosen up front because it changes composition, not just\ncropping: a portrait explainer wants stacked layouts, not letterboxed ones.",
+      "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+      ],
+      "title": "AspectRatio",
+      "type": "string"
+    },
+    "ErrorCategory": {
+      "description": "Coarse classification that determines how the system reacts.",
+      "enum": [
+        "validation",
+        "provider",
+        "provider_refused",
+        "policy",
+        "not_found",
+        "timeout",
+        "internal"
+      ],
+      "title": "ErrorCategory",
+      "type": "string"
+    },
+    "ErrorCode": {
+      "description": "Stable, machine-readable error codes.\n\nThese are part of the public contract: they appear in API responses and in\nmetrics, so they may be added to but must not be renamed.",
+      "enum": [
+        "schema_invalid",
+        "audio_unreadable",
+        "audio_too_long",
+        "audio_silent",
+        "transcription_failed",
+        "understanding_failed",
+        "scene_planning_failed",
+        "visual_planning_failed",
+        "asset_not_found",
+        "asset_license_unacceptable",
+        "generation_failed",
+        "generation_refused",
+        "budget_exceeded",
+        "latency_exceeded",
+        "render_failed",
+        "storage_unavailable",
+        "object_expired",
+        "provider_unavailable",
+        "rate_limited",
+        "not_authenticated",
+        "permission_denied",
+        "quota_exceeded",
+        "upload_refused",
+        "tenant_suspended",
+        "internal_error"
+      ],
+      "title": "ErrorCode",
+      "type": "string"
+    },
+    "ErrorInfo": {
+      "additionalProperties": false,
+      "description": "Serialisable description of a failure, safe to store and to return.\n\n``message`` is for engineers and goes to logs. ``user_message`` is for the\nperson who spoke into the microphone and must never leak provider names,\nstack traces, prompts or internal identifiers.",
+      "properties": {
+        "attempt": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Attempt",
+          "type": "integer"
+        },
+        "category": {
+          "$ref": "#/$defs/ErrorCategory"
+        },
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        },
+        "context": {
+          "additionalProperties": true,
+          "title": "Context",
+          "type": "object"
+        },
+        "message": {
+          "maxLength": 2000,
+          "title": "Message",
+          "type": "string"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "retryable": {
+          "default": false,
+          "title": "Retryable",
+          "type": "boolean"
+        },
+        "user_message": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Message"
+        }
+      },
+      "required": [
+        "code",
+        "category",
+        "message"
+      ],
+      "title": "ErrorInfo",
+      "type": "object"
+    },
+    "ObjectRef": {
+      "additionalProperties": false,
+      "description": "A pointer to a blob in object storage.\n\nBusiness logic never learns a filesystem path, a bucket URL, or a vendor\nname from this type. Turning an ``ObjectRef`` into readable bytes or a signed\nURL is the sole responsibility of the ``StorageProvider`` port.",
+      "properties": {
+        "bucket": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Bucket",
+          "type": "string"
+        },
+        "checksum_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checksum Sha256"
+        },
+        "content_type": {
+          "description": "IANA media type, e.g. 'audio/webm' or 'image/png'.",
+          "maxLength": 128,
+          "minLength": 3,
+          "title": "Content Type",
+          "type": "string"
+        },
+        "key": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "retention": {
+          "$ref": "#/$defs/RetentionClass",
+          "default": "ephemeral"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        }
+      },
+      "required": [
+        "bucket",
+        "key",
+        "content_type"
+      ],
+      "title": "ObjectRef",
+      "type": "object"
+    },
+    "RenderQuality": {
+      "description": "Preset trading render time and file size against fidelity.\n\n``PREVIEW`` exists so the storyboard can show real motion in seconds rather\nthan minutes; it is the same pipeline at lower resolution, never a different\ncode path, so what the user previews is what they will get.",
+      "enum": [
+        "preview",
+        "standard",
+        "high"
+      ],
+      "title": "RenderQuality",
+      "type": "string"
+    },
+    "RenderSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "$ref": "#/$defs/AspectRatio",
+          "default": "16:9"
+        },
+        "audio_bitrate_kbps": {
+          "default": 128,
+          "maximum": 320,
+          "minimum": 64,
+          "title": "Audio Bitrate Kbps",
+          "type": "integer"
+        },
+        "burn_in_captions": {
+          "default": true,
+          "title": "Burn In Captions",
+          "type": "boolean"
+        },
+        "codec": {
+          "$ref": "#/$defs/VideoCodec",
+          "default": "h264"
+        },
+        "frame_rate": {
+          "default": 30,
+          "maximum": 60,
+          "minimum": 24,
+          "title": "Frame Rate",
+          "type": "integer"
+        },
+        "include_attributions": {
+          "default": true,
+          "title": "Include Attributions",
+          "type": "boolean"
+        },
+        "quality": {
+          "$ref": "#/$defs/RenderQuality",
+          "default": "standard"
+        }
+      },
+      "title": "RenderSettings",
+      "type": "object"
+    },
+    "RetentionClass": {
+      "description": "How long the bytes behind an :class:`ObjectRef` are allowed to live.\n\nRetention is a property of the object itself so that lifecycle rules can be\napplied by the storage layer without it having to understand the domain\n(see ``docs/STORAGE_POLICY.md``).",
+      "enum": [
+        "ephemeral",
+        "project",
+        "archive"
+      ],
+      "title": "RetentionClass",
+      "type": "string"
+    },
+    "Status": {
+      "description": "Lifecycle status shared by recordings, scenes, assets and render jobs.",
+      "enum": [
+        "pending",
+        "processing",
+        "ready",
+        "failed",
+        "retrying",
+        "expired",
+        "deleted"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "VideoCodec": {
+      "enum": [
+        "h264",
+        "h265",
+        "vp9"
+      ],
+      "title": "VideoCodec",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/render_job.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One attempt to render one timeline.",
+  "properties": {
+    "attempt": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Attempt",
+      "type": "integer"
+    },
+    "backends": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Backends",
+      "type": "object"
+    },
+    "captions_output": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ObjectRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "cost_usd": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Cost Usd",
+      "type": "number"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "duration_seconds": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "maximum": 86400,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Duration Seconds"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ErrorInfo"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "organisation_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Organisation Id",
+      "type": "string"
+    },
+    "output": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ObjectRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "preview": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ObjectRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "preview_seconds": {
+      "default": 0.0,
+      "minimum": 0,
+      "title": "Preview Seconds",
+      "type": "number"
+    },
+    "progress": {
+      "default": 0.0,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Progress",
+      "type": "number"
+    },
+    "project_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "render_job_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Render Job Id",
+      "type": "string"
+    },
+    "render_seconds": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Render Seconds"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "settings": {
+      "$ref": "#/$defs/RenderSettings"
+    },
+    "started_at_seconds": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Started At Seconds"
+    },
+    "status": {
+      "$ref": "#/$defs/Status",
+      "default": "pending"
+    },
+    "timeline_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Timeline Id",
+      "type": "string"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    }
+  },
+  "required": [
+    "organisation_id",
+    "project_id",
+    "timeline_id"
+  ],
+  "title": "RenderJob",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

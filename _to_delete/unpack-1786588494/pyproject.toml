@@ -1,0 +1,132 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vtv"
+version = "0.1.0"
+description = "Voice to Video — a visual intelligence system"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+
+# The core has exactly one runtime dependency. Every provider SDK, HTTP client,
+# database driver and web framework belongs to an adapter or an application, and
+# arrives as an optional extra in a later stage. Keeping this list at one entry
+# is a design constraint, not an accident.
+dependencies = [
+    "pydantic>=2.7,<3",
+]
+
+[project.optional-dependencies]
+# The core needs pydantic alone. Everything below is an adapter's dependency,
+# and each extra maps to a capability you can choose not to install.
+server = [
+    "starlette>=0.37",
+    "uvicorn>=0.29",
+    "python-multipart>=0.0.9",
+]
+render = [
+    "pillow>=10.0",
+    "numpy>=1.26",
+]
+providers = [
+    "httpx>=0.27",
+]
+postgres = [
+    "asyncpg>=0.29",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "mypy>=1.10",
+    "ruff>=0.5",
+]
+
+[project.scripts]
+vtv-schemas = "vtv.schema_export:main"
+vtv-demo = "vtv.demo:cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q --strict-markers"
+# Tests are written as unittest.TestCase classes. pytest runs them natively, and
+# so does the standard library, which means the suite works in any environment
+# including ones where installing pytest is not possible.
+python_files = ["test_*.py"]
+
+[tool.coverage.run]
+source = ["vtv"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "\\.\\.\\.", "if TYPE_CHECKING:"]
+
+[tool.ruff]
+line-length = 90
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle
+    "F",    # pyflakes
+    "I",    # import order
+    "B",    # bugbear
+    "UP",   # pyupgrade
+    "N",    # naming
+    "SIM",  # simplify
+    "RUF",  # ruff-specific
+    "TID",  # tidy imports
+]
+ignore = [
+    "E501",    # line length is handled by the formatter
+    "B008",    # pydantic Field() in defaults is idiomatic
+    "RUF012",  # ClassVar annotation not required for our literal class attrs
+    # We use `class X(str, Enum)` rather than `StrEnum`. Both work with pydantic,
+    # but `str, Enum` keeps `f"{Status.READY}"` rendering as `Status.READY` in
+    # log lines and error messages, which is what an engineer reading an
+    # exception wants to see. Serialised output is `"ready"` either way.
+    "UP042",
+    # Typographic characters are deliberate. Real speech and real transcripts
+    # contain curly apostrophes and en dashes; a regex that only matched ASCII
+    # would fail on the first word processor's output, and human-readable
+    # strings read better with proper punctuation.
+    "RUF001",
+    "RUF002",
+    "RUF003",
+    # Our exception names read as sentences at the call site — `raise
+    # PolicyViolation(...)`, `raise BudgetExceeded(...)`. An `Error` suffix on
+    # every one of them adds noise without adding information.
+    "N818",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# The worked example is written to be read top to bottom like a document.
+"src/vtv/examples/*.py" = ["E501"]
+"tests/*.py" = ["E501"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = "src"
+packages = ["vtv"]
+strict = true
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+# Tests construct deliberately invalid models to prove they are rejected.
+module = "tests.*"
+disallow_untyped_defs = false
+warn_unused_ignores = false
+
+[tool.pydantic-mypy]
+init_typed = true
+warn_required_dynamic_aliases = true

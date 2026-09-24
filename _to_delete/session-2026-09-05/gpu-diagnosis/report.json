@@ -1,0 +1,412 @@
+{
+  "machine": "Windows-10-10.0.26200-SP0",
+  "frame": [
+    320,
+    180
+  ],
+  "still": "detailed",
+  "tolerance": 2,
+  "theme_background": [
+    11,
+    13,
+    16,
+    255
+  ],
+  "scenes": {
+    "background": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 0,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.0,
+      "bounding_box": null,
+      "ok": true
+    },
+    "message": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 0,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.0,
+      "bounding_box": null,
+      "ok": true
+    },
+    "picture": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.07,
+      "bounding_box": [
+        2,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "picture-zoomed": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.052,
+      "bounding_box": [
+        0,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "picture-panned": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.037,
+      "bounding_box": [
+        0,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "picture-contained": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.025,
+      "bounding_box": [
+        32,
+        18,
+        288,
+        180
+      ],
+      "ok": true
+    },
+    "plate-filled": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 0,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.0,
+      "bounding_box": null,
+      "ok": true
+    },
+    "plate-outlined": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 0,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.0,
+      "bounding_box": null,
+      "ok": true
+    },
+    "text": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 0,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.0,
+      "bounding_box": null,
+      "ok": true
+    },
+    "text-anchored": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 0,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.0,
+      "bounding_box": null,
+      "ok": true
+    },
+    "vignette": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 0,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.0,
+      "bounding_box": null,
+      "ok": true
+    },
+    "vignette-strong": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 0,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.0,
+      "bounding_box": null,
+      "ok": true
+    },
+    "overlay-over-picture": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.064,
+      "bounding_box": [
+        2,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "overlay-during-blend": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.046,
+      "bounding_box": [
+        0,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "blend-0": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.07,
+      "bounding_box": [
+        2,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "blend-50": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.05,
+      "bounding_box": [
+        0,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "blend-100": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.037,
+      "bounding_box": [
+        0,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "wipe-0": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.07,
+      "bounding_box": [
+        2,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "wipe-50": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.054,
+      "bounding_box": [
+        0,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "wipe-100": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.037,
+      "bounding_box": [
+        0,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "push-0": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.07,
+      "bounding_box": [
+        2,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "push-50": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.055,
+      "bounding_box": [
+        0,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    },
+    "push-100": {
+      "dimensions": [
+        320,
+        180
+      ],
+      "max_per_channel": 2,
+      "pixels_outside_tolerance": 0,
+      "mean_absolute_difference": 0.037,
+      "bounding_box": [
+        0,
+        0,
+        320,
+        180
+      ],
+      "ok": true
+    }
+  },
+  "device": {
+    "GL_VENDOR": "NVIDIA Corporation",
+    "GL_RENDERER": "NVIDIA GeForce GTX 1650/PCIe/SSE2",
+    "GL_VERSION": "3.3.0 NVIDIA 610.88",
+    "GL_POINT_SIZE_RANGE": "(1.0, 2047.0)",
+    "GL_SMOOTH_LINE_WIDTH_RANGE": "(0.5, 10.0)",
+    "GL_ALIASED_LINE_WIDTH_RANGE": "(1.0, 10.0)",
+    "GL_POINT_FADE_THRESHOLD_SIZE": "1.0",
+    "GL_POINT_SIZE_GRANULARITY": "0.125",
+    "GL_SMOOTH_LINE_WIDTH_GRANULARITY": "0.125",
+    "GL_MIN_PROGRAM_TEXEL_OFFSET": "-8.0",
+    "GL_MAX_PROGRAM_TEXEL_OFFSET": "7.0",
+    "GL_MINOR_VERSION": "3",
+    "GL_MAJOR_VERSION": "3",
+    "GL_SAMPLE_BUFFERS": "0",
+    "GL_SUBPIXEL_BITS": "8",
+    "GL_CONTEXT_PROFILE_MASK": "1",
+    "GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT": "256",
+    "GL_DOUBLEBUFFER": "True",
+    "GL_STEREO": "False",
+    "GL_MAX_VIEWPORT_DIMS": "(32768, 32768)",
+    "GL_MAX_3D_TEXTURE_SIZE": "16384",
+    "GL_MAX_ARRAY_TEXTURE_LAYERS": "2048",
+    "GL_MAX_CLIP_DISTANCES": "8",
+    "GL_MAX_COLOR_ATTACHMENTS": "8",
+    "GL_MAX_COLOR_TEXTURE_SAMPLES": "32",
+    "GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS": "233472",
+    "GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS": "231424",
+    "GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS": "192",
+    "GL_MAX_COMBINED_UNIFORM_BLOCKS": "84",
+    "GL_MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS": "233472",
+    "GL_MAX_CUBE_MAP_TEXTURE_SIZE": "32768",
+    "GL_MAX_DEPTH_TEXTURE_SAMPLES": "32",
+    "GL_MAX_DRAW_BUFFERS": "8",
+    "GL_MAX_DUAL_SOURCE_DRAW_BUFFERS": "1",
+    "GL_MAX_ELEMENTS_INDICES": "1048576",
+    "GL_MAX_ELEMENTS_VERTICES": "1048576",
+    "GL_MAX_FRAGMENT_INPUT_COMPONENTS": "128",
+    "GL_MAX_FRAGMENT_UNIFORM_COMPONENTS": "4096",
+    "GL_MAX_FRAGMENT_UNIFORM_VECTORS": "1024",
+    "GL_MAX_FRAGMENT_UNIFORM_BLOCKS": "14",
+    "GL_MAX_GEOMETRY_INPUT_COMPONENTS": "128",
+    "GL_MAX_GEOMETRY_OUTPUT_COMPONENTS": "128",
+    "GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS": "32",
+    "GL_MAX_GEOMETRY_UNIFORM_BLOCKS": "14",
+    "GL_MAX_GEOMETRY_UNIFORM_COMPONENTS": "2048",
+    "GL_MAX_GEOMETRY_OUTPUT_VERTICES": "1024",
+    "GL_MAX_INTEGER_SAMPLES": "32",
+    "GL_MAX_SAMPLES": "32",
+    "GL_MAX_RECTANGLE_TEXTURE_SIZE": "32768",
+    "GL_MAX_RENDERBUFFER_SIZE": "32768",
+    "GL_MAX_SAMPLE_MASK_WORDS": "2",
+    "GL_MAX_TEXTURE_BUFFER_SIZE": "268435456",
+    "GL_MAX_TEXTURE_IMAGE_UNITS": "32",
+    "GL_MAX_TEXTURE_LOD_BIAS": "15",
+    "GL_MAX_TEXTURE_SIZE": "32768",
+    "GL_MAX_UNIFORM_BUFFER_BINDINGS": "84",
+    "GL_MAX_UNIFORM_BLOCK_SIZE": "65536",
+    "GL_MAX_VARYING_VECTORS": "31",
+    "GL_MAX_VERTEX_ATTRIBS": "16",
+    "GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS": "32",
+    "GL_MAX_VERTEX_UNIFORM_COMPONENTS": "4096",
+    "GL_MAX_VERTEX_UNIFORM_VECTORS": "1024",
+    "GL_MAX_VERTEX_OUTPUT_COMPONENTS": "128",
+    "GL_MAX_VERTEX_UNIFORM_BLOCKS": "14",
+    "GL_MAX_SERVER_WAIT_TIMEOUT": "-1"
+  }
+}

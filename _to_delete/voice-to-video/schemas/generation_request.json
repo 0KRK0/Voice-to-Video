@@ -1,0 +1,493 @@
+{
+  "$defs": {
+    "AspectRatio": {
+      "description": "Delivery shape. Chosen up front because it changes composition, not just\ncropping: a portrait explainer wants stacked layouts, not letterboxed ones.",
+      "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+      ],
+      "title": "AspectRatio",
+      "type": "string"
+    },
+    "Budget": {
+      "additionalProperties": false,
+      "description": "A hard ceiling attached to a unit of work.\n\nEvery request that can spend money or time carries one of these. A provider\nthat cannot satisfy the budget must decline rather than overspend, which is\nwhat makes the cost strategy in ``docs/AI_PROVIDER_POLICY.md`` enforceable\ninstead of aspirational.",
+      "properties": {
+        "max_cost_usd": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Cost Usd"
+        },
+        "max_latency_seconds": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 86400,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Latency Seconds"
+        }
+      },
+      "title": "Budget",
+      "type": "object"
+    },
+    "GenerationKind": {
+      "enum": [
+        "image",
+        "video",
+        "text",
+        "speech_to_text"
+      ],
+      "title": "GenerationKind",
+      "type": "string"
+    },
+    "ImageParams": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "$ref": "#/$defs/AspectRatio",
+          "default": "16:9"
+        },
+        "count": {
+          "default": 1,
+          "maximum": 4,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "image",
+          "default": "image",
+          "title": "Kind",
+          "type": "string"
+        },
+        "negative_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Negative Prompt"
+        },
+        "prompt": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        },
+        "style_reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ObjectRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "ImageParams",
+      "type": "object"
+    },
+    "ObjectRef": {
+      "additionalProperties": false,
+      "description": "A pointer to a blob in object storage.\n\nBusiness logic never learns a filesystem path, a bucket URL, or a vendor\nname from this type. Turning an ``ObjectRef`` into readable bytes or a signed\nURL is the sole responsibility of the ``StorageProvider`` port.",
+      "properties": {
+        "bucket": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Bucket",
+          "type": "string"
+        },
+        "checksum_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checksum Sha256"
+        },
+        "content_type": {
+          "description": "IANA media type, e.g. 'audio/webm' or 'image/png'.",
+          "maxLength": 128,
+          "minLength": 3,
+          "title": "Content Type",
+          "type": "string"
+        },
+        "key": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "retention": {
+          "$ref": "#/$defs/RetentionClass",
+          "default": "ephemeral"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        }
+      },
+      "required": [
+        "bucket",
+        "key",
+        "content_type"
+      ],
+      "title": "ObjectRef",
+      "type": "object"
+    },
+    "RetentionClass": {
+      "description": "How long the bytes behind an :class:`ObjectRef` are allowed to live.\n\nRetention is a property of the object itself so that lifecycle rules can be\napplied by the storage layer without it having to understand the domain\n(see ``docs/STORAGE_POLICY.md``).",
+      "enum": [
+        "ephemeral",
+        "project",
+        "archive"
+      ],
+      "title": "RetentionClass",
+      "type": "string"
+    },
+    "SpeechToTextParams": {
+      "additionalProperties": false,
+      "properties": {
+        "audio": {
+          "$ref": "#/$defs/ObjectRef"
+        },
+        "kind": {
+          "const": "speech_to_text",
+          "default": "speech_to_text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "language_hint": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language Hint"
+        },
+        "vocabulary": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Vocabulary",
+          "type": "array"
+        },
+        "word_timestamps": {
+          "default": true,
+          "title": "Word Timestamps",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "audio"
+      ],
+      "title": "SpeechToTextParams",
+      "type": "object"
+    },
+    "TextParams": {
+      "additionalProperties": false,
+      "description": "A structured-output request to a language model.\n\nNote what is *not* here: no message list, no role juggling, no provider\nformatting. Callers state an instruction, supply structured input, and name\nthe schema the answer must satisfy. The adapter is responsible for turning\nthat into whatever shape its provider wants, and for rejecting a response\nthat does not validate.",
+      "properties": {
+        "input_json": {
+          "additionalProperties": true,
+          "title": "Input Json",
+          "type": "object"
+        },
+        "instruction": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Instruction",
+          "type": "string"
+        },
+        "kind": {
+          "const": "text",
+          "default": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "max_output_tokens": {
+          "default": 4096,
+          "maximum": 200000,
+          "minimum": 1,
+          "title": "Max Output Tokens",
+          "type": "integer"
+        },
+        "response_schema": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response Schema"
+        },
+        "temperature": {
+          "default": 0.2,
+          "maximum": 2.0,
+          "minimum": 0.0,
+          "title": "Temperature",
+          "type": "number"
+        }
+      },
+      "required": [
+        "instruction"
+      ],
+      "title": "TextParams",
+      "type": "object"
+    },
+    "VideoParams": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "$ref": "#/$defs/AspectRatio",
+          "default": "16:9"
+        },
+        "duration_seconds": {
+          "default": 5.0,
+          "exclusiveMinimum": 0,
+          "maximum": 30.0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "init_image": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ObjectRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "kind": {
+          "const": "video",
+          "default": "video",
+          "title": "Kind",
+          "type": "string"
+        },
+        "negative_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Negative Prompt"
+        },
+        "prompt": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "VideoParams",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.voice-to-video.dev/generation_request.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A unit of work for the generation router.",
+  "properties": {
+    "budget": {
+      "$ref": "#/$defs/Budget"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/GenerationKind"
+    },
+    "max_attempts": {
+      "default": 3,
+      "maximum": 10,
+      "minimum": 1,
+      "title": "Max Attempts",
+      "type": "integer"
+    },
+    "params": {
+      "discriminator": {
+        "mapping": {
+          "image": "#/$defs/ImageParams",
+          "speech_to_text": "#/$defs/SpeechToTextParams",
+          "text": "#/$defs/TextParams",
+          "video": "#/$defs/VideoParams"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ImageParams"
+        },
+        {
+          "$ref": "#/$defs/VideoParams"
+        },
+        {
+          "$ref": "#/$defs/TextParams"
+        },
+        {
+          "$ref": "#/$defs/SpeechToTextParams"
+        }
+      ],
+      "title": "Params"
+    },
+    "project_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Project Id"
+    },
+    "provider_hint": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider Hint"
+    },
+    "request_id": {
+      "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "scene_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z]{3}_[0-9a-hjkmnp-tv-z]{20,26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Scene Id"
+    },
+    "schema_version": {
+      "default": "1.0",
+      "description": "Contract bundle version this document was written with.",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "updated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Updated At"
+    }
+  },
+  "required": [
+    "kind",
+    "params"
+  ],
+  "title": "GenerationRequest",
+  "type": "object",
+  "x-contracts-version": "1.0"
+}

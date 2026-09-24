@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Voice to Video — Architecture</title>
+    <style>
+      :root {
+        --ink: #1c1b19;
+        --ink-2: #3b3733;
+        --muted: #6c6259;
+        --line: #ded9d2;
+        --line-2: #c9c2b8;
+        --bg: #f3f2f2;
+        --surface: #faf9f8;
+        --sunken: #efece7;
+        --accent: #a9752f;
+        --accent-wash: #fbf3e6;
+        --accent-line: #e6cb9e;
+        --free: #4a6b7c;
+        --free-wash: #eaf0f3;
+        --paid: #8d3b2f;
+        --paid-wash: #f6ebe8;
+        --good: #3f6b4a;
+        --good-wash: #e9f0eb;
+        --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        --serif: "Spectral", "Source Serif 4", "Iowan Old Style", Georgia, serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 32px 24px 80px;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--serif);
+        font-size: 15px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+      .page { max-width: 1180px; margin: 0 auto; }
+      h1 { font-size: 30px; font-weight: 400; margin: 0 0 4px; letter-spacing: -0.01em; }
+      .sub { color: var(--muted); margin: 0 0 6px; font-size: 14px; }
+      .stamp {
+        font-family: var(--mono); font-size: 11px; color: var(--muted);
+        border-top: 1px solid var(--line); padding-top: 8px; margin-bottom: 34px;
+      }
+      h2 {
+        font-size: 12px; font-weight: 600; letter-spacing: 0.09em;
+        text-transform: uppercase; color: var(--muted);
+        margin: 46px 0 14px; padding-bottom: 7px; border-bottom: 1px solid var(--line);
+      }
+      figure { margin: 0 0 10px; }
+      svg { display: block; width: 100%; height: auto; background: var(--surface); border: 1px solid var(--line); }
+      figcaption { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+      .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 14px 0 0; font-size: 12.5px; }
+      .legend span { display: inline-flex; align-items: center; gap: 7px; }
+      .sw { width: 13px; height: 13px; border-radius: 2px; border: 1px solid var(--line-2); flex: none; }
+      table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 6px; }
+      th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+      th { font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+      td.n, th.n { text-align: right; font-family: var(--mono); font-size: 12.5px; }
+      code { font-family: var(--mono); font-size: 12.5px; background: var(--sunken); padding: 1px 5px; border-radius: 2px; }
+      .note {
+        background: var(--accent-wash); border: 1px solid var(--accent-line);
+        border-left: 3px solid var(--accent); padding: 11px 14px; margin: 16px 0; font-size: 13.5px;
+      }
+      .note b { color: var(--accent); }
+      .free { color: var(--free); font-weight: 600; }
+      .paid { color: var(--paid); font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <h1>Voice to Video — architecture</h1>
+      <p class="sub">Every box below is a module that exists. Nothing here is aspirational.</p>
+      <p class="stamp">
+        41,295 lines backend (Python) &nbsp;·&nbsp; 11,904 lines frontend (TypeScript) &nbsp;·&nbsp;
+        964 backend tests &nbsp;·&nbsp; 64 frontend tests &nbsp;·&nbsp; 60 end-to-end checks
+      </p>
+
+      <!-- ================= SYSTEM ================= -->
+      <h2>1 · System topology</h2>
+      <figure>
+        <svg viewBox="0 0 1160 520" role="img" aria-label="System topology">
+          <defs>
+            <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#6c6259" />
+            </marker>
+            <style>
+              .b { fill: #faf9f8; stroke: #c9c2b8; stroke-width: 1; }
+              .bb { fill: #efece7; stroke: #c9c2b8; stroke-width: 1; }
+              .acc { fill: #fbf3e6; stroke: #a9752f; stroke-width: 1.4; }
+              .t { font-family: Georgia, serif; font-size: 13px; fill: #1c1b19; }
+              .tt { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; fill: #6c6259; }
+              .lbl { font-family: "IBM Plex Mono", monospace; font-size: 9.5px; fill: #6c6259; letter-spacing: .06em; text-transform: uppercase; }
+              .ln { stroke: #6c6259; stroke-width: 1.1; fill: none; marker-end: url(#a); }
+              .lnd { stroke: #c9c2b8; stroke-width: 1.1; fill: none; stroke-dasharray: 4 3; }
+              .grp { fill: none; stroke: #ded9d2; stroke-width: 1; stroke-dasharray: 3 3; }
+            </style>
+          </defs>
+
+          <!-- browser -->
+          <rect class="acc" x="24" y="30" width="212" height="104" rx="3" />
+          <text class="lbl" x="36" y="50">Browser</text>
+          <text class="t" x="36" y="72">TypeScript Studio</text>
+          <text class="tt" x="36" y="90">native ES modules</text>
+          <text class="tt" x="36" y="106">zero runtime deps</text>
+          <text class="tt" x="36" y="122">34 assets · 383 KB</text>
+
+          <!-- api -->
+          <rect class="b" x="316" y="30" width="212" height="104" rx="3" />
+          <text class="lbl" x="328" y="50">API · Starlette / ASGI</text>
+          <text class="t" x="328" y="72">validate · authorise</text>
+          <text class="t" x="328" y="90">enqueue · serve</text>
+          <text class="tt" x="328" y="112">never renders. never calls a model.</text>
+
+          <!-- queue -->
+          <rect class="bb" x="608" y="30" width="180" height="104" rx="3" />
+          <text class="lbl" x="620" y="50">Durable queue</text>
+          <text class="t" x="620" y="72">SQLite · BEGIN</text>
+          <text class="t" x="620" y="90">IMMEDIATE claim</text>
+          <text class="tt" x="620" y="112">idempotency = unique index</text>
+
+          <!-- workers -->
+          <rect class="b" x="868" y="30" width="264" height="104" rx="3" />
+          <text class="lbl" x="880" y="50">Workers · N replicas</text>
+          <text class="t" x="880" y="72">the entire pipeline</text>
+          <text class="t" x="880" y="90">+ ffmpeg</text>
+          <text class="tt" x="880" y="112">reclaim on death · retry · dead-letter</text>
+
+          <line class="ln" x1="240" y1="82" x2="310" y2="82" />
+          <text class="tt" x="248" y="74">HTTPS</text>
+          <line class="ln" x1="532" y1="82" x2="602" y2="82" />
+          <text class="tt" x="536" y="74">job</text>
+          <line class="ln" x1="792" y1="82" x2="862" y2="82" />
+          <text class="tt" x="798" y="74">claim</text>
+
+          <!-- state row -->
+          <rect class="grp" x="24" y="196" width="1108" height="140" rx="3" />
+          <text class="lbl" x="36" y="216">Shared state — no process owns any of it</text>
+
+          <rect class="bb" x="48" y="230" width="240" height="86" rx="3" />
+          <text class="t" x="60" y="252">Repository</text>
+          <text class="tt" x="60" y="270">projects · documents</text>
+          <text class="tt" x="60" y="286">SQLite today, PostgreSQL</text>
+          <text class="tt" x="60" y="300">schema proven + RLS tested</text>
+
+          <rect class="bb" x="312" y="230" width="240" height="86" rx="3" />
+          <text class="t" x="324" y="252">Object storage</text>
+          <text class="tt" x="324" y="270">orgs/&lt;org&gt;/projects/&lt;id&gt;/…</text>
+          <text class="tt" x="324" y="286">audio · assets · renders</text>
+          <text class="tt" x="324" y="300">local disk · S3 skeleton</text>
+
+          <rect class="bb" x="576" y="230" width="240" height="86" rx="3" />
+          <text class="t" x="588" y="252">Usage meter</text>
+          <text class="tt" x="588" y="270">reserve → settle</text>
+          <text class="tt" x="588" y="286">quotas · overage · invoice</text>
+          <text class="tt" x="588" y="300">shared, not per-replica</text>
+
+          <rect class="bb" x="840" y="230" width="268" height="86" rx="3" />
+          <text class="t" x="852" y="252">Audit + events</text>
+          <text class="tt" x="852" y="270">every security-relevant action</text>
+          <text class="tt" x="852" y="286">SSE stream to the editor</text>
+          <text class="tt" x="852" y="300">tenant-scoped, always</text>
+
+          <line class="lnd" x1="422" y1="138" x2="422" y2="192" />
+          <line class="lnd" x1="698" y1="138" x2="698" y2="192" />
+          <line class="lnd" x1="1000" y1="138" x2="1000" y2="192" />
+
+          <!-- providers -->
+          <rect class="grp" x="24" y="380" width="1108" height="116" rx="3" />
+          <text class="lbl" x="36" y="400">Provider ports — every one optional, every absence disclosed at /health</text>
+
+          <rect class="b" x="48" y="414" width="168" height="64" rx="3" />
+          <text class="t" x="60" y="436">Speech ↔ text</text>
+          <text class="tt" x="60" y="454">STT · TTS</text>
+          <text class="tt" x="60" y="468">OpenAI-compatible</text>
+
+          <rect class="b" x="240" y="414" width="168" height="64" rx="3" />
+          <text class="t" x="252" y="436">Language model</text>
+          <text class="tt" x="252" y="454">structured output only</text>
+          <text class="tt" x="252" y="468">never free prose</text>
+
+          <rect class="b" x="432" y="414" width="168" height="64" rx="3" />
+          <text class="t" x="444" y="436">Image / video gen</text>
+          <text class="tt" x="444" y="454">last resort</text>
+          <text class="tt" x="444" y="468">$0.04 / $0.25 per s</text>
+
+          <rect class="acc" x="624" y="414" width="196" height="64" rx="3" />
+          <text class="t" x="636" y="436">Asset search</text>
+          <text class="tt" x="636" y="454">Openverse · Wikimedia</text>
+          <text class="tt" x="636" y="468">CC-filtered · free</text>
+
+          <rect class="acc" x="844" y="414" width="264" height="64" rx="3" />
+          <text class="t" x="856" y="436">Animation engine — in-process</text>
+          <text class="tt" x="856" y="454">Pillow + ffmpeg · no model, no network</text>
+          <text class="tt" x="856" y="468">6 primitives · deterministic · $0.00</text>
+
+          <line class="lnd" x1="576" y1="340" x2="576" y2="376" />
+        </svg>
+        <figcaption>
+          The API never renders and never calls a model. That separation is what
+          makes a slow provider a slow <em>job</em> rather than a slow <em>website</em>.
+        </figcaption>
+      </figure>
+
+      <!-- ================= PIPELINE ================= -->
+      <h2>2 · What happens when you speak a sentence</h2>
+      <figure>
+        <svg viewBox="0 0 1160 660" role="img" aria-label="Pipeline stages">
+          <defs>
+            <style>
+              .s { fill: #faf9f8; stroke: #c9c2b8; stroke-width: 1; }
+              .sg { fill: #eaf0f3; stroke: #4a6b7c; stroke-width: 1.2; }
+              .sp { fill: #f6ebe8; stroke: #8d3b2f; stroke-width: 1.2; }
+              .sa { fill: #fbf3e6; stroke: #a9752f; stroke-width: 1.4; }
+              .num { font-family: "IBM Plex Mono", monospace; font-size: 11px; fill: #a9752f; font-weight: 600; }
+              .nm { font-family: Georgia, serif; font-size: 13.5px; fill: #1c1b19; }
+              .de { font-family: "IBM Plex Mono", monospace; font-size: 10px; fill: #6c6259; }
+              .fl { stroke: #6c6259; stroke-width: 1.2; fill: none; marker-end: url(#a2); }
+              .gate { fill: #e9f0eb; stroke: #3f6b4a; stroke-width: 1.4; }
+            </style>
+            <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#6c6259" />
+            </marker>
+          </defs>
+
+          <!-- stages column -->
+          <g>
+            <rect class="s" x="30" y="24" width="250" height="52" rx="3" />
+            <text class="num" x="42" y="44">1 · CAPTURE</text>
+            <text class="de" x="42" y="62">store the audio · probe real duration</text>
+
+            <rect class="s" x="30" y="90" width="250" height="52" rx="3" />
+            <text class="num" x="42" y="110">2 · TRANSCRIPTION</text>
+            <text class="de" x="42" y="128">words + timings. never invented.</text>
+
+            <rect class="s" x="30" y="156" width="250" height="52" rx="3" />
+            <text class="num" x="42" y="176">3 · UNDERSTANDING</text>
+            <text class="de" x="42" y="194">entities · quantities · relations</text>
+
+            <rect class="s" x="30" y="222" width="250" height="52" rx="3" />
+            <text class="num" x="42" y="242">4 · SCENE PLANNING</text>
+            <text class="de" x="42" y="260">one idea = one scene, not one sentence</text>
+
+            <rect class="sa" x="30" y="288" width="250" height="52" rx="3" />
+            <text class="num" x="42" y="308">5 · VISUAL DIRECTION</text>
+            <text class="de" x="42" y="326">choose a strategy per scene → see §3</text>
+
+            <rect class="gate" x="30" y="354" width="250" height="52" rx="3" />
+            <text class="num" x="42" y="374" fill="#3f6b4a">GATE · GROUNDING</text>
+            <text class="de" x="42" y="392">mandatory. cannot be constructed without.</text>
+
+            <rect class="s" x="30" y="420" width="250" height="52" rx="3" />
+            <text class="num" x="42" y="440">6 · ASSET RESOLUTION</text>
+            <text class="de" x="42" y="458">fetch · verify licence · store</text>
+
+            <rect class="s" x="30" y="486" width="250" height="52" rx="3" />
+            <text class="num" x="42" y="506">7 · COMPOSITION</text>
+            <text class="de" x="42" y="524">realise each shot, descending the ladder</text>
+
+            <rect class="s" x="30" y="552" width="250" height="52" rx="3" />
+            <text class="num" x="42" y="572">8 · RENDERING</text>
+            <text class="de" x="42" y="590">one ffmpeg pass · MP4 + WebVTT</text>
+
+            <path class="fl" d="M155,78 L155,86" /><path class="fl" d="M155,144 L155,152" />
+            <path class="fl" d="M155,210 L155,218" /><path class="fl" d="M155,276 L155,284" />
+            <path class="fl" d="M155,342 L155,350" /><path class="fl" d="M155,408 L155,416" />
+            <path class="fl" d="M155,474 L155,482" /><path class="fl" d="M155,540 L155,548" />
+          </g>
+
+          <!-- annotations -->
+          <g>
+            <text class="de" x="308" y="46">ffprobe. a claimed duration is not a duration.</text>
+            <text class="de" x="308" y="112">the ONLY stage that turns sound into words.</text>
+            <text class="de" x="308" y="178">this is what makes grounding possible later:</text>
+            <text class="de" x="308" y="192">a chart can only plot a number you said.</text>
+            <text class="de" x="308" y="244">pauses are where the system finds your scenes.</text>
+            <text class="de" x="308" y="310">the whole product lives here. eight rules, in order.</text>
+            <text class="de" x="308" y="376" fill="#3f6b4a">every plotted value must trace to your words,</text>
+            <text class="de" x="308" y="390" fill="#3f6b4a">or the shot is refused and replaced.</text>
+            <text class="de" x="308" y="442">40 MB cap · SSRF-guarded · SPDX checked twice.</text>
+            <text class="de" x="308" y="508">a rung that fails descends. one bad shot</text>
+            <text class="de" x="308" y="522">never fails the project.</text>
+            <text class="de" x="308" y="574">apad + -shortest so deliberate silence survives.</text>
+          </g>
+
+          <!-- editor loop -->
+          <g>
+            <rect class="sa" x="740" y="120" width="380" height="330" rx="3" />
+            <text class="num" x="756" y="146">THE STUDIO — where it stops being a pipeline</text>
+            <text class="de" x="756" y="172">Everything above ran once. From here the user</text>
+            <text class="de" x="756" y="186">directs, and nothing is re-run wholesale.</text>
+
+            <rect class="s" x="760" y="206" width="160" height="44" rx="3" />
+            <text class="nm" x="772" y="226">Script</text>
+            <text class="de" x="772" y="242">addressable lines</text>
+
+            <rect class="s" x="944" y="206" width="160" height="44" rx="3" />
+            <text class="nm" x="956" y="226">Visual unit</text>
+            <text class="de" x="956" y="242">versions · lock</text>
+
+            <rect class="s" x="760" y="272" width="160" height="44" rx="3" />
+            <text class="nm" x="772" y="292">Timeline clip</text>
+            <text class="de" x="772" y="308">what ffmpeg reads</text>
+
+            <rect class="s" x="944" y="272" width="160" height="44" rx="3" />
+            <text class="nm" x="956" y="292">Media library</text>
+            <text class="de" x="956" y="308">your own files</text>
+
+            <path class="fl" d="M924,228 L940,228" />
+            <path class="fl" d="M1024,254 L1024,268" />
+            <path class="fl" d="M940,294 L924,294" />
+            <path class="fl" d="M840,254 L840,268" />
+
+            <text class="de" x="756" y="348">Regenerate ONE visual — the other forty are not</text>
+            <text class="de" x="756" y="362">re-planned, not re-fetched, not re-charged.</text>
+            <text class="de" x="756" y="384">A lock is a rule, not a hope: locked units are</text>
+            <text class="de" x="756" y="398">pinned in the segmentation, so a re-plan</text>
+            <text class="de" x="756" y="412">physically cannot drop them.</text>
+            <text class="de" x="756" y="434">Every change repoints the clip ffmpeg reads.</text>
+          </g>
+          <path class="fl" d="M290,314 C520,314 560,240 734,240" />
+          <text class="de" x="520" y="232">units</text>
+        </svg>
+        <figcaption>
+          Stages 1–8 are the enum <code>PipelineStage</code>. The grounding gate sits
+          between direction and composition and has no enum member — it is not a
+          stage you can skip, it is a wall you pass through.
+        </figcaption>
+      </figure>
+
+      <!-- ================= LADDER ================= -->
+      <h2>3 · Where a picture actually comes from</h2>
+      <figure>
+        <svg viewBox="0 0 1160 430" role="img" aria-label="Visual sourcing ladder">
+          <defs>
+            <style>
+              .r { stroke-width: 1.3; }
+              .rl { font-family: Georgia, serif; font-size: 14px; fill: #1c1b19; }
+              .rd { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; fill: #6c6259; }
+              .rc { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 600; }
+              .dn { stroke: #8d3b2f; stroke-width: 1.4; fill: none; marker-end: url(#a3); stroke-dasharray: 5 3; }
+            </style>
+            <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#8d3b2f" />
+            </marker>
+          </defs>
+
+          <text class="rd" x="30" y="26">THE DIRECTOR ASKS ONE QUESTION PER SCENE — “what is this sentence trying to show?” — AND ANSWERS IT IN THIS ORDER:</text>
+
+          <!-- rungs -->
+          <rect x="30" y="46" width="700" height="54" rx="3" fill="#e9f0eb" stroke="#3f6b4a" class="r" />
+          <text class="rl" x="46" y="70">① DRAW IT OURSELVES — chart, timeline, network, comparison, map</text>
+          <text class="rd" x="46" y="88">a quantity, a date, a structure, a place → we have the data, so we draw the picture</text>
+          <text class="rc" x="756" y="72" fill="#3f6b4a">$0.0000</text>
+          <text class="rd" x="756" y="88">0.4 s · deterministic · exact</text>
+
+          <rect x="30" y="112" width="700" height="54" rx="3" fill="#eaf0f3" stroke="#4a6b7c" class="r" />
+          <text class="rl" x="46" y="136">② FIND A REAL PHOTOGRAPH — Openverse / Wikimedia Commons</text>
+          <text class="rd" x="46" y="154">a nameable thing: a person, a place, a product, an event → search the commons</text>
+          <text class="rc" x="756" y="138" fill="#4a6b7c">$0.0000</text>
+          <text class="rd" x="756" y="154">2 s · CC-filtered twice · attributed</text>
+
+          <rect x="30" y="178" width="700" height="54" rx="3" fill="#f6ebe8" stroke="#8d3b2f" class="r" />
+          <text class="rl" x="46" y="202">③ GENERATE AN IMAGE — only for an abstract idea, only if it matters</text>
+          <text class="rd" x="46" y="220">no data to draw, nothing real to photograph, and scene importance ≥ 0.6</text>
+          <text class="rc" x="756" y="204" fill="#8d3b2f">$0.0400</text>
+          <text class="rd" x="756" y="220">14 s · per image</text>
+
+          <rect x="30" y="244" width="700" height="54" rx="3" fill="#f6ebe8" stroke="#8d3b2f" class="r" />
+          <text class="rl" x="46" y="268">④ GENERATE A VIDEO — motion itself carries the meaning</text>
+          <text class="rd" x="46" y="286">off by default in the shipped wiring · needs a motion verb AND importance ≥ 0.7</text>
+          <text class="rc" x="756" y="270" fill="#8d3b2f">$0.2500</text>
+          <text class="rd" x="756" y="286">150 s · per second of video</text>
+
+          <rect x="30" y="310" width="700" height="54" rx="3" fill="#efece7" stroke="#c9c2b8" class="r" />
+          <text class="rl" x="46" y="334">⑤ TYPOGRAPHY — the speaker’s own words, set well</text>
+          <text class="rd" x="46" y="352">the terminal rung. cannot misstate anything, because it only repeats you.</text>
+          <text class="rc" x="756" y="336">$0.0000</text>
+          <text class="rd" x="756" y="352">always available · never fails</text>
+
+          <!-- descend arrows -->
+          <path class="dn" d="M960,276 C1010,276 1010,206 966,206" />
+          <path class="dn" d="M960,210 C1010,210 1010,140 966,140" />
+          <path class="dn" d="M960,144 C1010,144 1010,342 966,342" />
+          <text class="rd" x="1024" y="200">when a rung</text>
+          <text class="rd" x="1024" y="214">fails, the next</text>
+          <text class="rd" x="1024" y="228">one runs —</text>
+          <text class="rd" x="1024" y="242">and the fallback</text>
+          <text class="rd" x="1024" y="256">is recorded on</text>
+          <text class="rd" x="1024" y="270">the visual, never</text>
+          <text class="rd" x="1024" y="284">hidden.</text>
+
+          <text class="rd" x="30" y="392">BEFORE ANY OF IT RUNS: the director sorts scenes by cost and demotes the expensive ones until the project’s WORST CASE fits a $1.00 ceiling.</text>
+          <text class="rd" x="30" y="410">AFTER a rung is chosen: the grounding gate refuses any drawn visual whose numbers you did not say. A refused shot falls to your own words.</text>
+        </svg>
+        <figcaption>
+          <b>No, we do not "just use AI".</b> Generation is rung three of five, gated
+          on importance, capped by a budget the director enforces before spending,
+          and preceded by two rungs that cost nothing.
+        </figcaption>
+      </figure>
+      <div class="legend">
+        <span><i class="sw" style="background:#e9f0eb;border-color:#3f6b4a"></i> drawn in-process — no network, no model</span>
+        <span><i class="sw" style="background:#eaf0f3;border-color:#4a6b7c"></i> searched — real photographs, licence-checked</span>
+        <span><i class="sw" style="background:#f6ebe8;border-color:#8d3b2f"></i> generated — costs money, used last</span>
+      </div>
+
+      <!-- ================= TIERS ================= -->
+      <h2>4 · Plans, as declared in code</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Limit</th><th class="n">Free</th><th class="n">Starter</th>
+            <th class="n">Professional</th><th class="n">Business</th><th class="n">Enterprise</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Price / month</td><td class="n">$0</td><td class="n">$29</td><td class="n">$99</td><td class="n">$499</td><td class="n">negotiated</td></tr>
+          <tr><td>Rendered minutes</td><td class="n">10</td><td class="n">120</td><td class="n">600</td><td class="n">3,000</td><td class="n">50,000</td></tr>
+          <tr><td>Transcribed minutes</td><td class="n">20</td><td class="n">240</td><td class="n">1,200</td><td class="n">6,000</td><td class="n">100,000</td></tr>
+          <tr><td>Documents</td><td class="n">20</td><td class="n">300</td><td class="n">2,000</td><td class="n">20,000</td><td class="n">500,000</td></tr>
+          <tr><td>Generated assets</td><td class="n">0</td><td class="n">200</td><td class="n">1,500</td><td class="n">10,000</td><td class="n">200,000</td></tr>
+          <tr><td>Provider spend ceiling</td><td class="n">$2</td><td class="n">$40</td><td class="n">$250</td><td class="n">$1,500</td><td class="n">$25,000</td></tr>
+          <tr><td>Storage</td><td class="n">1 GB</td><td class="n">25 GB</td><td class="n">200 GB</td><td class="n">1 TB</td><td class="n">20 TB</td></tr>
+          <tr><td>Seats</td><td class="n">1</td><td class="n">3</td><td class="n">10</td><td class="n">50</td><td class="n">1,000</td></tr>
+          <tr><td>API keys</td><td class="n">1</td><td class="n">5</td><td class="n">20</td><td class="n">100</td><td class="n">500</td></tr>
+          <tr><td>Overage / minute</td><td class="n">—</td><td class="n">—</td><td class="n">$0.20</td><td class="n">$0.15</td><td class="n">$0.10</td></tr>
+          <tr><td>Retention ceiling</td><td class="n">7 d</td><td class="n">90 d</td><td class="n">365 d</td><td class="n">1,095 d</td><td class="n">3,650 d</td></tr>
+          <tr><td>Custom branding</td><td class="n">—</td><td class="n">—</td><td class="n">✓</td><td class="n">✓</td><td class="n">✓</td></tr>
+          <tr><td>SSO · audit export</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">✓</td><td class="n">✓</td></tr>
+          <tr><td>Priority rendering</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">✓</td><td class="n">✓</td></tr>
+          <tr><td>Data residency choice</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">✓</td></tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <b>Free tier gets zero generated assets — deliberately.</b> It is not crippled:
+        the first two rungs of the ladder cost nothing, so a free user still gets real
+        charts, real timelines, real photographs from the commons and typography. They
+        get everything except the rung that costs us money.
+      </div>
+
+      <!-- ================= UNIT ECONOMICS ================= -->
+      <h2>5 · What one minute of video costs us</h2>
+      <table>
+        <thead><tr><th>Provider call</th><th>Charged as</th><th class="n">Price</th></tr></thead>
+        <tbody>
+          <tr><td>Transcription</td><td>per minute of audio</td><td class="n">$0.006</td></tr>
+          <tr><td>Speech synthesis</td><td>per 1,000 characters</td><td class="n">$0.015</td></tr>
+          <tr><td>Language model</td><td>per 1M in / 1M out tokens</td><td class="n">$3.00 / $15.00</td></tr>
+          <tr><td>Image generation</td><td>per image</td><td class="n">$0.040</td></tr>
+          <tr><td>Video generation</td><td>per second, 10 s cap</td><td class="n">$0.250</td></tr>
+          <tr><td class="free">Asset search (Openverse, Wikimedia)</td><td>per search</td><td class="n free">$0.000</td></tr>
+          <tr><td class="free">Animation engine (charts, maps, typography)</td><td>per shot</td><td class="n free">$0.000</td></tr>
+          <tr><td class="free">Rendering (ffmpeg, our own CPU)</td><td>per render</td><td class="n free">$0.000</td></tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <b>The economics are the architecture.</b> A five-minute explainer with nine
+        visuals, where the director draws six and photographs three, costs
+        <b>$0.03 in transcription and nothing else</b>. The same video with every shot
+        generated costs $0.39 — thirteen times more for a result the grounding gate
+        cannot verify. Preferring to draw is not a cost optimisation bolted on
+        afterwards; it is rungs ① and ② of the ladder.
+      </div>
+
+      <!-- ================= DATA ================= -->
+      <h2>6 · What we store, and what we do not</h2>
+      <figure>
+        <svg viewBox="0 0 1160 260" role="img" aria-label="Storage split">
+          <defs><style>
+            .db { fill: #e9f0eb; stroke: #3f6b4a; stroke-width: 1.3; }
+            .ob { fill: #efece7; stroke: #c9c2b8; stroke-width: 1.3; }
+            .h { font-family: Georgia, serif; font-size: 15px; fill: #1c1b19; }
+            .i { font-family: "IBM Plex Mono", monospace; font-size: 11px; fill: #6c6259; }
+          </style></defs>
+
+          <rect class="db" x="30" y="24" width="540" height="200" rx="3" />
+          <text class="h" x="48" y="52">Database — the reasoning</text>
+          <text class="i" x="48" y="78">transcript · understanding · scene graph · visual plan</text>
+          <text class="i" x="48" y="96">visual bible · timeline · render job · script · units</text>
+          <text class="i" x="48" y="122">JSON documents. two tables. no BLOB column anywhere.</text>
+          <text class="i" x="48" y="148">kept for the plan’s retention ceiling — up to 10 years.</text>
+          <text class="i" x="48" y="180">this is why a project is regenerable: throw the video</text>
+          <text class="i" x="48" y="196">away and every decision that made it is still here.</text>
+
+          <rect class="ob" x="600" y="24" width="530" height="200" rx="3" />
+          <text class="h" x="618" y="52">Object storage — the pixels</text>
+          <text class="i" x="618" y="78">recordings · fetched assets · generated images</text>
+          <text class="i" x="618" y="96">rendered MP4 · caption VTT</text>
+          <text class="i" x="618" y="122">every key under orgs/&lt;organisation&gt;/… — enforced on</text>
+          <text class="i" x="618" y="138">write, so an object cannot land outside its tenant.</text>
+          <text class="i" x="618" y="170">the rendered video is EPHEMERAL by design.</text>
+          <text class="i" x="618" y="186">it is an output, not an asset. render it again.</text>
+        </svg>
+        <figcaption>
+          <b>No, we never put big videos in the database.</b> Two tables, both JSON,
+          no binary column. Video lives in object storage behind a signed,
+          short-lived URL and is treated as reproducible output.
+        </figcaption>
+      </figure>
+
+      <!-- ================= SECURITY ================= -->
+      <h2>7 · Tenant isolation — two independent failures required</h2>
+      <table>
+        <thead><tr><th>Layer</th><th>What it enforces</th><th>Proven by</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Application</td>
+            <td>the tenant is in the SQL query, not in an <code>if</code> after it</td>
+            <td>the API and security suites</td>
+          </tr>
+          <tr>
+            <td>Database</td>
+            <td>row-level security, <code>FORCE</code>d, one policy per tenant table, <code>SET LOCAL</code> per transaction</td>
+            <td>18 tests against a live PostgreSQL, attacking as the app role</td>
+          </tr>
+          <tr>
+            <td>Storage</td>
+            <td>every key must start <code>orgs/&lt;org&gt;/</code>, checked on write</td>
+            <td>the tenant-storage suite</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        A forgotten <code>WHERE</code> clause is caught by row-level security. A
+        misconfigured policy is caught by the application's own scoping. Requiring
+        both to be wrong at the same time is the entire value, and it costs one
+        <code>SET LOCAL</code> per transaction.
+      </div>
+    </div>
+  </body>
+</html>

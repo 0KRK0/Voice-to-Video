@@ -1,0 +1,51 @@
+name: CI
+
+# Every check that guards the architecture runs here. The contract-drift and
+# import-boundary checks in particular are the ones that stop the design from
+# eroding a commit at a time.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Type check
+        run: mypy
+
+      - name: Contracts have not drifted from the exported schemas
+        run: python -m vtv.schema_export --check
+
+      - name: Tests
+        run: pytest --cov=vtv --cov-report=term-missing
+
+      - name: The core still installs with no provider SDKs present
+        # The contracts and ports packages must import with pydantic alone. If
+        # this step ever needs another dependency, a vendor has leaked into the
+        # core and the fix is an adapter, not a new install line.
+        run: |
+          python -m venv /tmp/bare
+          /tmp/bare/bin/pip install --quiet "pydantic>=2.7,<3"
+          PYTHONPATH=src /tmp/bare/bin/python -c "import vtv.contracts, vtv.ports, vtv.examples; print('core imports cleanly')"

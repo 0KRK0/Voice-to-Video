@@ -1,0 +1,631 @@
+/*
+ * Layout and components.
+ *
+ * Organised by screen, in the order a user meets them: the chrome, sign-in,
+ * start, projects, the Studio (topbar, script, preview, inspector, media,
+ * timeline), the dialogues, and the phone layout at the end.
+ */
+
+/* -- Chrome --------------------------------------------------------------- */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.shell__outlet {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: 0 var(--space-6);
+  height: 46px;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-divider);
+  flex: none;
+}
+
+.chrome__brand {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: inherit;
+}
+
+.chrome__mark {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  letter-spacing: 0.01em;
+}
+
+.chrome__sub {
+  font-size: var(--text-xs);
+}
+
+.chrome__link {
+  color: var(--color-neutral-800);
+  text-decoration: none;
+  font-size: var(--text-base);
+}
+.chrome__link:hover {
+  color: var(--color-accent-700);
+}
+
+/* -- Pages ---------------------------------------------------------------- */
+
+.page {
+  flex: 1;
+  padding: var(--space-8) var(--space-6);
+  display: flex;
+  justify-content: center;
+  min-height: 0;
+}
+
+.page__panel {
+  width: min(1100px, 100%);
+  max-height: calc(100vh - 140px);
+}
+
+/* -- Sign in -------------------------------------------------------------- */
+
+.signin {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: var(--space-10);
+}
+
+.signin__form {
+  width: min(420px, 100%);
+  padding: var(--space-8);
+  gap: var(--space-4);
+}
+
+.signin__title {
+  font-size: var(--text-xl);
+}
+
+.signin__lede {
+  margin-bottom: var(--space-2);
+}
+
+.signin__error {
+  color: var(--color-danger);
+  font-size: var(--text-base);
+}
+
+/* -- Start ---------------------------------------------------------------- */
+
+.start {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-6);
+}
+
+.start__head {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 560px;
+}
+
+.start__title {
+  font-size: var(--text-3xl);
+  font-weight: 400;
+}
+
+.start__lede {
+  color: var(--color-neutral-700);
+  font-size: var(--text-md);
+  line-height: var(--leading-loose);
+}
+
+.start__modes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6);
+  width: min(940px, 100%);
+}
+
+/* Neither card is louder than the other. That is the design. */
+.modecard {
+  background: var(--color-bg);
+  border: 1px solid var(--color-divider);
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-height: 232px;
+}
+
+.modecard__mark {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--color-divider-strong);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--color-neutral-800);
+  margin-bottom: var(--space-2);
+}
+.modecard__mark svg {
+  width: 17px;
+  height: 17px;
+}
+
+.modecard__title {
+  font-size: var(--text-lg);
+  font-weight: 400;
+}
+
+.modecard__body {
+  color: var(--color-neutral-700);
+  line-height: var(--leading-loose);
+  flex: 1;
+}
+
+.modecard__caveat {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-700);
+  border-top: 1px solid var(--color-divider);
+  padding-top: var(--space-3);
+  width: 100%;
+}
+
+.start__rule {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: min(940px, 100%);
+}
+.start__rule::before,
+.start__rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-divider);
+}
+
+.start__documents {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  width: min(940px, 100%);
+}
+
+.docbutton {
+  font: inherit;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-bg);
+  border: 1px solid var(--color-divider);
+  cursor: pointer;
+  text-align: left;
+}
+.docbutton:hover {
+  border-color: var(--color-accent-400);
+}
+
+.docbutton__ext {
+  color: var(--color-accent-700);
+  font-size: var(--text-xs);
+}
+
+.start__busy {
+  color: var(--color-neutral-700);
+}
+
+/* -- Projects ------------------------------------------------------------- */
+
+.projects__title {
+  color: var(--color-neutral-900);
+  text-decoration: none;
+}
+.projects__title:hover {
+  color: var(--color-accent-700);
+  text-decoration: underline;
+}
+
+.projects__state.is-live {
+  color: var(--color-accent-700);
+}
+.projects__state.is-failed {
+  color: var(--color-danger);
+}
+.projects__state.is-warned {
+  color: var(--color-warn);
+}
+
+.projects__pulse {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-right: 7px;
+  animation: pulse 1.6s var(--ease) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.projects__actions {
+  text-align: right;
+  width: 1%;
+  white-space: nowrap;
+}
+
+/* -- Studio shell --------------------------------------------------------- */
+
+.studio {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--color-canvas);
+}
+
+.studio__upper {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 62%;
+  gap: 0;
+}
+
+.studio__left {
+  flex: 0 0 38%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  gap: 1px;
+}
+
+/*
+ * The right column sizes to its content and stays put while the script
+ * scrolls.
+ *
+ * It used to stretch to match the left column, which is what a flex row does
+ * by default. That was invisible while the preview absorbed the slack, and
+ * became a 1,148-pixel void the moment the video started taking its own
+ * aspect ratio instead: the player sat at the top, the inspector was pushed
+ * to the bottom of a column as tall as a fourteen-line script, and the space
+ * between them was nothing at all. Measured in the browser, not guessed.
+ *
+ * `align-self: flex-start` ends the column where its content ends. `sticky`
+ * then keeps the player and the inspector beside whichever line you have
+ * scrolled to, which is the arrangement the panel was always for.
+ */
+.studio__right {
+  flex: 1;
+  align-self: flex-start;
+  position: sticky;
+  top: 0;
+  /*
+   * `max-content` rather than `100vh`: the inspector no longer scrolls inside
+   * itself, so a hard cap here would clip its last rows with no way to reach
+   * them. Sticky still holds the column while there is room, and once the
+   * panel is taller than the viewport the page's own scroll takes over — one
+   * scrollbar, not two.
+   */
+  max-height: max-content;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  gap: 1px;
+}
+
+.studio__building {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: var(--space-12);
+}
+
+.divider {
+  flex: none;
+  background: var(--color-divider);
+  position: relative;
+}
+.divider--vertical {
+  width: 4px;
+  cursor: col-resize;
+}
+.divider--horizontal {
+  height: 4px;
+  cursor: row-resize;
+}
+.divider:hover,
+.divider:focus-visible {
+  background: var(--color-accent-400);
+}
+
+body.is-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+/* -- Topbar --------------------------------------------------------------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: var(--topbar-height);
+  padding: 0 var(--space-4);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-divider);
+  flex: none;
+}
+
+.topbar.is-offline {
+  box-shadow: inset 0 2px 0 var(--color-warn-line);
+}
+
+.topbar__back {
+  font: inherit;
+  font-size: var(--text-lg);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-neutral-700);
+  padding: 0 var(--space-2);
+}
+
+.topbar__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+}
+
+.topbar__saved {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-700);
+}
+.topbar__saved.is-unsaved {
+  color: var(--color-danger);
+}
+.topbar__saved.is-offline {
+  color: var(--color-warn);
+}
+
+.topbar__facts {
+  display: flex;
+  gap: var(--space-5);
+  align-items: center;
+}
+
+.topbar__fact {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.2;
+}
+
+.topbar__fact .label {
+  font-size: 9.5px;
+}
+
+.topbar__value {
+  font-size: var(--text-base);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.topbar__select,
+.topbar__target {
+  font: inherit;
+  font-size: var(--text-base);
+  border: none;
+  background: none;
+  color: inherit;
+  padding: 0;
+  border-bottom: 1px dotted var(--color-divider-strong);
+  cursor: pointer;
+}
+.topbar__target {
+  width: 46px;
+  font-variant-numeric: tabular-nums;
+}
+
+.topbar__value .is-over {
+  color: var(--color-danger);
+}
+.topbar__value .is-short {
+  color: var(--color-warn);
+}
+
+.topbar__busy {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-accent-700);
+  padding: 0 var(--space-3);
+}
+
+.topbar__spinner {
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar__spinner {
+    animation: none;
+    border-right-color: currentColor;
+    opacity: 0.5;
+  }
+  .projects__pulse {
+    animation: none;
+  }
+}
+
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.topbar__icon {
+  font: inherit;
+  font-size: var(--text-md);
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  color: var(--color-neutral-700);
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+}
+.topbar__icon:hover {
+  border-color: var(--color-divider-strong);
+  color: var(--color-neutral-900);
+}
+
+/* Jobs ------------------------------------------------------------------
+ *
+ * A list of bars. The bar is the screen's whole reason to exist, so it is the
+ * widest thing in each row and nothing competes with it for attention.
+ *
+ * `--live` animates; a finished bar does not. A permanently shimmering bar on
+ * a completed render is the interface claiming work is happening when none is,
+ * which is the same class of dishonesty as a fake progress indicator.
+ */
+.jobs__summary {
+  padding: var(--space-3) var(--space-4) 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.jobs__list {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2) 0 var(--space-4);
+}
+
+.jobs__row {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.jobs__open {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+
+.jobs__open:hover .jobs__name {
+  text-decoration: underline;
+}
+
+.jobs__name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jobs__state {
+  flex: none;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.jobs__bar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-divider);
+  overflow: hidden;
+}
+
+.jobs__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-accent, #6ea8fe);
+  /* Matches the poll interval, so the bar glides between samples instead of
+   * stepping. It never runs ahead: the width it animates towards is always a
+   * number the server sent. */
+  transition: width 600ms ease-out;
+}
+
+.jobs__bar--live .jobs__fill {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-accent, #6ea8fe),
+    color-mix(in srgb, var(--color-accent, #6ea8fe) 55%, transparent),
+    var(--color-accent, #6ea8fe)
+  );
+  background-size: 200% 100%;
+  animation: jobs-sheen 1.6s linear infinite;
+}
+
+@keyframes jobs-sheen {
+  from { background-position: 200% 0; }
+  to { background-position: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jobs__fill { transition: none; }
+  .jobs__bar--live .jobs__fill { animation: none; }
+}
+
+.jobs__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.jobs__percent {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.jobs__muted {
+  color: var(--color-text-muted);
+}
